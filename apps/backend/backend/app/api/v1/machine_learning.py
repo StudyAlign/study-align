@@ -106,16 +106,7 @@ async def create_machine_learning_distribute(ml_model: UploadFile = File(...),
         }
         machine_learning = schema.machine_learning.ml_model.MLModelCreateDistribute(**machine_learning_data)
         machine_learning_db = model.MLModel(**machine_learning.dict())
-        db.add(machine_learning_db)
-        db.flush()
-
-        path = methods.create_path(ml_model, str(machine_learning_db.key))
-        machine_learning_db.path = path
-
-        methods.upload_model(ml_model, path)
-
-        db.commit()
-        db.refresh(machine_learning_db)
+        methods.create_machine_learning_model_with_upload(db, machine_learning_db, ml_model)
     except exc.SQLAlchemyError:
         if os.path.exists(path):
             os.remove(path)
@@ -180,16 +171,7 @@ async def update_machine_learning_distribute_new(machine_learning_id: int,
         machine_learning.time = datetime.utcnow()
         machine_learning.old_model_id = old_model_id
 
-        db.add(machine_learning)
-        db.flush()
-
-        path = methods.create_path(ml_model, str(machine_learning.key))
-        machine_learning.path = path
-
-        methods.upload_model(ml_model, path)
-
-        db.commit()
-        db.refresh(machine_learning)
+        methods.create_machine_learning_model_with_upload(db, machine_learning, ml_model)
     except exc.SQLAlchemyError:
         if os.path.exists(path):
             os.remove(path)
@@ -227,21 +209,20 @@ async def update_machine_learning_distribute_replace(machine_learning_id: int,
 
     if ml_model:
         new_path = methods.create_path(ml_model, str(machine_learning.key))
-
         # make backup copy
         backup_name = str(machine_learning.key) + ".BACKUP"
         backup_path = os.path.join(MODELS_DIR, backup_name)
         shutil.copy2(path, backup_path)
-
         methods.upload_model(ml_model, new_path)
         data["path"] = new_path
+
     try:
         methods.patch(db, model.MLModel, data, machine_learning_id)
         db.refresh(machine_learning)
     except exc.SQLAlchemyError as err:
-        #print("SQLAlchemyError error: {0}".format(err))
+        # print("SQLAlchemyError error: {0}".format(err))
+        # restore backup and delete uploaded model
         if os.path.exists(backup_path):
-            # restore backup and delete newly uploaded model
             shutil.copy2(backup_path, old_path)
             os.remove(new_path)
         raise HTTPException(status_code=409, detail="Failed to upload machine learning model.")
@@ -249,3 +230,38 @@ async def update_machine_learning_distribute_replace(machine_learning_id: int,
         if os.path.exists(backup_path):
             os.remove(backup_path)
     return machine_learning
+
+
+@router.put("/machine-learning/cloud/{machine_learning_id}/new",
+            response_model=schema.machine_learning.ml_model.MLModel,
+            dependencies=[Depends(methods.adminAccessTokenValidator)])
+async def update_machine_learning_cloud_new(machine_learning_id: int,
+                                            machine_learning_update: schema.machine_learning.ml_model.MLModelUpdate,
+                                            db: Session = Depends(get_db)):
+    machine_learning = methods.read(db, model.MLModel, machine_learning_id)
+    if_exists(machine_learning, ENTITY)
+    if machine_learning_update.condition_id:
+        condition = methods.read(db, model.Condition, machine_learning_update.condition_id)
+        if_exists(condition, "Condition")
+    if machine_learning_update.key:
+        ml_key = methods.read_by(db, model.MLModel, "key", machine_learning.key)
+        if ml_key:
+            detail = "Model key %s already in use" % str(ml_key.key)
+            raise HTTPException(status_code=409, detail=detail)
+
+    db.expunge(machine_learning)
+    make_transient(machine_learning)
+    old_model_id = machine_learning.id
+
+    machine_learning.id = None
+    machine_learning.key = machine_learning_update.key or machine_learning.key
+    machine_learning.path = machine_learning_update.path or machine_learning.path
+    machine_learning.name = machine_learning_update.name or machine_learning.name
+    machine_learning.description = machine_learning_update.description or machine_learning.description
+    machine_learning.changelog = machine_learning_update.changelog or machine_learning.changelog
+    machine_learning.active = machine_learning_update.active or machine_learning.active
+    machine_learning.condition_id = machine_learning_update.condition_id or machine_learning.condition_id
+    machine_learning.time = datetime.utcnow()
+    machine_learning.old_model_id = old_model_id
+
+    return methods.create(db, model.MLModel, machine_learning)

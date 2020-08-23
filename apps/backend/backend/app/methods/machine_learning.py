@@ -47,3 +47,16 @@ def upload_model(ml_model: UploadFile, path: str):
         raise HTTPException(status_code=409, detail="Failed to save uploaded model.")
     finally:
         ml_model.file.close()
+
+
+def create_machine_learning_model_with_upload(db: Session, machine_learning: model.MLModel, ml_model: UploadFile):
+    db.add(machine_learning)
+    db.flush()
+
+    path = create_path(ml_model, str(machine_learning.key))
+    machine_learning.path = path
+
+    upload_model(ml_model, path)
+
+    db.commit()
+    db.refresh(machine_learning)
