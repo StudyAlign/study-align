@@ -5,17 +5,26 @@ from pydantic import BaseModel
 
 
 class PredictionBase(BaseModel):
-    time: datetime
     input: Union[dict, list, set, float, int, str, bytes, bool]
-    prediction: Union[dict, list, set, float, int, str, bytes, bool]
 
 
-class PredictionCreate(PredictionBase):
+class PredictionInput(PredictionBase):
     pass
 
 
+class PredictionCreate(PredictionBase):
+    time: datetime
+    prediction: Union[dict, list, set, float, int, str, bytes, bool]
+
+    ml_model_id: int
+    participant_id: int
+    condition_id: int
+
 class Prediction(PredictionBase):
     id: int
+    time: datetime
+
+    prediction: Union[dict, list, set, float, int, str, bytes, bool]
 
     ml_model_id: int
     participant_id: int

@@ -10,6 +10,8 @@ from sqlalchemy import exc
 from sqlalchemy.orm import make_transient
 from starlette.responses import FileResponse
 
+import requests
+
 import methods
 from api import get_db, if_exists
 from definitions import MODELS_DIR
@@ -277,3 +279,65 @@ async def update_machine_learning_cloud_replace(machine_learning_id: int,
     db.refresh(machine_learning)
 
     return machine_learning
+
+
+@router.post("/machine-learning/cloud/{machine_learning_id}/predict",
+             response_model=schema.machine_learning.Prediction)
+async def make_prediction_cloud(machine_learning_id: int,
+                                data: schema.machine_learning.prediction.PredictionInput,
+                                participant: model.Participant = Depends(methods.participantAccessTokenValidator),
+                                db: Session = Depends(get_db)):
+    machine_learning = methods.read(db, model.MLModel, machine_learning_id)
+    if_exists(machine_learning, ENTITY)
+
+    api_key = machine_learning.key
+    api_url = machine_learning.path
+    headers = {'X-API-Key': str(api_key)}
+    response = requests.post(api_url + '/predict', data={'input': data.input}, headers=headers)
+
+    response_data = None
+    if response.status_code == requests.codes.ok:
+        try:
+            response_data = response.json()
+            print(response_data)
+        except ValueError as err:
+            print(err)
+    else:
+        detail = "Model URL (%s) could not be reached" % str(api_url)
+        raise HTTPException(status_code=409, detail=detail)
+
+    if response_data:
+        prediction = response_data.prediction
+
+        prediction_data = {
+            "input": input,
+            "prediction": prediction,
+            "time": datetime.utcnow(),
+            "ml_model_id": machine_learning_id,
+            "participant_id": participant.id,
+            "condition_id": machine_learning.condition_id
+        }
+        prediction_create = schema.machine_learning.prediction.PredictionCreate(**prediction_data)
+        prediction_db = model.Prediction(**prediction_create.dict())
+        return methods.create(db, model.Prediction, prediction_db)
+
+    detail = "Model response (%s) was empty" % str(api_url)
+    raise HTTPException(status_code=409, detail=detail)
+
+
+@router.get("/machine-learning/cloud/{machine_learning_id}/ping",
+            dependencies=[Depends(methods.switchAccessTokenValidator)])
+async def ping_cloud_model(machine_learning_id: int,
+                           db: Session = Depends(get_db)):
+    machine_learning = methods.read(db, model.MLModel, machine_learning_id)
+    if_exists(machine_learning, ENTITY)
+    api_url = machine_learning.path
+
+    try:
+        response = requests.get(api_url + '/ping')
+    except requests.ConnectionError as err:
+        print(err)
+
+    if response.status_code == requests.codes.ok:
+        return True
+    return False

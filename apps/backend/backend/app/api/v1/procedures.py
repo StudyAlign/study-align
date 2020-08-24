@@ -90,7 +90,7 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
                 break
         previous_step_index = participant.procedure.procedure_steps.index(previous_step)
 
-        #if previous step is questionnaire, check if already finished by participant, persist it to DB accordingly
+        #if previous step is a questionnaire, check if it is already finished by participant, persist it to DB accordingly
         if previous_step.questionnaire is not None:
             questionnaire_data = requests.get(previous_step.questionnaire.results_url)
             questionnaire_result_data = methods.check_questionnaire_results_soscisurvey(questionnaire_data, participant.token)
