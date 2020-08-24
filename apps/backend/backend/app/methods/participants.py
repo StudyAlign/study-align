@@ -13,6 +13,7 @@ from api import if_not_zero, if_exists
 def create_participants(db: Session, study_id: int, amount: int):
     procedure_ids = methods.read_procedure_ids_by_study(db, study_id)
     if_not_zero(procedure_ids, "Procedure")
+    print(procedure_ids)
     return _create_participants_bulk(db, study_id, amount, procedure_ids)
 
 

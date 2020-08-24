@@ -19,7 +19,7 @@ def if_exists(data: Any, entity: str):
 
 
 def if_not_zero(data: Any, entity: str):
-    if data == 0:
+    if data == 0 or not data:
         raise HTTPException(status_code=404, detail=not_found(entity))
 
 

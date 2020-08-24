@@ -55,7 +55,6 @@ def create_machine_learning_model_with_upload(db: Session, machine_learning: mod
 
     path = create_path(ml_model, str(machine_learning.key))
     machine_learning.path = path
-
     upload_model(ml_model, path)
 
     db.commit()

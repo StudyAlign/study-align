@@ -13,7 +13,7 @@ class MLModel(Base):
     name = Column(String)
     description = Column(String)
     path = Column(String)
-    key = Column(UUID(as_uuid=True), unique=True, default=uuid.uuid4)
+    key = Column(UUID(as_uuid=True), unique=False, default=uuid.uuid4)
     active = Column(Boolean, default=False, nullable=False)
     distribute = Column(Boolean, default=False, nullable=False)
     changelog = Column(String, nullable=True)

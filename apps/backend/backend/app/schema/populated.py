@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional, List
 
 from schema.machine_learning import MLModel, Prediction
@@ -76,11 +77,12 @@ class MLModelPopulated(MLModel):
 
 
 class MLModelCloudPopulated(MLModelPopulated):
-    pass
+    path: str
+    key: uuid.UUID
 
 
 class MLModelDistributePopulated(MLModelPopulated):
-    path: str
+    pass
 
 
 class TaskPopulated(Task):

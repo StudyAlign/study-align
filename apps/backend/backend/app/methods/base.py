@@ -37,8 +37,11 @@ def read_list(db: Session, model: Base):
     return db.query(model).all()
 
 
-def create(db: Session, model: Base, data: BaseModel):
-    db_data = model(**data.dict())
+def create(db: Session, model: Base, data: Union[BaseModel, Dict]):
+    if isinstance(data, BaseModel):
+        data = data.dict()
+
+    db_data = model(**data)
     db.add(db_data)
     db.commit()
     db.refresh(db_data)
@@ -48,7 +51,6 @@ def create(db: Session, model: Base, data: BaseModel):
 def patch(db: Session, model: Base, data: Union[BaseModel, Dict], id: int):
     if isinstance(data, BaseModel):
         data = data.dict(exclude_unset=True)
-    print (data)
 
     db_data = db.query(model).\
         filter(model.id == id).\

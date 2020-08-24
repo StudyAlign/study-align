@@ -1,20 +1,17 @@
-import hashlib
 import os
 import shutil
 import uuid
 from datetime import datetime
-from pathlib import Path
 from typing import Union, List, Optional
 
 from fastapi import Depends, APIRouter, File, UploadFile, Form, HTTPException
 from pydantic.main import BaseModel
 from sqlalchemy import exc
 from sqlalchemy.orm import make_transient
-from starlette import status
 from starlette.responses import FileResponse
 
 import methods
-from api import get_db, if_exists, if_not_zero
+from api import get_db, if_exists
 from definitions import MODELS_DIR
 
 from model.base import Session
@@ -34,28 +31,14 @@ ENTITY = "MLModel"
             dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def generate_key_for_cloud_model(db: Session = Depends(get_db)):
     key = uuid.uuid4()
-    while methods.read_by(db, model.MLModel, "key", key):
+    while methods.read_by(db, model.MLModel, "key", str(key)):
         key = uuid.uuid4()
     return key
 
 
-@router.get("/machine-learning/{machine_learning_id}",
-            response_model=Union[schema.populated.MLModelDistributePopulated, schema.populated.MLModelCloudPopulated])
-async def read_machine_learning_model(machine_learning_id: int,
-                                      participant: model.Participant = Depends(methods.access_switch_participant),
-                                      db: Session = Depends(get_db)):
-    machine_learning = methods.read_with_join(db, model.MLModel, machine_learning_id, "condition")
-    if_exists(machine_learning, ENTITY)
-    methods.is_participant_allowed_to_use_model(db, participant, machine_learning)
-
-    if machine_learning.distribute:
-        return schema.populated.MLModelDistributePopulated(**machine_learning.__dict__)
-    return schema.populated.MLModelCloudPopulated(**machine_learning.__dict__)
-
-
 @router.get("/machine-learning/models",
             response_model=List[
-                Union[schema.populated.MLModelDistributePopulated, schema.populated.MLModelCloudPopulated]],
+                Union[schema.populated.MLModelCloudPopulated, schema.populated.MLModelDistributePopulated]],
             dependencies=[Depends(methods.switchAccessTokenValidator)])
 async def read_machine_learning_models_by_condition_id(condition_id: int, db: Session = Depends(get_db)):
     machine_learning_models = methods.read_model_list_by_condition_id(db, model.MLModel, "condition_id", condition_id,
@@ -70,20 +53,37 @@ async def read_machine_learning_models_by_condition_id(condition_id: int, db: Se
     return result
 
 
-@router.post("/machine-learning/cloud", response_model=schema.machine_learning.ml_model.MLModel,
+@router.get("/machine-learning/{machine_learning_id}",
+            response_model=Union[schema.populated.MLModelCloudPopulated, schema.populated.MLModelDistributePopulated])
+async def read_machine_learning_model(machine_learning_id: int,
+                                      participant: model.Participant = Depends(methods.access_switch_participant),
+                                      db: Session = Depends(get_db)):
+    machine_learning = methods.read_with_join(db, model.MLModel, machine_learning_id, "condition")
+    if_exists(machine_learning, ENTITY)
+    methods.is_participant_allowed_to_use_model(db, participant, machine_learning)
+
+    if machine_learning.distribute:
+        return schema.populated.MLModelDistributePopulated(**machine_learning.__dict__)
+    return schema.populated.MLModelCloudPopulated(**machine_learning.__dict__)
+
+
+@router.post("/machine-learning/cloud", response_model=schema.machine_learning.ml_model.MLModelCloud,
              dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def create_machine_learning_cloud(machine_learning: schema.machine_learning.ml_model.MLModelCreateCloud,
                                         db: Session = Depends(get_db)):
     condition = methods.read(db, model.Condition, machine_learning.condition_id)
     if_exists(condition, "Condition")
-    ml_key = methods.read_by(db, model.MLModel, "key", machine_learning.key)
+    ml_key = methods.read_by(db, model.MLModel, "key", str(machine_learning.key))
     if ml_key:
         detail = "Model key %s already in use" % str(ml_key.key)
         raise HTTPException(status_code=409, detail=detail)
-    return methods.create(db, model.MLModel, machine_learning)
+    data = machine_learning.dict()
+    data['time'] = datetime.utcnow()
+    data['distribute'] = False
+    return methods.create(db, model.MLModel, data)
 
 
-@router.post("/machine-learning/distribute", response_model=schema.machine_learning.ml_model.MLModel,
+@router.post("/machine-learning/distribute", response_model=schema.machine_learning.ml_model.MLModelDistribute,
              dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def create_machine_learning_distribute(ml_model: UploadFile = File(...),
                                              name: str = Form(...),
@@ -101,11 +101,11 @@ async def create_machine_learning_distribute(ml_model: UploadFile = File(...),
             "description": description,
             "active": active,
             "condition_id": condition_id,
-            "distribute": True,
-            "time": datetime.utcnow()
+            "distribute": True
         }
         machine_learning = schema.machine_learning.ml_model.MLModelCreateDistribute(**machine_learning_data)
         machine_learning_db = model.MLModel(**machine_learning.dict())
+        machine_learning_db.time = datetime.utcnow()
         methods.create_machine_learning_model_with_upload(db, machine_learning_db, ml_model)
     except exc.SQLAlchemyError:
         if os.path.exists(path):
@@ -128,18 +128,8 @@ async def download_machine_learning_model(machine_learning_id: int,
     return FileResponse(machine_learning.path)
 
 
-@router.patch("/machine-learning/{machine_learning_id}", status_code=status.HTTP_204_NO_CONTENT,
-              dependencies=[Depends(methods.adminAccessTokenValidator)])
-async def update_machine_learning_model(machine_learning_id: int,
-                                        machine_learning: schema.machine_learning.MLModelUpdate,
-                                        db: Session = Depends(get_db)):
-    machine_learning_update = methods.patch(db, model.MLModel, machine_learning, machine_learning_id)
-    if_not_zero(machine_learning_update, ENTITY)
-    return machine_learning_update
-
-
-@router.put("/machine-learning/distribute/{machine_learning_id}/new",
-            response_model=schema.machine_learning.ml_model.MLModel,
+@router.put("/machine-learning/distribute/{machine_learning_id}/new-version",
+            response_model=schema.machine_learning.ml_model.MLModelDistribute,
             dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def update_machine_learning_distribute_new(machine_learning_id: int,
                                                  ml_model: UploadFile = File(...),
@@ -151,8 +141,9 @@ async def update_machine_learning_distribute_new(machine_learning_id: int,
                                                  db: Session = Depends(get_db)):
     machine_learning = methods.read(db, model.MLModel, machine_learning_id)
     if_exists(machine_learning, ENTITY)
-    condition = methods.read(db, model.Condition, condition_id)
-    if_exists(condition, "Condition")
+    if condition_id:
+        condition = methods.read(db, model.Condition, condition_id)
+        if_exists(condition, "Condition")
 
     path = ""
     try:
@@ -179,8 +170,8 @@ async def update_machine_learning_distribute_new(machine_learning_id: int,
     return machine_learning
 
 
-@router.put("/machine-learning/distribute/{machine_learning_id}/replace",
-            response_model=schema.machine_learning.ml_model.MLModel,
+@router.put("/machine-learning/distribute/{machine_learning_id}/replace-version",
+            response_model=schema.machine_learning.ml_model.MLModelDistribute,
             dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def update_machine_learning_distribute_replace(machine_learning_id: int,
                                                      ml_model: Optional[UploadFile] = File(None),
@@ -214,7 +205,8 @@ async def update_machine_learning_distribute_replace(machine_learning_id: int,
         backup_path = os.path.join(MODELS_DIR, backup_name)
         shutil.copy2(path, backup_path)
         methods.upload_model(ml_model, new_path)
-        data["path"] = new_path
+        data['path'] = new_path
+        data['time'] = datetime.utcnow()
 
     try:
         methods.patch(db, model.MLModel, data, machine_learning_id)
@@ -232,36 +224,56 @@ async def update_machine_learning_distribute_replace(machine_learning_id: int,
     return machine_learning
 
 
-@router.put("/machine-learning/cloud/{machine_learning_id}/new",
-            response_model=schema.machine_learning.ml_model.MLModel,
+@router.put("/machine-learning/cloud/{machine_learning_id}/new-version",
+            response_model=schema.machine_learning.ml_model.MLModelCloud,
             dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def update_machine_learning_cloud_new(machine_learning_id: int,
-                                            machine_learning_update: schema.machine_learning.ml_model.MLModelUpdate,
+                                            machine_learning_update: schema.machine_learning.ml_model.MLModelUpdateCloud,
                                             db: Session = Depends(get_db)):
     machine_learning = methods.read(db, model.MLModel, machine_learning_id)
     if_exists(machine_learning, ENTITY)
     if machine_learning_update.condition_id:
         condition = methods.read(db, model.Condition, machine_learning_update.condition_id)
         if_exists(condition, "Condition")
-    if machine_learning_update.key:
-        ml_key = methods.read_by(db, model.MLModel, "key", machine_learning.key)
-        if ml_key:
-            detail = "Model key %s already in use" % str(ml_key.key)
-            raise HTTPException(status_code=409, detail=detail)
+    # if machine_learning_update.key:
+    #     ml_key = methods.read_by(db, model.MLModel, "key", machine_learning_update.key)
+    #     if ml_key:
+    #         detail = "Model key %s already in use" % str(ml_key.key)
+    #         raise HTTPException(status_code=409, detail=detail)
 
-    db.expunge(machine_learning)
-    make_transient(machine_learning)
     old_model_id = machine_learning.id
 
-    machine_learning.id = None
-    machine_learning.key = machine_learning_update.key or machine_learning.key
-    machine_learning.path = machine_learning_update.path or machine_learning.path
-    machine_learning.name = machine_learning_update.name or machine_learning.name
-    machine_learning.description = machine_learning_update.description or machine_learning.description
-    machine_learning.changelog = machine_learning_update.changelog or machine_learning.changelog
-    machine_learning.active = machine_learning_update.active or machine_learning.active
-    machine_learning.condition_id = machine_learning_update.condition_id or machine_learning.condition_id
-    machine_learning.time = datetime.utcnow()
-    machine_learning.old_model_id = old_model_id
+    machine_learning_current = machine_learning.__dict__
+    machine_learning_update = machine_learning_update.dict(exclude_unset=True)
 
-    return methods.create(db, model.MLModel, machine_learning)
+    # replace new data
+    machine_learning_new_data = {**machine_learning_current, **machine_learning_update}
+    del machine_learning_new_data['id']
+    del machine_learning_new_data['_sa_instance_state']
+    machine_learning_new_data['time'] = datetime.utcnow()
+    machine_learning_new_data['old_model_id'] = old_model_id
+
+    machine_learning.active = False
+
+    return methods.create(db, model.MLModel, machine_learning_new_data)
+
+
+@router.put("/machine-learning/cloud/{machine_learning_id}/replace-version",
+            response_model=schema.machine_learning.ml_model.MLModelCloud,
+            dependencies=[Depends(methods.adminAccessTokenValidator)])
+async def update_machine_learning_cloud_replace(machine_learning_id: int,
+                                                machine_learning_update: schema.machine_learning.ml_model.MLModelUpdateCloud,
+                                                db: Session = Depends(get_db)):
+    machine_learning = methods.read(db, model.MLModel, machine_learning_id)
+    if_exists(machine_learning, ENTITY)
+    if machine_learning_update.condition_id:
+        condition = methods.read(db, model.Condition, machine_learning_update.condition_id)
+        if_exists(condition, "Condition")
+
+    data = machine_learning_update.dict(exclude_unset=True)
+    data['time'] = datetime.utcnow()
+    data['path'] = data.get('path') or machine_learning.path
+    methods.patch(db, model.MLModel, data, machine_learning_id)
+    db.refresh(machine_learning)
+
+    return machine_learning

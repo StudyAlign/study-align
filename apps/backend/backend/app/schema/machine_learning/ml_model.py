@@ -6,15 +6,13 @@ from pydantic import BaseModel
 
 class MLModelBase(BaseModel):
     name: str
-    time: datetime
     description: str
     active: bool
     condition_id: int
 
 
 class MLModelCreateCloud(MLModelBase):
-    path: Optional[str]
-    distribute: bool = False
+    path: str
     key: uuid.UUID
 
 
@@ -22,27 +20,38 @@ class MLModelCreateDistribute(MLModelBase):
     distribute: bool = True
 
 
-class MLModelUpdate(MLModelBase):
+class MLModelUpdateBase(BaseModel):
     name: Optional[str]
-    time: Optional[datetime]
     description: Optional[str]
     active: Optional[bool]
     condition_id: Optional[int]
+    changelog: Optional[str]
+    path: Optional[str]
+
+
+class MLModelUpdateDistribute(MLModelUpdateBase):
+    description: Optional[str]
+    active: bool
+    condition_id: Optional[int]
     path: Optional[str]
     changelog: Optional[str]
-    key: Optional[uuid.UUID]
+
+
+class MLModelUpdateCloud(MLModelUpdateBase):
+    key: uuid.UUID
 
 
 class MLModel(MLModelBase):
     id: int
-    key: Optional[uuid.UUID]
+    time: datetime
 
     class Config:
         orm_mode = True
 
 
 class MLModelCloud(MLModel):
-    pass
+    path: str
+    key: uuid.UUID
 
 
 class MLModelDistribute(MLModel):
