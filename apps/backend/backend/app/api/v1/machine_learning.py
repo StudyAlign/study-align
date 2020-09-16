@@ -25,7 +25,7 @@ import schema.machine_learning
 
 router = APIRouter()
 
-ENTITY = "MLModel"
+ENTITY = "Machine Learning"
 
 
 @router.get("/machine-learning/generate-key",
@@ -335,9 +335,9 @@ async def ping_cloud_model(machine_learning_id: int,
 
     try:
         response = requests.get(api_url + '/ping')
+        if response.status_code == requests.codes.ok:
+            return True
+        return False
     except requests.ConnectionError as err:
         print(err)
-
-    if response.status_code == requests.codes.ok:
-        return True
-    return False
+        return False

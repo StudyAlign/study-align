@@ -12,6 +12,7 @@ API_PREFIX = "/api/v1"
 
 app = FastAPI(title="study-align-api", version="1")
 
+
 app.include_router(
     admin.router,
     prefix=API_PREFIX,

@@ -3,9 +3,6 @@ import uuid
 from typing import List, Optional
 from pydantic import BaseModel
 
-from schema.questionnaire_result import QuestionnaireResult
-from schema.machine_learning.prediction import Prediction
-
 
 class ParticipantEnum(str, Enum):
     free = "free"
@@ -29,7 +26,7 @@ class Participant(ParticipantBase):
 
     procedure_id: Optional[int] = None
 
-    procedure_step_id: Optional[int] = None
+    current_procedure_step: Optional[int] = None
 
     class Config:
         orm_mode = True

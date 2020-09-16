@@ -1,11 +1,14 @@
 version: '3.7'
 networks:
-  studyctrl-network:
+  outside:
+    external:
+      name: studyctrl-network
+  inside:
     driver: bridge
 volumes:
   database-data:
 services:
-  database:
+  studyctrl-database:
     container_name: studyctrl-database
     image: postgres:12.3-alpine
     env_file:
@@ -15,7 +18,7 @@ services:
     volumes:
       - database-data:/var/lib/postgresql/data/ 
     networks:
-      - studyctrl-network
+      - inside
   studyctrl-backend:
     container_name: studyctrl-backend
     build: ./backend
@@ -23,27 +26,12 @@ services:
     env_file:
       - ./database/database.env
     ports:
-      - "8001:80"
+      - "8000:80"
     depends_on:
-      - database
+      - studyctrl-database
     networks:
-      - studyctrl-network
+     - outside
+     - inside
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--debug", "--port", "80", "--reload-dir", "/app"]
     volumes:
       - ./backend/app:/app
-  nginx: 
-    image: nginx:1.19.0-alpine
-    container_name: studyctrl-loadbalancer
-    volumes:
-      - ./loadbalancer/nginx.conf:/etc/nginx/conf.d/default.conf 
-#      - ./nginx/error.log:/etc/nginx/error_log.log
-#      - ./nginx/cache/:/etc/nginx/cache
-#      - /etc/letsencrypt/:/etc/letsencrypt/
-    ports:
-      - 8080:8080
-      - 443:443
-    depends_on:
-      - studyctrl-backend
-    networks:
-      - studyctrl-network
-    

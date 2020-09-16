@@ -5,12 +5,40 @@
 - [ ] Roles (for users, study permissions)
 
 ## Run application
-```commandline
-docker-compose up
-```
+1. Create / run a docker network by running the shell script create-network.sh
+2. Start nginx: Open a new shell window, change the directory to `loadbalancer`, execute: `docker-compose up`
+3. Start limesurvey: Open a new shell window, change the directory to `limesurvey`, execute: `docker-compose up`
+4. Start study-align: Open a new shell window, execute `docker-compose up` from the project's root folder
+
+Access limesurvey locally through `http://localhost:8082`.
+Access the studyalign backend locally through `http://localhost:8080`
+Note: In future, the studyalign frontend will be served through `http://localhost:8081`
+
+## Configure limesurvey
+Login with the admin credentials and activate JSON RPC, see: https://manual.limesurvey.org/RemoteControl_2_API.
+
+### Survey specific configuration
+Go to "Global survey settings". There, modify the settings as follows:
+- Set access code length to: 36
+- Enable participant-based response persistence: On
+- Send confirmation emails: Off
+
+This way every survey, which will be created in future, is going to inherit the configuration.
+It is crucial to keep these settings. Otherwise studies will not work properly!
+
+
+## Architeture Overview
+We run all containers on one host.
+The services `limesurvey` and `studyctrl-backend` will be attached to the `studyctrl-network`. As well, will be 
+the nginx service `studyctrl-nginx`. The nginx serves as a reverse proxy to balance network requests.
+
+By executing `docker network inspect studyctrl-network` from the shell you can see the details about the 
+`studyctrl-network`. The `studyctrl-network` is accessible from outside, e.g. via port 443 (SSL). Whereas we isolate
+the limesurvey mariadb and the studyalign postgres and make it only available within a container.
+
+The limesurvey instance and the studyalign instance run in separate containers. 
 
 ## Set up .env
-
 Create a `.env` file in the root (app) folder. Then copy paste the key-value pairs below:
 
 ```
@@ -58,3 +86,16 @@ This is executing all migrations up to the latest.
   "token_type": "bearer"
 }
 ```
+
+# Predictions
+
+## Distributable Models, e.g. tensorflow js
+
+coming soon
+
+## Predictions with models hosted on another VM aka. study-align-prediction
+
+If you decide to host your machine learning model on a separate VM, use the study-align-prediction example project.
+
+You can run the VM locally with `docker-compose up` as well. When adding a model to the database enter
+the URL `http://172.17.0.1:8081/api/v1`. This way the services are able to communicate with each other.

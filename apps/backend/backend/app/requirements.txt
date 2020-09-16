@@ -8,6 +8,7 @@ ujson==3.0.0
 python-multipart==0.0.5
 pydantic==1.6.1
 python-jose[cryptography]==3.2.0
+sse-starlette==0.4.0
 
 #ml
 #tensorflow==2.2.0
