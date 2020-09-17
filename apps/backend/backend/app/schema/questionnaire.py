@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel
 
@@ -10,7 +10,11 @@ class QuestionnaireBase(BaseModel):
 
 class QuestionnaireCreate(QuestionnaireBase):
     study_id: int
-    pass
+
+
+class QuestionnaireRemoteControl(QuestionnaireBase):
+    study_id: int
+    credentials: Union[dict, list, set, float, int, str, bytes, bool]
 
 
 class QuestionnairePatch(BaseModel):
