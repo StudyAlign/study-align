@@ -35,21 +35,20 @@ router = APIRouter()
 
 ENTITY = "Procedure"
 
-navigator = ConnectionManager()
+#navigator = ConnectionManager()
 
-
-@router.websocket("/agado")
-async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):
-    participant = methods.read_by(db, model.Participant, "token", "d2ab960d-8629-42df-9609-b21763dc2804")
-    await navigator.connect(participant.id, websocket)
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await navigator.send_personal_message(f"You wrote: {data}", participant.id)
-            await navigator.broadcast(f"Client #{str(participant.token)} says: {data}")
-    except WebSocketDisconnect:
-        navigator.disconnect(participant.id)
-        await navigator.broadcast(f"Client #{str(participant.token)} left the chat")
+# @router.websocket("/agado")
+# async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):
+#     participant = methods.read_by(db, model.Participant, "token", "d2ab960d-8629-42df-9609-b21763dc2804")
+#     await navigator.connect(participant.id, websocket)
+#     try:
+#         while True:
+#             data = await websocket.receive_text()
+#             await navigator.send_personal_message(f"You wrote: {data}", participant.id)
+#             await navigator.broadcast(f"Client #{str(participant.token)} says: {data}")
+#     except WebSocketDisconnect:
+#         navigator.disconnect(participant.id)
+#         await navigator.broadcast(f"Client #{str(participant.token)} left the chat")
 
 
 @router.get("/procedures/start",
@@ -61,7 +60,7 @@ async def procedure_start(participant: schema.populated.ParticipantPopulated = D
     if participant.current_procedure_step is not None:
         raise HTTPException(status_code=409, detail="Procedure already started.")
 
-    await navigator.send_personal_message("HAHAHAHHAHA", participant.id)
+    #await navigator.send_personal_message("HAHAHAHHAHA", participant.id)
 
     try:
         first_step = participant.procedure.procedure_steps[0]
@@ -99,7 +98,7 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
     if participant.current_procedure_step is None:
         raise HTTPException(status_code=409, detail="Procedure not started yet.")
 
-    await navigator.send_personal_message("HAHAHAHHAHA", participant.id)
+    #await navigator.send_personal_message("HAHAHAHHAHA", participant.id)
 
     try:
         next_time = datetime.utcnow()
@@ -122,6 +121,10 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
             questionnaire_data = requests.get(previous_step.questionnaire.results_url)
             questionnaire_result_data = methods.check_questionnaire_results_soscisurvey(questionnaire_data,
                                                                                         participant.token)
+
+            # check questionnaire system
+            # if limesurvey:
+                # get limesurvey data
 
             if not questionnaire_result_data:
                 raise HTTPException(status_code=409,

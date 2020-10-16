@@ -1,4 +1,3 @@
-import base64
 import json
 from collections import OrderedDict
 from typing import List
@@ -28,7 +27,6 @@ class LimeSurvey(object):
             ("plugin", "Authdb")
         ])
         response = self._query(method=method, params=params)
-        self._check_response(method, response)
 
         if type(response) is str:
             self.session_key = response
@@ -62,8 +60,7 @@ class LimeSurvey(object):
             ("sResponseType", "full")
         ])
         response = self._query(method=method, params=params)
-        self._check_response(method, response)
-        return base64.b64decode(response)
+        return response
 
     def add_participants(self, survey_id: int = None, participants: List = None):
         method = "add_participants"
@@ -74,8 +71,7 @@ class LimeSurvey(object):
             ("bCreateToken", False)
         ])
         response = self._query(method=method, params=params)
-        self._check_response(method, response)
-        return base64.b64decode(response)
+        return response
 
     @staticmethod
     def error_builder(method, *args):
@@ -83,7 +79,7 @@ class LimeSurvey(object):
         message = [base_err, method]
         if args is not None:
             message += [str(x) for x in args]
-        return " | ".join(message)
+        return "; ".join(message)
 
     def _query(self, method, params):
         if not self.session_key and not method == "get_session_key":
@@ -108,22 +104,24 @@ class LimeSurvey(object):
             raise HTTPException(status_code=400, detail=error)
 
         response_data = response.json()
-
         if response_data.get("error") is not None:
             error = self.error_builder(method, "Response Error", response.status_code, response.content)
             raise HTTPException(status_code=400, detail=error)
 
-        try:
-            return_value = response_data.get("result")
-        except KeyError:
+        return_value = response_data.get("result")
+        if not return_value:
             error = self.error_builder(method, "Key 'result' not in response json", response.status_code, response.content)
             raise HTTPException(status_code=400, detail=error)
 
-        return return_value
+        if "status" in return_value:
+            status = return_value.get("status")
+            error = self.error_builder(method, status, response.status_code)
+            raise HTTPException(status_code=400, detail=error)
 
-    def _check_response(self, method, response):
-        response_type = type(response)
-        if response_type is dict and "status" in response:
-            status = response["status"]
-            error = self.error_builder(method, status, response.status_code, response.content)
-            raise HTTPException(status_code=403, detail=error)
+        if type(return_value) is list:
+            errors = [data.get("errors") for data in return_value if "errors" in data]
+            if errors:
+                error = self.error_builder(method, response.status_code, errors)
+                raise HTTPException(status_code=400, detail=error)
+
+        return return_value

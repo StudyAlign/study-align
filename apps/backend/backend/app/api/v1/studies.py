@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from fastapi import Depends, APIRouter, status, HTTPException
@@ -12,6 +13,7 @@ import methods
 import schema.study
 import schema.procedure
 import schema.api
+from schema.questionnaire import QuetionnaireSystemEnum
 
 router = APIRouter()
 
@@ -62,6 +64,36 @@ async def generate_participants(study_id: int, amount: int, db: Session = Depend
     if participant_count != 0:
         raise HTTPException(status_code=409, detail="Participants have already been generated")
     return methods.create_participants(db, study_id, amount)
+
+
+@router.get("/studies/{study_id}/survey-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.adminAccessTokenValidator)])
+async def populate_survey_participants(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+
+    surveys = methods.read_list_by(db, model.Questionnaire, "study_id", study_id)
+    if not surveys:
+        raise HTTPException(status_code=409, detail="Study has no surveys")
+
+    participants = methods.read_list_by(db, model.Participant, "study_id", study_id)
+    if not participants:
+        raise HTTPException(status_code=409, detail="Study has no participants")
+
+    survey_participants = [{"token": str(p.token)} for p in participants]
+
+    for survey in surveys:
+        if survey.system == QuetionnaireSystemEnum.limesurvey and not survey.participants_populated:
+            api_url = survey.api_url
+            # LimeSurvey RPC class throws http errors
+            limesurvey = methods.LimeSurvey(api_url, survey.api_username)
+            limesurvey.get_session_key(survey.api_password)
+            limesurvey.add_participants(survey.ext_id, survey_participants)
+            limesurvey.release_session_key()
+
+            survey.participants_populated = True
+            db.commit()
+
+    return
 
 
 @router.get("/studies/{study_id}/participate", response_model=schema.api.Tokens)

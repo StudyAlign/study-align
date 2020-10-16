@@ -1,24 +1,46 @@
-from typing import Optional, Union
+from enum import Enum
+from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Json
+
+
+class QuetionnaireSystemEnum(str, Enum):
+    limesurvey = "limesurvey"
+    soscisurvey = "soscisurvey"
+    surveymonkey = "surveymonkey"
 
 
 class QuestionnaireBase(BaseModel):
     url: str
-    results_url: str
+    system: QuetionnaireSystemEnum
 
 
 class QuestionnaireCreate(QuestionnaireBase):
     study_id: int
+    ext_id: str
+
+    api_username: str
+    api_password: str
 
 
 class QuestionnaireRemoteControl(QuestionnaireBase):
     study_id: int
-    credentials: Union[dict, list, set, float, int, str, bytes, bool]
+    api_url: Optional[str]
+    api_username: Optional[str]
+    api_password: Optional[str]
+
+    credentials: Optional[Json[dict]]
 
 
 class QuestionnairePatch(BaseModel):
     url: Optional[str]
+    system: Optional[QuetionnaireSystemEnum]
+
+    ext_id: Optional[str]
+
+    api_url: Optional[str]
+    api_username: Optional[str]
+    api_password: Optional[str]
 
     class Config:
         extra = 'forbid'

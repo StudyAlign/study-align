@@ -13,7 +13,7 @@ class TouchType(Base):
     touch_interaction_id = Column(Integer, ForeignKey('touch_interactions.id'))
     touch_id = Column(Integer, ForeignKey('touches.id'))
 
-    type = Column(Enum("all", "changed", "target", name="touch_type", create_type=False))
+    type = Column(Enum("all", "changed", "target", name="touch_type_enum", create_type=False))
 
     def __repr__(self):
         return "<TouchType(id='%d' type='%s')>" % (self.id, self.type)

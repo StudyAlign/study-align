@@ -20,6 +20,7 @@ class PredictionCreate(PredictionBase):
     participant_id: int
     condition_id: int
 
+
 class Prediction(PredictionBase):
     id: int
     time: datetime

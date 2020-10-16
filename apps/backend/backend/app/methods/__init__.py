@@ -9,3 +9,4 @@ from methods.studies import *
 from methods.interactions import *
 from methods.questionnaires import *
 from methods.machine_learning import *
+from methods.questionnaires.limesurvey_rpc import *
