@@ -8,7 +8,9 @@ import model
 import methods.conditions
 
 from schema.procedure import ProcedureCondition, ProcedureText, ProcedureQuestionnaire
+from schema.procedure_progress import ProcedureProgressStateEnum, ProcedureProgressCreate
 
+from datetime import datetime
 
 def read_procedure_ids_by_study(db: Session, study_id: int):
     procedure_ids = db.query(model.Procedure.id.label('id')). \
@@ -60,3 +62,14 @@ def _latin_square(condition_ids: List[int]):
         conditions.rotate(1)
 
     return result
+
+
+def create_procedure_progress(db: Session, state: ProcedureProgressStateEnum, time: datetime, participant_id: int,
+                              procedure_step_id: int):
+    procedure_progress = ProcedureProgressCreate(
+        state=state,
+        time=time,
+        participant_id=participant_id,
+        procedure_step_id=procedure_step_id
+    )
+    db.add(model.ProcedureProgress(**procedure_progress.dict()))

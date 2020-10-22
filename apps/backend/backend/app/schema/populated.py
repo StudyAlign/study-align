@@ -4,13 +4,13 @@ from typing import Optional, List
 from schema.machine_learning import MLModel, Prediction
 from schema.procedure_progress import ProcedureProgress
 from schema.procedure_step import ProcedureStep
-from schema.condition import Condition
+from schema.condition import Condition, ConditionStep
 from schema.procedure import Procedure
 from schema.participant import Participant
-from schema.questionnaire import Questionnaire
+from schema.questionnaire import Questionnaire, QuestionnaireStep
 from schema.study import Study
 from schema.task import Task
-from schema.text import Text
+from schema.text import Text, TextStep
 
 
 class ConditionPopulated(Condition):
@@ -21,9 +21,9 @@ class ConditionPopulated(Condition):
 
 
 class ProcedureStepPopulated(ProcedureStep):
-    condition: Optional[Condition] = None
-    text: Optional[Text] = None
-    questionnaire: Optional[Questionnaire] = None
+    condition: Optional[ConditionStep] = None
+    text: Optional[TextStep] = None
+    questionnaire: Optional[QuestionnaireStep] = None
 
     class Config:
         orm_mode = True

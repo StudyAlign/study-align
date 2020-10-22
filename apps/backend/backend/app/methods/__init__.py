@@ -10,3 +10,4 @@ from methods.interactions import *
 from methods.questionnaires import *
 from methods.machine_learning import *
 from methods.questionnaires.limesurvey_rpc import *
+from methods.procedure_navigator import *

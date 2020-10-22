@@ -1,42 +1,85 @@
-from typing import List
+import asyncio
 
-from fastapi import WebSocket
-
-
-class Connection:
-    def __init__(self, participant_id: int, websocket: WebSocket):
-        print("CONNECTION: " + str(participant_id))
-        self.participant_id = participant_id
-        self.websocket = websocket
+from schema.procedure_navigator import ProcedureNavigatorConnection, ProcedureNavigatorStateEnum
+from fastapi import Request
 
 
-class ConnectionManager:
+class ProcedureNavigator(object):
+
+    # connection_pool is a dict with the schema seen in static method build_connection()
     def __init__(self):
-        self.active_connections: List[Connection] = []
+        self.connection_pool = {}
+
+    def subscribe(self, participant_id: int, procedure_step_id: int, state: ProcedureNavigatorStateEnum):
+        connection = self.build_connection(participant_id, procedure_step_id, state)
+        self.connection_pool.update(connection)
+
+    def unsubscribe(self, participant_id: int):
+        if self.connection_pool.get(participant_id):
+            del self.connection_pool[participant_id]
+
+    def update_connection(self, participant_id: int, procedure_step_id: int, state: ProcedureNavigatorStateEnum):
+        connection = self.build_connection(participant_id, procedure_step_id, state)
+        if self.connection_pool.get(participant_id):
+            self.connection_pool.update(connection)
 
     def get_connection(self, participant_id: int):
-        print("CONNNNECTIONS")
-        print(self.active_connections)
-        return next((c for c in self.active_connections if c.participant_id == participant_id), None)
+        return self.connection_pool.get(participant_id)
 
-    async def connect(self, participant_id: int, websocket: WebSocket):
-        await websocket.accept()
-        connection = self.get_connection(participant_id)
-        if not connection:
-            self.active_connections.append(Connection(participant_id, websocket))
+    @staticmethod
+    def build_connection(participant_id: int, procedure_step_id: int, state: ProcedureNavigatorStateEnum):
+        return {participant_id: ProcedureNavigatorConnection(procedure_step_id=procedure_step_id, state=state)}
 
-    def disconnect(self, participant_id):
-        connection = self.get_connection(participant_id)
-        if connection:
-            self.active_connections.remove(connection)
 
-    async def send_personal_message(self, message: str, participant_id):
-        print("POERANNNSL")
-        connection = self.get_connection(participant_id)
-        print(connection)
-        if connection:
-            await connection.websocket.send_text(message)
+async def navigator_sse(request: Request, procedure_navigator: ProcedureNavigator, participant_id: int):
+    delay = 5
+    retry_timeout = 10000
+    previous_navigator_state = None
+    event_id = 0
+    no_sub_count = 0
+    while True:
+        # Unsubscribe participant if disconnected
+        if await request.is_disconnected():
+            procedure_navigator.unsubscribe(participant_id)
+            break
 
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.websocket.send_text(message)
+        # Send unsubscribed message
+        if previous_navigator_state and not procedure_navigator.get_connection(participant_id):
+            yield {
+                "id": event_id,
+                "event": "participant_unsubscribed",
+                "data": {
+                    "participant_id": participant_id
+                }
+            }
+            break
+
+        # Send subscribe message to client
+        if not previous_navigator_state and procedure_navigator.get_connection(participant_id):
+            yield {
+                "id": event_id,
+                "event": "participant_subscribed",
+                "data": {
+                    "participant_id": participant_id
+                }
+            }
+            
+        if not previous_navigator_state and not procedure_navigator.get_connection(participant_id):
+            if no_sub_count == 3:
+                break
+            no_sub_count = no_sub_count + 1
+
+        current_navigator_state = procedure_navigator.get_connection(participant_id)
+        if current_navigator_state != previous_navigator_state:
+            yield {
+                "id": event_id,
+                "event": "state_change",
+                "retry": retry_timeout,
+                "data": current_navigator_state.json()
+            }
+            previous_navigator_state = current_navigator_state
+        else:
+            print('No change in status...')
+
+        event_id = event_id + 1
+        await asyncio.sleep(delay)

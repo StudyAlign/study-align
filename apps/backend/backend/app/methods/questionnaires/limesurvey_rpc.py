@@ -54,7 +54,7 @@ class LimeSurvey(object):
             ("sSessionKey", self.session_key),
             ("iSurveyID", survey_id),
             ("sDocumentType", "json"),
-            ("sToken", token),
+            ("sToken", str(token)),
             ("sLanguageCode", language_code),
             ("sCompletionStatus", "complete"),
             ("sResponseType", "full")
@@ -69,6 +69,16 @@ class LimeSurvey(object):
             ("iSurveyID", survey_id),
             ("aParticipantData", participants),
             ("bCreateToken", False)
+        ])
+        response = self._query(method=method, params=params)
+        return response
+
+    def get_participant_properties(self, survey_id: int = None, token: UUID = None):
+        method = "get_participant_properties"
+        params = OrderedDict([
+            ("sSessionKey", self.session_key),
+            ("iSurveyID", survey_id),
+            ("aTokenQueryProperties", {"token": str(token)}),
         ])
         response = self._query(method=method, params=params)
         return response
@@ -96,7 +106,7 @@ class LimeSurvey(object):
             self.url, headers=self.headers, data=data_json)
 
         if not response.ok:
-            error = self.error_builder(method, "Response error", response.status_code, response.content)
+            error = self.error_builder(method, "Response not ok", response.status_code, response.content)
             raise HTTPException(status_code=400, detail=error)
 
         if not len(response.content) > 0:
@@ -105,12 +115,13 @@ class LimeSurvey(object):
 
         response_data = response.json()
         if response_data.get("error") is not None:
-            error = self.error_builder(method, "Response Error", response.status_code, response.content)
+            error = self.error_builder(method, "Response error", response.status_code, response.content)
             raise HTTPException(status_code=400, detail=error)
 
         return_value = response_data.get("result")
         if not return_value:
-            error = self.error_builder(method, "Key 'result' not in response json", response.status_code, response.content)
+            error = self.error_builder(method, "Key 'result' not in response json", response.status_code,
+                                       response.content)
             raise HTTPException(status_code=400, detail=error)
 
         if "status" in return_value:

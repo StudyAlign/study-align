@@ -14,11 +14,13 @@ Access limesurvey locally through `http://localhost:8082`.
 Access the studyalign backend locally through `http://localhost:8080`
 Note: In future, the studyalign frontend will be served through `http://localhost:8081`
 
-## Configure limesurvey
+## Limesurvey Configuration & Survey Workflow
+
+### 1. Activate JSON RPC
 Login with the admin credentials and activate JSON RPC, see: https://manual.limesurvey.org/RemoteControl_2_API.
 
-### Survey specific configuration
-Go to "Global survey settings". There, modify the settings as follows:
+### 2. Global survey configuration
+Go to "Global survey settings", e.g. (https://yourinstance.com/index.php/admin/globalsettings/sa/surveysettings/partial/_tokens_panel) . Modify the settings as follows:
 - Set access code length to: 36
 - Enable participant-based response persistence: On
 - Send confirmation emails: Off
@@ -26,6 +28,18 @@ Go to "Global survey settings". There, modify the settings as follows:
 This way every survey, which will be created in future, is going to inherit the configuration.
 It is crucial to keep these settings. Otherwise studies will not work properly!
 
+### 3. Create survey administrator for RPC
+Create a separate survey administrator, grant only rights for "Use internal database authentication".
+The user is needed for remote procedure calls. This way our system communicates with a limesurvey instance.
+
+## Limesurvey Workflow
+- Create surveys in limesurvey
+- When editing a survey, go to "Survey permissions". Add the RPC survey administrator.
+- In the following view, grant rights to "create AND view/read Participants" and "export Responses"
+- Finally, when adding a survey in studyalign, provide the credentials to the RPC survey admin as follows:
+```
+{"username": "name_of_rpc_admin", "password": "password_of_rpc_user"}
+```
 
 ## Architeture Overview
 We run all containers on one host.

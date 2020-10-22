@@ -13,7 +13,7 @@ import methods
 import schema.study
 import schema.procedure
 import schema.api
-from schema.questionnaire import QuetionnaireSystemEnum
+from schema.questionnaire import QuestionnaireSystemEnum
 
 router = APIRouter()
 
@@ -82,7 +82,7 @@ async def populate_survey_participants(study_id: int, db: Session = Depends(get_
     survey_participants = [{"token": str(p.token)} for p in participants]
 
     for survey in surveys:
-        if survey.system == QuetionnaireSystemEnum.limesurvey and not survey.participants_populated:
+        if survey.system == QuestionnaireSystemEnum.limesurvey and not survey.participants_populated:
             api_url = survey.api_url
             # LimeSurvey RPC class throws http errors
             limesurvey = methods.LimeSurvey(api_url, survey.api_username)

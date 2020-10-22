@@ -1,10 +1,10 @@
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Json
+from pydantic import BaseModel, Json, Field
 
 
-class QuetionnaireSystemEnum(str, Enum):
+class QuestionnaireSystemEnum(str, Enum):
     limesurvey = "limesurvey"
     soscisurvey = "soscisurvey"
     surveymonkey = "surveymonkey"
@@ -12,7 +12,7 @@ class QuetionnaireSystemEnum(str, Enum):
 
 class QuestionnaireBase(BaseModel):
     url: str
-    system: QuetionnaireSystemEnum
+    system: QuestionnaireSystemEnum
 
 
 class QuestionnaireCreate(QuestionnaireBase):
@@ -34,7 +34,7 @@ class QuestionnaireRemoteControl(QuestionnaireBase):
 
 class QuestionnairePatch(BaseModel):
     url: Optional[str]
-    system: Optional[QuetionnaireSystemEnum]
+    system: Optional[QuestionnaireSystemEnum]
 
     ext_id: Optional[str]
 
@@ -52,3 +52,7 @@ class Questionnaire(QuestionnaireBase):
 
     class Config:
         orm_mode = True
+
+
+class QuestionnaireStep(Questionnaire):
+    procedure_step_type: str = Field("questionnaire", const=True)

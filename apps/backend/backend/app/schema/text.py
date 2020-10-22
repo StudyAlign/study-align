@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TextBase(BaseModel):
@@ -28,3 +28,7 @@ class Text(TextBase):
 
     class Config:
         orm_mode = True
+
+
+class TextStep(Text):
+    procedure_step_type: str = Field("text", const=True)

@@ -2,6 +2,7 @@ import uuid
 from typing import List, Optional, Union
 
 from pydantic import BaseModel
+from pydantic.fields import Field
 
 
 class ConditionBase(BaseModel):
@@ -11,7 +12,6 @@ class ConditionBase(BaseModel):
 
 class ConditionCreate(ConditionBase):
     study_id: int
-    pass
 
 
 class ConditionPatch(BaseModel):
@@ -36,3 +36,7 @@ class Condition(ConditionBase):
 
     class Config:
         orm_mode = True
+
+
+class ConditionStep(Condition):
+    procedure_step_type: str = Field("condition", const=True)
