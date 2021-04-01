@@ -10,7 +10,8 @@ from model.study import Study
 from model.task import Task
 from model.text import Text
 
-from model.interaction import GenericInteraction, KeyboardInteraction, MouseInteraction, TouchInteraction, Touch
+from model.interaction import GenericInteraction, KeyboardInteraction, MouseInteraction, DragInteraction, \
+    TouchInteraction, Touch
 from model.machine_learning import MLModel, Prediction
 
 Condition.__table__
@@ -27,6 +28,7 @@ Text.__table__
 GenericInteraction.__table__
 KeyboardInteraction.__table__
 MouseInteraction.__table__
+DragInteraction.__table__
 TouchInteraction.__table__
 Touch.__table__
 

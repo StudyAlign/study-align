@@ -1,9 +1,5 @@
 from model.base import Base
-from sqlalchemy import Column, Integer, DateTime, String, ForeignKey, Enum
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.dialects.postgresql import UUID
-import uuid
-
+from sqlalchemy import Column, Integer, ForeignKey, Enum
 
 class TouchType(Base):
     __tablename__ = 'touch_types'

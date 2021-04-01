@@ -48,13 +48,13 @@ def create(db: Session, model: Base, data: Union[BaseModel, Dict]):
     return db_data
 
 
-def patch(db: Session, model: Base, data: Union[BaseModel, Dict], id: int):
+def patch(db: Session, model: Base, data: Union[BaseModel, Dict], id: int, synchronize_session: str = "evaluate"):
     if isinstance(data, BaseModel):
         data = data.dict(exclude_unset=True)
 
     db_data = db.query(model).\
         filter(model.id == id).\
-        update(data)
+        update(data, synchronize_session=synchronize_session)
     db.commit()
     return db_data
 

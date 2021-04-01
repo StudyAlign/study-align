@@ -13,6 +13,7 @@ from .text import Text
 from .interaction.generic_interaction import GenericInteraction
 from .interaction.keyboard_interaction import KeyboardInteraction
 from .interaction.mouse_interaction import MouseInteraction
+from .interaction.drag_interaction import DragInteraction
 from .interaction.touch_type import TouchType
 from .interaction.touch import Touch
 from .interaction.touch_interaction import TouchInteraction

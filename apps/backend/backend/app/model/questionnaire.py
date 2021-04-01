@@ -1,7 +1,7 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from model.base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey, Enum, Boolean, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
@@ -24,7 +24,7 @@ class Questionnaire(Base):
 
     questionnaire_results = relationship("QuestionnaireResult", back_populates="questionnaire")
 
-    @property
+    @hybrid_property
     def api_credentials(self):
         return self._api_credentials
 
@@ -32,7 +32,7 @@ class Questionnaire(Base):
     def api_credentials(self, api_credentials):
         self._api_credentials = api_credentials
 
-    @property
+    @hybrid_property
     def api_username(self):
         return self._api_credentials.get("username")
 
@@ -42,7 +42,7 @@ class Questionnaire(Base):
             self._api_credentials = {}
         self._api_credentials["username"] = api_username
 
-    @property
+    @hybrid_property
     def api_password(self):
         return self._api_credentials.get("password")
 

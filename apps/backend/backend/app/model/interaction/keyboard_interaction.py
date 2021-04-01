@@ -1,6 +1,7 @@
 from model.base import Base
 from sqlalchemy import Column, String, Integer, Float, Boolean, SmallInteger, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB
 import uuid
 
 
@@ -31,11 +32,13 @@ class KeyboardInteraction(Base):
     ctrlKey = Column(Boolean, default=False)
     isComposing = Column(Boolean, default=False)
     key = Column(String)
-    locale = Column(String, nullable=True)
+    #locale = Column(String, nullable=True)
     location = Column(SmallInteger)
     metaKey = Column(Boolean, default=False)
     repeat = Column(Boolean, default=False)
     shiftKey = Column(Boolean, default= False)
+    # additional field to store meta data on demand
+    metaData = Column(JSONB, nullable=True)
 
     def __repr__(self):
         return "<KeyboardInteraction(id='%d')>" % self.id

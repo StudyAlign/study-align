@@ -54,6 +54,25 @@ async def log_mouse_interaction_bulk(data: schema.interaction.interactions.Mouse
     return
 
 
+@router.post("/interaction/drag", response_model=schema.interaction.interactions.DragInteraction)
+async def log_drag_interaction_single(data: schema.interaction.interactions.DragInteractionCreateSingle,
+                                       participant: schema.participant.Participant = Depends(
+                                           methods.get_active_participant),
+                                       db: Session = Depends(get_db)):
+    methods.is_participating_in_condition(participant, data.condition_id)
+    return methods.create_single_interaction(db, 'Drag Interaction', model.DragInteraction, data, participant)
+
+
+@router.post("/interaction/drag/bulk", status_code=status.HTTP_204_NO_CONTENT)
+async def log_drag_interaction_bulk(data: schema.interaction.interactions.DragInteractionCreateBulk,
+                                     participant: schema.participant.Participant = Depends(
+                                         methods.get_active_participant),
+                                     db: Session = Depends(get_db)):
+    methods.is_participating_in_condition(participant, data.condition_id)
+    methods.create_bulk_interaction(db, "Drag Interactions", model.DragInteraction, data, participant)
+    return
+
+
 @router.post("/interaction/keyboard", response_model=schema.interaction.interactions.KeyboardInteraction)
 async def log_keyboard_interaction_single(data: schema.interaction.interactions.KeyboardInteractionCreateSingle,
                                           participant: schema.participant.Participant = Depends(

@@ -38,7 +38,7 @@ class TokenValidator:
         try:
             token = auth_credentials.credentials
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        except ExpiredSignatureError:
+        except ExpiredSignatureError as e:
             raise credentials_exception
         except JWTError:
             raise credentials_exception

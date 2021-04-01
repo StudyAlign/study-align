@@ -1,6 +1,6 @@
 from enum import Enum
 import uuid
-from typing import List, Optional
+from typing import Optional
 from pydantic import BaseModel
 
 

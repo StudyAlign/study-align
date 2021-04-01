@@ -19,7 +19,7 @@ router = APIRouter()
 ENTITY = "Participant"
 
 
-@router.get("/participants/me/", response_model=schema.participant.Participant)
+@router.get("/participants/me", response_model=schema.participant.Participant)
 async def read_participant_me(participant: schema.participant.Participant = Depends(methods.get_active_participant)):
     return participant
 

@@ -10,25 +10,20 @@ class InteractionCreateBase(BaseModel):
     condition_id: int
 
 
-class MouseEnum(str, Enum):
+class MouseEventEnum(str, Enum):
     click = "click"
     dblclick = "dblclick"
     mouseup = "mouseup"
     mousedown = "mousedown"
-
-
-class MouseRelatedTargetEnum(str, Enum):
     mouseenter = "mouseenter"
     mouseleave = "mouseleave"
     mouseout = "mouseout"
     mouseover = "mouseover"
-    dragenter = "dragenter"
-    dragexit = "dragexit"
 
 
 class MouseInteractionBase(BaseModel):
     uuid: uuid.UUID
-    event: MouseEnum
+    event: MouseEventEnum
     time: datetime
     screenX: float
     screenY: float
@@ -40,8 +35,10 @@ class MouseInteractionBase(BaseModel):
     metaKey: bool
     button: int
     button: int
-    relatedTarget: MouseRelatedTargetEnum
-    region: str
+    relatedTarget: Union[dict, list, set, float, int, str, bytes, bool]
+    x: float  # alias for clientX
+    y: float  # alias for clientY
+    metaData: Union[dict, list, set, float, int, str, bytes, bool]
 
 
 class MouseInteractionCreate(MouseInteractionBase):
@@ -63,22 +60,68 @@ class MouseInteraction(MouseInteractionBase):
         orm_mode = True
 
 
+class DragEventEnum(str, Enum):
+    drag = "drag"
+    dragend = "dragend"
+    dragenter = "dragenter"
+    dragexit = "dragexit"
+    dragleave = "dragleave"
+    dragover = "dragover"
+    dragstart = "dragstart"
+    drop = "drop"
+
+
+class DragInteractionBase(MouseInteractionBase):
+    event: DragEventEnum
+
+
+class DragInteractionCreate(DragInteractionBase):
+    pass
+
+
+class DragInteractionCreateSingle(InteractionCreateBase):
+    interaction: DragInteractionCreate
+
+
+class DragInteractionCreateBulk(InteractionCreateBase):
+    interactions: List[DragInteractionCreate]
+
+
+class DragInteraction(DragInteractionBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 class TouchEnum(str, Enum):
     all = "all"
     changed = "changed"
     target = "target"
 
 
+class TouchTypeEnum(str, Enum):
+    direct = "direct"
+    stylus = "stylus"
+
+
 class TouchBase(BaseModel):
     uuid: uuid.UUID
+    altitudeAngle: Optional[float]
+    azimuthAngle: Optional[float]
+    clientX: float
+    clientY: float
+    force = float
     identifier: int
     screenX: float
     screenY: float
-    clientX: float
-    clientY: float
     pageX: float
     pageY: float
-    target: str
+    radiusX: float
+    radiusY: float
+    rotationAngle: float
+    target: Union[dict, list, set, float, int, str, bytes, bool]
+    touchType: Optional[TouchTypeEnum]
 
 
 class TouchCreate(TouchBase):
@@ -107,8 +150,7 @@ class TouchInteractionBase(BaseModel):
     ctrlKey: bool
     metaKey: bool
     shiftKey: bool
-    rotation: Optional[float]
-    scale: Optional[float]
+    metaData: Union[dict, list, set, float, int, str, bytes, bool]
 
 
 class TouchInteractionCreate(TouchInteractionBase):
@@ -150,12 +192,12 @@ class KeyboardInteractionBase(BaseModel):
     code: str
     isComposing: bool
     key: str
-    locale: str
+    #locale: str
     location: int
     metaKey: bool
     repeat: bool
     shiftKey: bool
-
+    metaData: Union[dict, list, set, float, int, str, bytes, bool]
 
 class KeyboardInteractionCreate(KeyboardInteractionBase):
     pass

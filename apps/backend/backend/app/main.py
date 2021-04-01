@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from decouple import config
 import logging
 
 from api.v1 import studies, conditions, procedures, tasks, texts, questionnaires, participants, procedure_steps, \
@@ -12,6 +14,16 @@ API_PREFIX = "/api/v1"
 
 app = FastAPI(title="study-align-api", version="1")
 
+# read allowed cors origins from .env file
+origins = config('CORS_ORIGINS', cast=lambda v: [s.strip() for s in v.split(',')])
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(
     admin.router,

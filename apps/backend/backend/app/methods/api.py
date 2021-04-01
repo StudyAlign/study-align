@@ -76,7 +76,7 @@ def create_access_token(sub: str, role: str):
 # refresh tokens expire with end of study
 def create_refresh_token(sub: str, role: str, end_date: datetime):
     delta = end_date - datetime.utcnow()
-    refresh_token_expires = delta.total_seconds() * 60
+    refresh_token_expires = delta.total_seconds() / 60
     data = {
         "sub": sub,
         "role": role,
@@ -85,6 +85,11 @@ def create_refresh_token(sub: str, role: str, end_date: datetime):
     refresh_token = _create_token(
         data=data, expires_delta=timedelta(minutes=refresh_token_expires)
     )
+
+    print("REFRESH TOKEN")
+    print(data)
+    print(str(timedelta(minutes=refresh_token_expires)))
+    print(refresh_token)
     return refresh_token
 
 

@@ -22,7 +22,7 @@ class Condition(Base):
     ml_model = relationship("MLModel", uselist=False, back_populates="condition")
 
     # logs
-    #interactions = relationship("Interaction", back_populates="condition")
+    # interactions = relationship("Interaction", back_populates="condition")
     predictions = relationship("Prediction", back_populates="condition")
 
     def __repr__(self):

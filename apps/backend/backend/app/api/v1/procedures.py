@@ -243,8 +243,9 @@ async def procedure_check_surveyresult(participant: schema.populated.Participant
 
 
 @router.get("/procedures/navigator")
-async def navigate_procedure(request: Request,
-                             participant: schema.populated.ParticipantPopulated = Depends(methods.get_active_participant)):
+async def navigate_procedure(request: Request, participant: str, db: Session = Depends(get_db)):
+    participant = methods.read_by(db, model.Participant, "token", participant)
+    if_exists(participant, "Participant")
     sse = navigator_sse(request, navigator, participant.id)
     return EventSourceResponse(sse)
 

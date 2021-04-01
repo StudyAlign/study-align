@@ -19,6 +19,7 @@ class QuestionnaireCreate(QuestionnaireBase):
     study_id: int
     ext_id: str
 
+    api_url: str
     api_username: str
     api_password: str
 
@@ -41,6 +42,7 @@ class QuestionnairePatch(BaseModel):
     api_url: Optional[str]
     api_username: Optional[str]
     api_password: Optional[str]
+    api_credentials: Optional[str]
 
     class Config:
         extra = 'forbid'

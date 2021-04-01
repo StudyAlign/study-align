@@ -1,12 +1,15 @@
-version: '2'
+version: '3'
+
 networks:
   outside:
     external:
       name: studyctrl-network
   inside:
     driver: bridge
+
 volumes:
   limesurvey-data:
+
 services:
   mysql:
     container_name: limesurvey-mysql
@@ -22,20 +25,26 @@ services:
       MYSQL_PASSWORD: limesurvey_pass
     networks:
       - inside
+
   limesurvey:
     container_name: limesurvey
-    image: acspri/limesurvey
+    image: martialblog/limesurvey:latest
     ports:
       - 8002:80
     environment:
-      LIMESURVEY_DB_USER: limesurvey_admin
-      LIMESURVEY_DB_PASSWORD: limesurvey_pass
-      LIMESURVEY_ADMIN_USER: admin
-      LIMESURVEY_ADMIN_PASSWORD: password
-      LIMESURVEY_ADMIN_NAME: Lime Administrator
-      LIMESURVEY_ADMIN_EMAIL: cashaddy@cashaddy.net
+      DB_HOST: mysql
+      DB_NAME: limesurvey
+      DB_USERNAME: limesurvey_admin
+      DB_PASSWORD: limesurvey_pass
+      ADMIN_USER: admin
+      ADMIN_PASSWORD: password
+      ADMIN_NAME: Lime Administrator
+      ADMIN_EMAIL: cashaddy@cashaddy.net
+      #PUBLIC_URL: http://localhost:8002/surveys
+     # BASE_URL: /surveys
     depends_on:
       - mysql
     networks:
       - inside
       - outside
+

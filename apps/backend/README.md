@@ -50,7 +50,7 @@ By executing `docker network inspect studyctrl-network` from the shell you can s
 `studyctrl-network`. The `studyctrl-network` is accessible from outside, e.g. via port 443 (SSL). Whereas we isolate
 the limesurvey mariadb and the studyalign postgres and make it only available within a container.
 
-The limesurvey instance and the studyalign instance run in separate containers. 
+The limesurvey instance, and the studyalign instance run in separate containers. 
 
 ## Set up .env
 Create a `.env` file in the root (app) folder. Then copy paste the key-value pairs below:
@@ -60,13 +60,14 @@ SECRET_KEY = "4307fff64d15d8366384e22cb48f8d4f6fc3bd74c89eb19a1c93bdfc5f94434d"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120
 API_ADMIN_KEY = "73d088b3ce965980dcb1ccf3b5b63b54cafb93232ab0889151c52207fe5a104b"
+CORS_ORIGINS = "http://localhost, http://localhost:8080, http://localhost:63343"
 ```
 
 These key-value pairs are mainly used for authentication (issuing and validating of JWT tokens). In a production 
 environment they would be replaced accordingly. Configuration of env variables might differ between hosting services.
 
 ## Database
-To initialise the database, execute: `docker exec -it studyctrl-backend python /app/init_db.py`
+To initialise the database `cd backend` and execute: `docker exec -it studyctrl-backend python /app/init_db.py`
 
 You can connect to the database with a tool like DataGrip. You will find the development credentials within 
 `database/database.env`, e.g. using the url: `jdbc:postgresql://localhost:5433/postgres`.
@@ -113,3 +114,9 @@ If you decide to host your machine learning model on a separate VM, use the stud
 
 You can run the VM locally with `docker-compose up` as well. When adding a model to the database enter
 the URL `http://172.17.0.1:8081/api/v1`. This way the services are able to communicate with each other.
+
+# Interaction Logging
+
+## Mouse Interactions:
+
+- relatedTarget property is optional and must be created manually => see createMouseInteraction() in frontend lib.

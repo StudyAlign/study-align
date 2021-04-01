@@ -2,6 +2,7 @@ from model.base import Base
 from sqlalchemy import Column, Integer, Float, Boolean, DateTime, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB
 import uuid
 
 # see: https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent
@@ -32,8 +33,10 @@ class TouchInteraction(Base):
     ctrlKey = Column(Boolean, default=False)
     metaKey = Column(Boolean, default=False)
     shiftKey = Column(Boolean, default=False)
-    rotation = Column(Float, default=0)  # not standardized, compare with mozilla docs
-    scale = Column(Float, default=1)  # not standardized, compare with mozilla docs
+    #rotation = Column(Float, default=0)  # not standardized, compare with mozilla docs
+    #scale = Column(Float, default=1)  # not standardized, compare with mozilla docs
+    # additional field to store meta data on demand
+    metaData = Column(JSONB, nullable=True)
 
     touches = relationship("Touch",
                            secondary=TouchType.__table__,

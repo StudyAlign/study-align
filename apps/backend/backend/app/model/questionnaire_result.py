@@ -18,6 +18,5 @@ class QuestionnaireResult(Base):
     questionnaire_id = Column(Integer, ForeignKey('questionnaires.id'))
     questionnaire = relationship("Questionnaire", back_populates="questionnaire_results")
 
-
     def __repr__(self):
         return "<Questionnaire Result(id='%d', result='%s')>" % (self.id, self.result)
