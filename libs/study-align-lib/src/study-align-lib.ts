@@ -364,7 +364,15 @@ class StudyAlignLib {
         return this.request(options);
     }
 
-    // TODO: Read procedure step
+    currentProcedureStep() {
+        const options: Options = {
+            method: "GET",
+            path: "procedure-steps",
+            headers: {}
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
 
     checkSurveyResult() {
         const options: Options = {
