@@ -283,6 +283,14 @@ async def update_procedure_navigator(connection_update: schema.procedure_navigat
     participant = methods.read_by(db, model.Participant, "token", connection_update.participant_token)
     if_exists(participant, "Participant")
 
+    condition = participant.procedure_step.condition
+
+    if condition:
+        navigator.update_connection(participant_id=participant.id,
+                                    procedure_step_id=participant.current_procedure_step,
+                                    state=connection_update.state)
+        return
+
     questionnaire = participant.procedure_step.questionnaire
     print(questionnaire)
     # check if the current step is a limesurvey questionnaire
