@@ -10,7 +10,8 @@ class Condition(Base):
 
     id = Column(Integer, primary_key=True)
     uuid = Column(UUID(as_uuid=True), unique=True, nullable=False, default=uuid.uuid4)
-    name = Column(String)
+    name = Column(String, nullable=False)
+    url = Column(String, nullable=False)
     config = Column(JSON)
 
     study_id = Column(Integer, ForeignKey('studies.id'))

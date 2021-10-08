@@ -84,6 +84,7 @@ async def populate_survey_participants(study_id: int, db: Session = Depends(get_
     for survey in surveys:
         if survey.system == QuestionnaireSystemEnum.limesurvey and not survey.participants_populated:
             api_url = survey.api_url
+            print(api_url)
             # LimeSurvey RPC class throws http errors
             limesurvey = methods.LimeSurvey(api_url, survey.api_username)
             limesurvey.get_session_key(survey.api_password)

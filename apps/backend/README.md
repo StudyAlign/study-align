@@ -5,7 +5,8 @@
 - [ ] Roles (for users, study permissions)
 
 ## Run application
-1. Create / run a docker network by running the shell script create-network.sh
+1. Create a docker network by making the shell script create-network.sh executable `sudo chmod +x create-network.sh` and 
+   running it `./create-network.sh`.
 2. Start nginx: Open a new shell window, change the directory to `loadbalancer`, execute: `docker-compose up`
 3. Start limesurvey: Open a new shell window, change the directory to `limesurvey`, execute: `docker-compose up`
 4. Start study-align: Open a new shell window, execute `docker-compose up` from the project's root folder
@@ -41,7 +42,7 @@ The user is needed for remote procedure calls. This way our system communicates 
 {"username": "name_of_rpc_admin", "password": "password_of_rpc_user"}
 ```
 
-## Architeture Overview
+## Architecture Overview
 We run all containers on one host.
 The services `limesurvey` and `studyctrl-backend` will be attached to the `studyctrl-network`. As well, will be 
 the nginx service `studyctrl-nginx`. The nginx serves as a reverse proxy to balance network requests.

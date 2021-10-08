@@ -23,6 +23,8 @@ async def read_current_procedure_step(participant: schema.populated.ParticipantP
                           db: Session = Depends(get_db)):
     if participant.current_procedure_step is None:
         raise HTTPException(status_code=409, detail="Procedure not started yet.")
+
+
     return methods.get_procedure_step(participant.procedure_step)
 
 @router.get("/procedure-steps/{procedure_id}", response_model=List[schema.populated.ProcedureStepPopulated], dependencies=[Depends(methods.adminAccessTokenValidator)])

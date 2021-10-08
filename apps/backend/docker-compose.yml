@@ -5,6 +5,9 @@ networks:
       name: studyctrl-network
   inside:
     driver: bridge
+  traefik-net:
+    external: true
+
 volumes:
   database-data:
 services:
@@ -32,6 +35,12 @@ services:
     networks:
      - outside
      - inside
+     - traefik-net
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--debug", "--port", "80", "--reload-dir", "/app"]
     volumes:
       - ./backend/app:/app
+    labels:
+      - "traefik.port=80"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.enable=true"
+      - "traefik.http.routers.study-align-backend.rule=Host(`study-align-backend.localhost`)"

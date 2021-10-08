@@ -247,11 +247,24 @@ async def navigate_procedure(request: Request, participant: str, db: Session = D
     participant = methods.read_by(db, model.Participant, "token", participant)
     if_exists(participant, "Participant")
     sse = navigator_sse(request, navigator, participant.id)
+    state = schema.procedure_navigator.ProcedureNavigatorStateEnum.in_progress
+    navigator.subscribe(participant_id=participant.id,
+                        procedure_step_id=participant.current_procedure_step,
+                        state=state)
     return EventSourceResponse(sse)
 
 
 @router.get("/procedures/navigator/reconnect", status_code=status.HTTP_204_NO_CONTENT)
 async def reconnect_procedure_navigator(participant: schema.populated.ParticipantPopulated = Depends(methods.get_active_participant)):
+    condition = participant.procedure_step.condition
+
+    if condition:
+        state = schema.procedure_navigator.ProcedureNavigatorStateEnum.in_progress
+        navigator.subscribe(participant_id=participant.id,
+                            procedure_step_id=participant.current_procedure_step,
+                            state=state)
+        return
+
     questionnaire = participant.procedure_step.questionnaire
     if questionnaire and questionnaire.system == schema.questionnaire.QuestionnaireSystemEnum.limesurvey:
         connection = navigator.get_connection(participant.id)
@@ -283,9 +296,12 @@ async def update_procedure_navigator(connection_update: schema.procedure_navigat
     participant = methods.read_by(db, model.Participant, "token", connection_update.participant_token)
     if_exists(participant, "Participant")
 
+    if participant.procedure_step is None:
+        raise HTTPException(status_code=409, detail="Participant token is not valid")
+
     condition = participant.procedure_step.condition
 
-    if condition:
+    if condition and connection_update.source == 'condition':
         navigator.update_connection(participant_id=participant.id,
                                     procedure_step_id=participant.current_procedure_step,
                                     state=connection_update.state)

@@ -8,6 +8,7 @@ from pydantic.fields import Field
 class ConditionBase(BaseModel):
     name: str
     config: Union[dict, list, set, float, int, str, bytes, bool]
+    url: str
 
 
 class ConditionCreate(ConditionBase):
@@ -17,6 +18,7 @@ class ConditionCreate(ConditionBase):
 class ConditionPatch(BaseModel):
     name: Optional[str]
     config: Optional[Union[dict, list, set, float, int, str, bytes, bool]]
+    url: Optional[str]
     task_id: Optional[int]
 
     class Config:

@@ -24,6 +24,7 @@ class ProcedureNavigator(object):
             self.connection_pool.update(connection)
 
     def get_connection(self, participant_id: int):
+        print(self.connection_pool)
         return self.connection_pool.get(participant_id)
 
     @staticmethod
@@ -33,18 +34,22 @@ class ProcedureNavigator(object):
 
 async def navigator_sse(request: Request, procedure_navigator: ProcedureNavigator, participant_id: int):
     delay = 5
-    retry_timeout = 10000
+    retry_timeout = 5000
     previous_navigator_state = None
     event_id = 0
     no_sub_count = 0
     while True:
+
+        print(previous_navigator_state)
         # Unsubscribe participant if disconnected
         if await request.is_disconnected():
+            print("DISCONNECTED FROM NAVIGATOR")
             procedure_navigator.unsubscribe(participant_id)
             break
 
         # Send unsubscribed message
         if previous_navigator_state and not procedure_navigator.get_connection(participant_id):
+            print("UNSUBSCRIBED FROM NAVIGATOR")
             yield {
                 "id": event_id,
                 "event": "participant_unsubscribed",
@@ -56,6 +61,7 @@ async def navigator_sse(request: Request, procedure_navigator: ProcedureNavigato
 
         # Send subscribe message to client
         if not previous_navigator_state and procedure_navigator.get_connection(participant_id):
+            print("SUBSCRIBED TO NAVIGATOR")
             yield {
                 "id": event_id,
                 "event": "participant_subscribed",
@@ -66,11 +72,13 @@ async def navigator_sse(request: Request, procedure_navigator: ProcedureNavigato
             
         if not previous_navigator_state and not procedure_navigator.get_connection(participant_id):
             if no_sub_count == 3:
+                print("NO SUB ON NAVIGATOR, BREAK")
                 break
             no_sub_count = no_sub_count + 1
 
         current_navigator_state = procedure_navigator.get_connection(participant_id)
         if current_navigator_state != previous_navigator_state:
+            print("NAVIGATOR STATE CHANGED")
             yield {
                 "id": event_id,
                 "event": "state_change",

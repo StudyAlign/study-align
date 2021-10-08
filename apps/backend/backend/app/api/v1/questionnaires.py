@@ -36,7 +36,19 @@ async def read_questionnaires(db: Session = Depends(get_db)):
 async def create_questionnaire(questionnaire: schema.questionnaire.QuestionnaireCreate, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, questionnaire.study_id)
     if_exists(study, ENTITY)
-    return methods.create(db, model.Questionnaire, questionnaire)
+
+    api_credentials = {}
+    if questionnaire.api_username:
+        api_credentials["username"] = questionnaire.api_username
+        del questionnaire.api_username
+    if questionnaire.api_password:
+        api_credentials["password"] = questionnaire.api_password
+        del questionnaire.api_password
+
+    q = questionnaire.dict()
+    q["_api_credentials"] = api_credentials
+
+    return methods.create(db, model.Questionnaire, q)
 
 
 @router.patch("/questionnaires/{questionnaire_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.adminAccessTokenValidator)])
