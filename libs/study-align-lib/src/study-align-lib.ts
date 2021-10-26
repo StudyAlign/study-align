@@ -44,6 +44,13 @@ class StudyAlignLib {
         options.headers["Content-type"] = "application/json";
     }
 
+    setLoggerHeaders(options: Options) {
+        const loggerKey = this.readLoggerKey();
+        if (loggerKey) {
+            options.headers["Studyalign-Logger-Key"] = loggerKey;
+        }
+    }
+
     request(options: Options) {
         return new Promise( (resolve, reject) => {
             let url = this.apiUrl + "/" + options.path;
@@ -165,6 +172,18 @@ class StudyAlignLib {
         return this.request(options);
     }
 
+    storeLoggerKey(key: string) {
+        localStorage.setItem("loggerKey", key);
+    }
+
+    readLoggerKey(): string {
+        return localStorage.getItem("loggerKey");
+    }
+
+    deleteLoggerKey() {
+        localStorage.removeItem("loggerKey");
+    }
+
     me(): Promise<any> {
         const options: Options = {
             method: "GET",
@@ -175,7 +194,7 @@ class StudyAlignLib {
         return this.request(options);
     }
 
-    getProcedure(procedureId: number): Promise<any>  {
+    getProcedure(procedureId: number): Promise<any> {
         const options: Options = {
             method: "GET",
             path: "procedures/" + procedureId,
@@ -229,7 +248,7 @@ class StudyAlignLib {
             path: path,
             headers: {}
         }
-        this.setHeaders(options);
+        this.setLoggerHeaders(options);
         options.body = {
             condition_id: conditionId,
             interaction: interaction
@@ -392,7 +411,7 @@ class StudyAlignLib {
                     const participantToken = response.body.token;
                     const url = this.apiUrl + "/" + "procedures/navigator?participant=" + participantToken;
                     this.sse = new EventSource(url, {withCredentials: true});
-                    resolve(this.sse);
+                    resolve(true);
                 }
                 reject({
                     text: "Participant not found"
@@ -415,6 +434,26 @@ class StudyAlignLib {
             headers: {}
         }
         this.setHeaders(options);
+        return this.request(options);
+    }
+
+    getNavigator() {
+        return this.sse;
+    }
+
+    updateNavigator(participantToken: string, source: NavigatorSource, state: NavigatorState, extId: number) {
+        const options: Options = {
+            method: "POST",
+            path: "procedures/navigator",
+            headers: {}
+        }
+        this.setHeaders(options);
+        options.body = {
+            participant_token: participantToken,
+            source: source,
+            state: state,
+            ext_id: extId
+        };
         return this.request(options);
     }
 
