@@ -20,17 +20,17 @@ router = APIRouter()
 ENTITY = "Study"
 
 
-@router.get("/studies", response_model=List[schema.study.Study], dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.get("/studies", response_model=List[schema.study.StudyDetails], dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def read_studies(db: Session = Depends(get_db)):
     return methods.read_list(db, model.Study)
 
 
-@router.post("/studies", response_model=schema.study.Study, dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.post("/studies", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def create_study(study: schema.study.StudyCreate, db: Session = Depends(get_db)):
     return methods.create(db, model.Study, study)
 
 
-@router.get("/studies/{study_id}", response_model=schema.study.Study)
+@router.get("/studies/{study_id}", response_model=schema.study.StudyDetails)
 async def read_study(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, ENTITY)
@@ -80,6 +80,8 @@ async def populate_survey_participants(study_id: int, db: Session = Depends(get_
         raise HTTPException(status_code=409, detail="Study has no participants")
 
     survey_participants = [{"token": str(p.token)} for p in participants]
+
+    print(survey_participants)
 
     for survey in surveys:
         if survey.system == QuestionnaireSystemEnum.limesurvey and not survey.participants_populated:

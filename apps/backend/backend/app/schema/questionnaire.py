@@ -58,3 +58,5 @@ class Questionnaire(QuestionnaireBase):
 
 class QuestionnaireStep(Questionnaire):
     procedure_step_type: str = Field("questionnaire", const=True)
+    is_last_step: Optional[bool]
+    is_second_last_step: Optional[bool]

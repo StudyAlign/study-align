@@ -32,3 +32,5 @@ class Text(TextBase):
 
 class TextStep(Text):
     procedure_step_type: str = Field("text", const=True)
+    is_last_step: Optional[bool]
+    is_second_last_step: Optional[bool]

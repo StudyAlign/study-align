@@ -15,11 +15,12 @@ import schema.condition
 
 router = APIRouter()
 
+# TO-DO: get_active_logger_participant for all routes in interaction.py
 
 @router.post("/interaction/generic", response_model=schema.interaction.interactions.GenericInteraction)
 async def log_generic_interaction_single(data: schema.interaction.interactions.GenericInteractionCreateSingle,
                                          participant: schema.participant.Participant = Depends(
-                                             methods.get_active_participant),
+                                             methods.get_active_logger_participant),
                                          db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     return methods.create_single_interaction(db, 'Generic Interaction', model.GenericInteraction, data, participant)
@@ -28,7 +29,7 @@ async def log_generic_interaction_single(data: schema.interaction.interactions.G
 @router.post("/interaction/generic/bulk", status_code=status.HTTP_204_NO_CONTENT)
 async def log_generic_interaction_bulk(data: schema.interaction.interactions.GenericInteractionCreateBulk,
                                        participant: schema.participant.Participant = Depends(
-                                           methods.get_active_participant),
+                                           methods.get_active_logger_participant),
                                        db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     methods.create_bulk_interaction(db, "Generic Interactions", model.GenericInteraction, data, participant)
@@ -38,7 +39,7 @@ async def log_generic_interaction_bulk(data: schema.interaction.interactions.Gen
 @router.post("/interaction/mouse", response_model=schema.interaction.interactions.MouseInteraction)
 async def log_mouse_interaction_single(data: schema.interaction.interactions.MouseInteractionCreateSingle,
                                        participant: schema.participant.Participant = Depends(
-                                           methods.get_active_participant),
+                                           methods.get_active_logger_participant),
                                        db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     return methods.create_single_interaction(db, 'Mouse Interaction', model.MouseInteraction, data, participant)
@@ -47,7 +48,7 @@ async def log_mouse_interaction_single(data: schema.interaction.interactions.Mou
 @router.post("/interaction/mouse/bulk", status_code=status.HTTP_204_NO_CONTENT)
 async def log_mouse_interaction_bulk(data: schema.interaction.interactions.MouseInteractionCreateBulk,
                                      participant: schema.participant.Participant = Depends(
-                                         methods.get_active_participant),
+                                         methods.get_active_logger_participant),
                                      db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     methods.create_bulk_interaction(db, "Mouse Interactions", model.MouseInteraction, data, participant)
@@ -57,7 +58,7 @@ async def log_mouse_interaction_bulk(data: schema.interaction.interactions.Mouse
 @router.post("/interaction/drag", response_model=schema.interaction.interactions.DragInteraction)
 async def log_drag_interaction_single(data: schema.interaction.interactions.DragInteractionCreateSingle,
                                        participant: schema.participant.Participant = Depends(
-                                           methods.get_active_participant),
+                                           methods.get_active_logger_participant),
                                        db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     return methods.create_single_interaction(db, 'Drag Interaction', model.DragInteraction, data, participant)
@@ -66,7 +67,7 @@ async def log_drag_interaction_single(data: schema.interaction.interactions.Drag
 @router.post("/interaction/drag/bulk", status_code=status.HTTP_204_NO_CONTENT)
 async def log_drag_interaction_bulk(data: schema.interaction.interactions.DragInteractionCreateBulk,
                                      participant: schema.participant.Participant = Depends(
-                                         methods.get_active_participant),
+                                         methods.get_active_logger_participant),
                                      db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     methods.create_bulk_interaction(db, "Drag Interactions", model.DragInteraction, data, participant)
@@ -76,7 +77,7 @@ async def log_drag_interaction_bulk(data: schema.interaction.interactions.DragIn
 @router.post("/interaction/keyboard", response_model=schema.interaction.interactions.KeyboardInteraction)
 async def log_keyboard_interaction_single(data: schema.interaction.interactions.KeyboardInteractionCreateSingle,
                                           participant: schema.participant.Participant = Depends(
-                                              methods.get_active_participant),
+                                              methods.get_active_logger_participant),
                                           db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     return methods.create_single_interaction(db, 'Keyboard Interaction', model.KeyboardInteraction, data, participant)
@@ -85,7 +86,7 @@ async def log_keyboard_interaction_single(data: schema.interaction.interactions.
 @router.post("/interaction/keyboard/bulk", status_code=status.HTTP_204_NO_CONTENT)
 async def log_keyboard_interaction_bulk(data: schema.interaction.interactions.KeyboardInteractionCreateBulk,
                                         participant: schema.participant.Participant = Depends(
-                                            methods.get_active_participant),
+                                            methods.get_active_logger_participant),
                                         db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     methods.create_bulk_interaction(db, "Keyboard Interactions", model.KeyboardInteraction, data, participant)
@@ -95,7 +96,7 @@ async def log_keyboard_interaction_bulk(data: schema.interaction.interactions.Ke
 @router.post("/interaction/touch", response_model=schema.interaction.interactions.TouchInteraction)
 async def log_touch_interaction_single(data: schema.interaction.interactions.TouchInteractionCreateSingle,
                                        participant: schema.participant.Participant = Depends(
-                                           methods.get_active_participant),
+                                           methods.get_active_logger_participant),
                                        db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     try:
@@ -136,7 +137,7 @@ async def log_touch_interaction_single(data: schema.interaction.interactions.Tou
 @router.post("/interaction/touch/bulk", status_code=status.HTTP_204_NO_CONTENT)
 async def log_touch_interaction_bulk(data: schema.interaction.interactions.TouchInteractionCreateBulk,
                                      participant: schema.populated.ParticipantPopulated = Depends(
-                                         methods.get_active_participant),
+                                         methods.get_active_logger_participant),
                                      db: Session = Depends(get_db)):
     methods.is_participating_in_condition(participant, data.condition_id)
     try:

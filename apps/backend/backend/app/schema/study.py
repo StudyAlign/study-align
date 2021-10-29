@@ -3,11 +3,6 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from schema.condition import Condition
-from schema.procedure import Procedure
-from schema.participant import Participant
-from schema.procedure_step import ProcedureStep
-
 
 class StudyBase(BaseModel):
     name: str
@@ -17,6 +12,9 @@ class StudyBase(BaseModel):
 
 
 class StudyCreate(StudyBase):
+    description: str
+    consent: str
+
     class Config:
         extra = 'forbid'
 
@@ -24,6 +22,8 @@ class StudyCreate(StudyBase):
 class StudyUpdate(BaseModel):
     name: Optional[str]
     startDate: Optional[datetime]
+    description: Optional[str]
+    consent: Optional[str]
     endDate: Optional[datetime]
     isActive: Optional[bool]
 
@@ -33,6 +33,15 @@ class StudyUpdate(BaseModel):
 
 class Study(StudyBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+
+class StudyDetails(StudyBase):
+    id: int
+    description: str
+    consent: str
 
     class Config:
         orm_mode = True

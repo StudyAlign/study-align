@@ -46,3 +46,10 @@ async def update_condition(condition_id: int, condition: schema.condition.Condit
     condition_update = methods.patch(db, model.Condition, condition, condition_id)
     if_not_zero(condition_update, ENTITY)
     return condition_update
+
+
+@router.get("/conditions/{condition_id}/config", response_model=schema.condition.ConditionConfig, dependencies=[Depends(methods.participantLoggerKeyValidator)])
+async def read_condition_config(condition_id: int, db: Session = Depends(get_db)):
+    condition = methods.read(db, model.Condition, condition_id)
+    if_exists(condition, ENTITY)
+    return condition

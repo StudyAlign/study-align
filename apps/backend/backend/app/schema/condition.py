@@ -42,3 +42,13 @@ class Condition(ConditionBase):
 
 class ConditionStep(Condition):
     procedure_step_type: str = Field("condition", const=True)
+    is_last_step: Optional[bool]
+    is_second_last_step: Optional[bool]
+
+
+class ConditionConfig(BaseModel):
+    id: int
+    config: Union[dict, list, set, float, int, str, bytes, bool]
+
+    class Config:
+        orm_mode = True

@@ -16,6 +16,8 @@ class Participant(Base):
     study_end = Column(DateTime(timezone=False))
     timezone = Column(String(50))
 
+    logger_key = Column(UUID(as_uuid=True), unique=True, nullable=False, default=uuid.uuid4)
+
     study_id = Column(Integer, ForeignKey('studies.id'))
     study = relationship("Study", back_populates="participants")
 

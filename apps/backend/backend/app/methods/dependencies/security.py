@@ -2,7 +2,7 @@ from typing import List
 from uuid import UUID
 
 from fastapi import HTTPException, Depends, status, Header, Security
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, APIKeyHeader
 from jose import JWTError, jwt, ExpiredSignatureError
 from decouple import config
 
@@ -77,3 +77,30 @@ class TokenValidator:
             return participant
 
         raise credentials_exception
+
+
+LOGGER_API_KEY = APIKeyHeader(name='Studyalign-Logger-Key')
+
+
+class LoggerKeyValidator:
+    def __call__(self, logger_api_key: str = Depends(LOGGER_API_KEY),
+                 db: Session = Depends(get_db)):
+
+        key_format_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Logger api key format is wrong"
+        )
+
+        try:
+            UUID(logger_api_key, version=4)
+        except ValueError:
+            raise key_format_exception
+
+        key_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate logger api key"
+        )
+        participant = methods.read_by(db, model.Participant, "logger_key", logger_api_key)
+        if participant is None or participant.state != "in_progress":
+            raise key_exception
+        return participant

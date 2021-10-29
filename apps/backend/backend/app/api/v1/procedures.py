@@ -99,41 +99,42 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
                 break
         previous_step_index = participant.procedure.procedure_steps.index(previous_step)
 
-        # retrieve responses from external survey tools, such as limesurvey or monkeysurvey and move it into our DB
-        if previous_step.questionnaire is not None:
-            questionnaire_result_data = None
-
-            if previous_step.questionnaire.system == schema.questionnaire.QuestionnaireSystemEnum.limesurvey:
-                api_url = previous_step.questionnaire.api_url
-                # LimeSurvey RPC class throws http errors
-                limesurvey = methods.LimeSurvey(api_url, previous_step.questionnaire.api_username)
-                limesurvey.get_session_key(previous_step.questionnaire.api_password)
-
-                participant_data = limesurvey.get_participant_properties(previous_step.questionnaire.ext_id,
-                                                                         participant.token)
-                if not participant_data or participant_data.get("completed") == "N":
-                    raise HTTPException(status_code=409,
-                                        detail="Participant must have completed survey before you can proceed with the experiment.")
-
-                questionnaire_result_data = limesurvey.export_responses_by_token(previous_step.questionnaire.ext_id,
-                                                                                 participant.token)
-                limesurvey.release_session_key()
-
-                if questionnaire_result_data:
-                    questionnaire_result_data = json.loads(b64decode(questionnaire_result_data))
-
-            if not questionnaire_result_data:
-                raise HTTPException(status_code=409,
-                                    detail="Questionnaire must be completed before you can proceed with the experiment.")
-
-            questionnaire_result = schema.questionnaire_result.QuestionnaireResultCreate(
-                time=next_time,
-                result=questionnaire_result_data,
-                questionnaire_id=previous_step.questionnaire.id,
-                participant_id=participant.id
-            )
-            db.add(model.QuestionnaireResult(**questionnaire_result.dict()))
-            navigator.unsubscribe(participant.id)
+        methods.retrieve_survey_responses(db, participant, previous_step, next_time)
+        # # retrieve responses from external survey tools, such as limesurvey or monkeysurvey and move it into our DB
+        # if previous_step.questionnaire is not None:
+        #     questionnaire_result_data = None
+        #
+        #     if previous_step.questionnaire.system == schema.questionnaire.QuestionnaireSystemEnum.limesurvey:
+        #         api_url = previous_step.questionnaire.api_url
+        #         # LimeSurvey RPC class throws http errors
+        #         limesurvey = methods.LimeSurvey(api_url, previous_step.questionnaire.api_username)
+        #         limesurvey.get_session_key(previous_step.questionnaire.api_password)
+        #
+        #         participant_data = limesurvey.get_participant_properties(previous_step.questionnaire.ext_id,
+        #                                                                  participant.token)
+        #         if not participant_data or participant_data.get("completed") == "N":
+        #             raise HTTPException(status_code=409,
+        #                                 detail="Participant must have completed survey before you can proceed with the experiment.")
+        #
+        #         questionnaire_result_data = limesurvey.export_responses_by_token(previous_step.questionnaire.ext_id,
+        #                                                                          participant.token)
+        #         limesurvey.release_session_key()
+        #
+        #         if questionnaire_result_data:
+        #             questionnaire_result_data = json.loads(b64decode(questionnaire_result_data))
+        #
+        #     if not questionnaire_result_data:
+        #         raise HTTPException(status_code=409,
+        #                             detail="Questionnaire must be completed before you can proceed with the experiment.")
+        #
+        #     questionnaire_result = schema.questionnaire_result.QuestionnaireResultCreate(
+        #         time=next_time,
+        #         result=questionnaire_result_data,
+        #         questionnaire_id=previous_step.questionnaire.id,
+        #         participant_id=participant.id
+        #     )
+        #     db.add(model.QuestionnaireResult(**questionnaire_result.dict()))
+        #     navigator.unsubscribe(participant.id)
 
         # previous step is last step
         if previous_step_index == len(participant.procedure.procedure_steps) - 1:
@@ -171,10 +172,25 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
             navigator.subscribe(participant_id=participant.id, procedure_step_id=next_step.id,
                             state=schema.procedure_navigator.ProcedureNavigatorStateEnum.in_progress)
 
+        # is next_step second last step?
+
+        next_step_index = participant.procedure.procedure_steps.index(next_step)
+
+        is_last_step = False
+        if next_step_index == len(participant.procedure.procedure_steps) - 1:
+            is_last_step = True
+
+        is_second_last_step = False
+        if next_step_index == len(participant.procedure.procedure_steps) - 2:
+            is_second_last_step = True
+
     except exc.SQLAlchemyError:
         raise HTTPException(status_code=409, detail="Failed to proceed experiment step.")
 
-    return methods.get_procedure_step(next_step)
+    procedure_step = methods.get_procedure_step(next_step)
+    procedure_step = methods.set_is_last_step(procedure_step, is_last_step)
+    procedure_step = methods.set_is_second_last_step(procedure_step, is_second_last_step)
+    return procedure_step
 
 
 @router.get("/procedures/end", status_code=status.HTTP_204_NO_CONTENT)
@@ -193,6 +209,46 @@ async def procedure_end(participant: schema.participant.Participant = Depends(me
                 previous_step = step
                 break
         previous_step_index = participant.procedure.procedure_steps.index(previous_step)
+
+        methods.retrieve_survey_responses(db, participant,previous_step, end_time)
+        # # retrieve responses from external survey tools, such as limesurvey or monkeysurvey and move it into our DB
+        # if previous_step.questionnaire is not None:
+        #     questionnaire_result_data = None
+        #
+        #     if previous_step.questionnaire.system == schema.questionnaire.QuestionnaireSystemEnum.limesurvey:
+        #         api_url = previous_step.questionnaire.api_url
+        #         # LimeSurvey RPC class throws http errors
+        #         limesurvey = methods.LimeSurvey(api_url, previous_step.questionnaire.api_username)
+        #         limesurvey.get_session_key(previous_step.questionnaire.api_password)
+        #         participant_token = str(participant.token).replace('-' , '')
+        #
+        #         participant_data = limesurvey.get_participant_properties(previous_step.questionnaire.ext_id,
+        #                                                                  participant_token)
+        #         if not participant_data or participant_data.get("completed") == "N":
+        #             raise HTTPException(status_code=409,
+        #                                 detail="Participant must have completed survey before you can proceed with the experiment.")
+        #
+        #         questionnaire_result_data = limesurvey.export_responses_by_token(previous_step.questionnaire.ext_id,
+        #                                                                          participant_token)
+        #         limesurvey.release_session_key()
+        #
+        #         if questionnaire_result_data:
+        #             questionnaire_result_data = json.loads(b64decode(questionnaire_result_data))
+        #
+        #     if not questionnaire_result_data:
+        #         raise HTTPException(status_code=409,
+        #                             detail="Questionnaire must be completed before you can proceed with the experiment.")
+        #
+        #     questionnaire_result = schema.questionnaire_result.QuestionnaireResultCreate(
+        #         time=end_time,
+        #         result=questionnaire_result_data,
+        #         questionnaire_id=previous_step.questionnaire.id,
+        #         participant_id=participant.id
+        #     )
+        #     db.add(model.QuestionnaireResult(**questionnaire_result.dict()))
+        #     navigator.unsubscribe(participant.id)
+
+
 
         # previous step is last step
         if previous_step_index == len(participant.procedure.procedure_steps) - 1:

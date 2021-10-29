@@ -10,8 +10,7 @@ from jose import jwt
 
 from decouple import config
 
-from methods.dependencies.security import TokenValidator
-
+from methods.dependencies.security import TokenValidator, LoggerKeyValidator
 
 SECRET_KEY = config('SECRET_KEY')
 ALGORITHM = config('ALGORITHM')
@@ -34,6 +33,8 @@ adminRefreshTokenValidator = TokenValidator(type=REFRESH, role=[Role.ADMIN])
 
 switchAccessTokenValidator = TokenValidator(role=[Role.ADMIN, Role.PARTICIPANT])
 
+participantLoggerKeyValidator = LoggerKeyValidator()
+
 
 def check_admin_key(api_key: str):
     if api_key != API_ADMIN_KEY:
@@ -49,6 +50,12 @@ async def get_active_participant(participant: model.Participant = Depends(partic
 async def access_switch_participant(participant: Base = Depends(switchAccessTokenValidator)):
     if isinstance(participant, model.Participant) and participant.state is "in_progress":
         return participant
+
+
+async def get_active_logger_participant(participant: model.Participant = Depends(participantLoggerKeyValidator)):
+    if participant.state != "in_progress":
+        raise HTTPException(status_code=400, detail="Inactive participant")
+    return participant
 
 
 def issue_access_token(sub: str, role: str):

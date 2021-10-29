@@ -24,8 +24,22 @@ async def read_current_procedure_step(participant: schema.populated.ParticipantP
     if participant.current_procedure_step is None:
         raise HTTPException(status_code=409, detail="Procedure not started yet.")
 
+    current_step = participant.procedure_step
+    current_step_index = participant.procedure.procedure_steps.index(current_step)
 
-    return methods.get_procedure_step(participant.procedure_step)
+    is_last_step = False
+    if current_step_index == len(participant.procedure.procedure_steps) - 1:
+        is_last_step = True
+
+    is_second_last_step = False
+    if current_step_index == len(participant.procedure.procedure_steps) - 2:
+        is_second_last_step = True
+
+    procedure_step = methods.get_procedure_step(current_step)
+    procedure_step = methods.set_is_last_step(procedure_step, is_last_step)
+    procedure_step = methods.set_is_second_last_step(procedure_step, is_second_last_step)
+    return procedure_step
+
 
 @router.get("/procedure-steps/{procedure_id}", response_model=List[schema.populated.ProcedureStepPopulated], dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def read_procedure_steps_by_procedure_id(procedure_id: int, db: Session = Depends(get_db)):

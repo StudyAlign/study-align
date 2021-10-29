@@ -28,5 +28,7 @@ class Participant(ParticipantBase):
 
     current_procedure_step: Optional[int] = None
 
+    logger_key: uuid.UUID
+
     class Config:
         orm_mode = True

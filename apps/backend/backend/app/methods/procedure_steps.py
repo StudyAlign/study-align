@@ -1,3 +1,5 @@
+from typing import Union
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
@@ -21,5 +23,19 @@ def get_procedure_step(procedure_step: schema.populated.ProcedureStepPopulated):
         return procedure_step.text
     if procedure_step.questionnaire is not None:
         return procedure_step.questionnaire
-
     raise HTTPException(status_code=409, detail="Failed to get specific procedure step.")
+
+
+def set_is_last_step(procedure_step: Union[schema.condition.ConditionStep,
+                                 schema.questionnaire.QuestionnaireStep,
+                                 schema.text.TextStep], is_last_step: bool):
+    procedure_step.is_last_step = is_last_step
+    return procedure_step
+
+
+def set_is_second_last_step(procedure_step: Union[schema.condition.ConditionStep,
+                                 schema.questionnaire.QuestionnaireStep,
+                                 schema.text.TextStep], is_second_last_step: bool):
+    procedure_step.is_second_last_step = is_second_last_step
+    return procedure_step
+

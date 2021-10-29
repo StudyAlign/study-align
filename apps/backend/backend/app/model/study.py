@@ -8,6 +8,8 @@ class Study(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    description = Column(String)
+    consent = Column(String)
     startDate = Column(DateTime(timezone=False))
     endDate = Column(DateTime(timezone=False))
     isActive = Column(Boolean, nullable=False)

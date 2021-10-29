@@ -1,6 +1,10 @@
+from base64 import b64decode
 from collections import deque
 from typing import List, Union
 
+from fastapi import HTTPException
+import json
+import schema
 from sqlalchemy.orm import Session
 
 import model
@@ -9,8 +13,10 @@ import methods.conditions
 
 from schema.procedure import ProcedureCondition, ProcedureText, ProcedureQuestionnaire
 from schema.procedure_progress import ProcedureProgressStateEnum, ProcedureProgressCreate
+from schema.populated import ProcedureStepPopulated
 
 from datetime import datetime
+
 
 def read_procedure_ids_by_study(db: Session, study_id: int):
     procedure_ids = db.query(model.Procedure.id.label('id')). \
@@ -73,3 +79,44 @@ def create_procedure_progress(db: Session, state: ProcedureProgressStateEnum, ti
         procedure_step_id=procedure_step_id
     )
     db.add(model.ProcedureProgress(**procedure_progress.dict()))
+
+
+def retrieve_survey_responses(db: Session, participant: schema.participant.Participant,
+                              previous_step: schema.populated.ProcedureStepPopulated, time: datetime):
+    # retrieve responses from external survey tools, such as limesurvey or monkeysurvey and move it into our DB
+    if previous_step.questionnaire is not None:
+        questionnaire_result_data = None
+
+        if previous_step.questionnaire.system == schema.questionnaire.QuestionnaireSystemEnum.limesurvey:
+            api_url = previous_step.questionnaire.api_url
+            # LimeSurvey RPC class throws http errors
+            limesurvey = methods.LimeSurvey(api_url, previous_step.questionnaire.api_username)
+            limesurvey.get_session_key(previous_step.questionnaire.api_password)
+            participant_token = str(participant.token).replace('-', '')
+
+            print("PARTICIPANT TOKEN LIMESURVEY" + participant_token)
+
+            participant_data = limesurvey.get_participant_properties(previous_step.questionnaire.ext_id,
+                                                                     participant_token)
+            if not participant_data or participant_data.get("completed") == "N":
+                raise HTTPException(status_code=409,
+                                    detail="Participant must have completed survey before you can proceed with the experiment.")
+
+            questionnaire_result_data = limesurvey.export_responses_by_token(previous_step.questionnaire.ext_id,
+                                                                             participant_token)
+            limesurvey.release_session_key()
+
+            if questionnaire_result_data:
+                questionnaire_result_data = json.loads(b64decode(questionnaire_result_data))
+
+        if not questionnaire_result_data:
+            raise HTTPException(status_code=409,
+                                detail="Questionnaire must be completed before you can proceed with the experiment.")
+
+        questionnaire_result = schema.questionnaire_result.QuestionnaireResultCreate(
+            time=time,
+            result=questionnaire_result_data,
+            questionnaire_id=previous_step.questionnaire.id,
+            participant_id=participant.id
+        )
+        db.add(model.QuestionnaireResult(**questionnaire_result.dict()))

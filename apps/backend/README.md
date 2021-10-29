@@ -1,8 +1,14 @@
 # Get Started
 
-## What is missing
+## Conventions:
+- **A procedure must start and end with a TEXT step!**
 
+## What is missing
+- [ ] Prolific Link
+- [ ] Logo Upload for study
 - [ ] Roles (for users, study permissions)
+- [ ] Duplicate Study (without participants)
+- [ ] Demo / Test mode
 
 ## Run application
 1. Create a docker network by making the shell script create-network.sh executable `sudo chmod +x create-network.sh` and 
