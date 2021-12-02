@@ -232,7 +232,9 @@ class StudyAlignLib {
         const options: Options = {
             method: "POST",
             path: path,
-            headers: {}
+            headers: {
+                'Content-Type': 'application/json'
+            }
         }
         this.setHeaders(options);
         options.body = {
@@ -246,7 +248,9 @@ class StudyAlignLib {
         const options: Options = {
             method: "POST",
             path: path,
-            headers: {}
+            headers: {
+                'Content-Type': 'application/json'
+            }
         }
         this.setLoggerHeaders(options);
         options.body = {
@@ -445,7 +449,9 @@ class StudyAlignLib {
         const options: Options = {
             method: "POST",
             path: "procedures/navigator",
-            headers: {}
+            headers: {
+                'Content-Type': 'application/json'
+            }
         }
         this.setHeaders(options);
         options.body = {
