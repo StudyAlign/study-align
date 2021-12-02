@@ -20,6 +20,9 @@ class LimeSurvey(object):
         self.username = username
         self.session_key = None
 
+    def format_participant_token(self, participant_token):
+        return str(participant_token).replace('-', '')
+
     def get_session_key(self, password: str):
         method = "get_session_key"
         params = OrderedDict([

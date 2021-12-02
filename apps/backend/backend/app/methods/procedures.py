@@ -89,13 +89,10 @@ def retrieve_survey_responses(db: Session, participant: schema.participant.Parti
 
         if previous_step.questionnaire.system == schema.questionnaire.QuestionnaireSystemEnum.limesurvey:
             api_url = previous_step.questionnaire.api_url
-            # LimeSurvey RPC class throws http errors
+            # LimeSurvey RPC class throws http errorparticipant_tokens
             limesurvey = methods.LimeSurvey(api_url, previous_step.questionnaire.api_username)
             limesurvey.get_session_key(previous_step.questionnaire.api_password)
-            participant_token = str(participant.token).replace('-', '')
-
-            print("PARTICIPANT TOKEN LIMESURVEY" + participant_token)
-
+            participant_token = limesurvey.format_participant_token(participant.token)
             participant_data = limesurvey.get_participant_properties(previous_step.questionnaire.ext_id,
                                                                      participant_token)
             if not participant_data or participant_data.get("completed") == "N":

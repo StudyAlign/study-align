@@ -285,9 +285,9 @@ async def procedure_check_surveyresult(participant: schema.populated.Participant
             # LimeSurvey RPC class throws http errors
             limesurvey = methods.LimeSurvey(api_url, current_step.questionnaire.api_username)
             limesurvey.get_session_key(current_step.questionnaire.api_password)
-
+            participant_token = limesurvey.format_participant_token(participant.token)
             participant_data = limesurvey.get_participant_properties(current_step.questionnaire.ext_id,
-                                                                     participant.token)
+                                                                     participant_token)
             limesurvey.release_session_key()
             print(participant_data)
             if not participant_data or participant_data.get("completed") == "N":
@@ -330,8 +330,10 @@ async def reconnect_procedure_navigator(participant: schema.populated.Participan
             # LimeSurvey RPC class throws http errors
             limesurvey = methods.LimeSurvey(api_url, current_step.questionnaire.api_username)
             limesurvey.get_session_key(current_step.questionnaire.api_password)
+            # participant token in limesurvey is the uuid without hyphens?
+            participant_token = limesurvey.format_participant_token(participant.token)
             participant_data = limesurvey.get_participant_properties(current_step.questionnaire.ext_id,
-                                                                     participant.token)
+                                                                     participant_token)
             limesurvey.release_session_key()
             state = schema.procedure_navigator.ProcedureNavigatorStateEnum.in_progress
             if not participant_data or participant_data.get("completed") != "N":
