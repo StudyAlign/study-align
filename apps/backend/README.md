@@ -16,7 +16,8 @@
 2. Start nginx: Open a new shell window, change the directory to `loadbalancer`, execute: `docker-compose up`
 3. Start limesurvey: Open a new shell window, change the directory to `limesurvey`, execute: `docker-compose up`
 4. Start study-align: Open a new shell window, execute `docker-compose up` from the project's root folder
-
+   1. On production, run: `docker-compose -f docker-compose.prod.yml up`
+   2. On dev, run: `docker-compose -f docker-compose.dev.yml up`
 Access limesurvey locally through `http://localhost:8082`.
 Access the studyalign backend locally through `http://localhost:8080`
 Note: In future, the studyalign frontend will be served through `http://localhost:8081`
@@ -75,6 +76,7 @@ environment they would be replaced accordingly. Configuration of env variables m
 
 ## Database
 To initialise the database `cd backend` and execute: `docker exec -it studyctrl-backend python /app/init_db.py`
+On dev you would run: `docker exec -it studyctrl-backend-dev python /app/init_db.py`
 
 You can connect to the database with a tool like DataGrip. You will find the development credentials within 
 `database/database.env`, e.g. using the url: `jdbc:postgresql://localhost:5433/postgres`.
