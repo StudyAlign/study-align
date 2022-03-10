@@ -15,7 +15,7 @@ services:
     container_name: studyctrl-database-dev
     image: postgres:12.3-alpine
     env_file:
-      - ./database/database.env
+      - ./database/database.dev.env
     ports:
       - "5434:5432"
     volumes:
@@ -27,7 +27,7 @@ services:
     build: ./backend
     image: studyctrl-backend-dev
     env_file:
-      - ./database/database.env
+      - ./database/database.dev.env
     ports:
       - "8112:80"
     depends_on:
@@ -36,7 +36,7 @@ services:
      - outside
      - inside
      - traefik-net
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--debug", "--port", "80", "--reload-dir", "/app", "--root-path", "/study-align"]
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--debug", "--port", "80", "--reload-dir", "/app", "--root-path", "/study-align-dev"]
     volumes:
       - ./backend/app:/app
     labels:
