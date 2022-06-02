@@ -19,5 +19,10 @@ class Study(Base):
     participants = relationship("Participant", back_populates="study")
     #interactions = relationship("Interaction", back_populates="study")
 
+    owner_id = Column(Integer, ForeignKey('users.id'))
+    owner = relationship("User")
+
+    collaborators = relationship("Collaborator", back_populates="study")
+
     def __repr__(self):
         return "<Study(id='%d', name='%s', startDate='%s', endDate='%s')>" % (self.id, self.name, self.startDate, self.endDate)

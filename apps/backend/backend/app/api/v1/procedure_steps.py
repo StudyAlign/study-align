@@ -41,7 +41,7 @@ async def read_current_procedure_step(participant: schema.populated.ParticipantP
     return procedure_step
 
 
-@router.get("/procedure-steps/{procedure_id}", response_model=List[schema.populated.ProcedureStepPopulated], dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.get("/procedure-steps/{procedure_id}", response_model=List[schema.populated.ProcedureStepPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_procedure_steps_by_procedure_id(procedure_id: int, db: Session = Depends(get_db)):
     procedure_steps = methods.read_ordered_procedure_steps(db, procedure_id)
     return procedure_steps

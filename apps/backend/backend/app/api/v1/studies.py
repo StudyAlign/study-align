@@ -10,6 +10,8 @@ import model
 
 import methods
 
+from methods import AuthMethod, UserRole
+
 import schema.study
 import schema.procedure
 import schema.api
@@ -19,13 +21,12 @@ router = APIRouter()
 
 ENTITY = "Study"
 
-
-@router.get("/studies", response_model=List[schema.study.StudyDetails], dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.get("/studies", response_model=List[schema.study.StudyDetails], dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_studies(db: Session = Depends(get_db)):
     return methods.read_list(db, model.Study)
 
 
-@router.post("/studies", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.post("/studies", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def create_study(study: schema.study.StudyCreate, db: Session = Depends(get_db)):
     return methods.create(db, model.Study, study)
 
@@ -37,14 +38,14 @@ async def read_study(study_id: int, db: Session = Depends(get_db)):
     return study
 
 
-@router.patch("/studies/{study_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.patch("/studies/{study_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def update_study(study_id: int, study: schema.study.StudyUpdate, db: Session = Depends(get_db)):
     study_update = methods.patch(db, model.Study, study, study_id)
     if_not_zero(study_update, ENTITY)
     return study_update
 
 
-@router.post("/studies/{study_id}/procedures", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.post("/studies/{study_id}/procedures", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def generate_procedures_with_steps(study_id: int,
                                          steps: List[Union[schema.procedure.ProcedureCondition,
                                                            schema.procedure.ProcedureText,
@@ -56,7 +57,7 @@ async def generate_procedures_with_steps(study_id: int,
     return methods.create_procedures_with_steps(db, study_id, steps)
 
 
-@router.post("/studies/{study_id}/participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.post("/studies/{study_id}/participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def generate_participants(study_id: int, amount: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, ENTITY)
@@ -66,7 +67,7 @@ async def generate_participants(study_id: int, amount: int, db: Session = Depend
     return methods.create_participants(db, study_id, amount)
 
 
-@router.get("/studies/{study_id}/survey-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.get("/studies/{study_id}/survey-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def populate_survey_participants(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, ENTITY)
@@ -108,4 +109,4 @@ async def participate(study_id: int, db: Session = Depends(get_db)):
     participant = methods.draw_participant(db, study_id)
     if not participant:
         raise HTTPException(status_code=409, detail="No Participants found")
-    return methods.api.issue_tokens(str(participant.token), study.endDate, role=methods.Role.PARTICIPANT)
+    return methods.api.issue_tokens(str(participant.token), study.endDate, role=methods.AuthMethod.PARTICIPANT_KEY)

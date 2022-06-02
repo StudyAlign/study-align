@@ -68,7 +68,9 @@ SECRET_KEY = "4307fff64d15d8366384e22cb48f8d4f6fc3bd74c89eb19a1c93bdfc5f94434d"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120
 API_ADMIN_KEY = "73d088b3ce965980dcb1ccf3b5b63b54cafb93232ab0889151c52207fe5a104b"
-CORS_ORIGINS = "http://localhost, http://localhost:8080, http://localhost:63343"
+INITIAL_ADMIN_PW = "StudyAlignInitialLogin"
+
+CORS_ORIGINS = "http://localhost:*, http://localhost, http://localhost:8080, http://localhost:63343, http://localhost:3333, http://localhost:3000, http://localhost:3366"
 ```
 
 These key-value pairs are mainly used for authentication (issuing and validating of JWT tokens). In a production 
