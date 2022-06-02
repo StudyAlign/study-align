@@ -62,4 +62,4 @@ pwd_hash = pwd_context.hash(password)
 admin_user = methods.create(db, User, UserCreate(name="admin", password=pwd_hash,
                                                  firstname="Example", lastname="Administrator",
                                                  email="norply@studyalign.com",
-                                                 role_id=admin_role.id, isActive=True))
+                                                 role_id=admin_role.id, is_active=True))

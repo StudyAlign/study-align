@@ -104,7 +104,7 @@ async def populate_survey_participants(study_id: int, db: Session = Depends(get_
 async def participate(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, "Study")
-    if not study.isActive and datetime.datetime.utcnow() >= study.endDate:
+    if not study.is_active and datetime.datetime.utcnow() >= study.endDate:
         raise HTTPException(status_code=403, detail="Study is too old, or inactive")
     participant = methods.draw_participant(db, study_id)
     if not participant:

@@ -12,7 +12,7 @@ class Study(Base):
     consent = Column(String)
     startDate = Column(DateTime(timezone=False))
     endDate = Column(DateTime(timezone=False))
-    isActive = Column(Boolean, nullable=False)
+    is_active = Column(Boolean, nullable=False)
 
     conditions = relationship("Condition", back_populates="study")
     procedures = relationship("Procedure", back_populates="study")

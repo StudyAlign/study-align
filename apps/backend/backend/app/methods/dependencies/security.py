@@ -103,7 +103,7 @@ class UserValidator:
             )
 
         user = methods.read_by(db, model.User, "id", user_id)
-        if user is None or not user.isActive:
+        if user is None or not user.is_active:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Inactive user",

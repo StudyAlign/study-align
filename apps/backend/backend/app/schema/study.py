@@ -8,7 +8,7 @@ class StudyBase(BaseModel):
     name: str
     startDate: datetime
     endDate: datetime
-    isActive: bool
+    is_active: bool
     owner_id: int
 
 
@@ -26,7 +26,7 @@ class StudyUpdate(BaseModel):
     description: Optional[str]
     consent: Optional[str]
     endDate: Optional[datetime]
-    isActive: Optional[bool]
+    is_active: Optional[bool]
     owner_id: Optional[int]
 
     class Config:

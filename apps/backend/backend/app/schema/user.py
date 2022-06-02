@@ -10,7 +10,7 @@ class UserBase(BaseModel):
     lastname: str
     email: str
     role_id: int
-    isActive: bool
+    is_active: bool
 
 class UserCreate(UserBase):
     password: str
@@ -22,7 +22,7 @@ class UserUpdate(UserBase):
     email: Optional[str]
     password: Optional[str]
     role_id: Optional[int]
-    isActive: Optional[bool]
+    is_active: Optional[bool]
 
     class Config:
         extra = 'forbid'
