@@ -42,7 +42,6 @@
                 console.log("ERROR");
                 console.log(error);
             });
-
     }
     window.addEventListener("load", init);
 
@@ -132,7 +131,7 @@
             console.log(Date.now());
             console.log(event.timeStamp);
 
-            sal.addKeyboardInteraction('keydown', event, timestamp, {"aha": "ok"}, {"metos": "datos"});
+            sal.addKeyboardInteraction('keydown', event, timestamp, event, {"metos": "datos"});
 /*
             sal.logKeyboardInteraction(1, 'keydown', event, timestamp).then(response => {
                 console.log(response)
