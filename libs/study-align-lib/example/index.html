@@ -2,16 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Study Align Lib</title>
-
-    <script src="./dist/study-align-lib-bundle.js"></script>
-    <!--
-    <script type="text/javascript">
-        let sal = new studyAlignLib("http://localhost:8080", 1);
-    </script>-->
-
-
-   <script type="text/javascript" src="./test.js"></script>
+    <title>Study Align Library Example</title>
+    <!-- include bundled library -->
+    <script src="../dist/study-align-lib-bundle.js"></script>
+    <!-- test.js shows the usage of the library's methods -->
+   <script type="text/javascript" src="test.js"></script>
 </head>
 <body>
 <h1>Study Align Library</h1>
@@ -19,10 +14,11 @@
 <div>
     <button id="refresh">Refresh Tokens</button>
 </div>
-<div class="agado">
-    <button id="3">Button 3</button>
-    <button id="2">Button 2</button>
-    <button id="4">Button 4</button>
+<div class="buttons">
+    <button id="button2">mouseenter (add to bulk)</button>
+    <button id="button3">click (add to bulk)</button>
+    <button id="button4">click (log directly)</button>
+    <button id="button5">Transmit mouse bulk</button>
 </div>
 <div>
     <input id="textinput" type="text" />

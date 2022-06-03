@@ -1,7 +1,27 @@
-    // import studyAlignLib from "./dist/study-align-lib-bundle.js";
+    //import studyAlignLib from "./dist/study-align-lib-bundle.js";
 
-    const sal = new studyAlignLib("http://localhost:8080", 1);
+    /* Integrate the Library in three steps:
+        1. Initialize studyAlignLib (STEP1)
+        2. Implement data logging (STEP2)
+        3. Finish procedure step (STEP3)
+     */
 
+
+    //STEP1: Initialize new studyAlignLib object and
+    //The study frontend will pass three GET parameters to your prototype:
+    // 1. condition_id
+    // 2. logger_key
+    // 3. participant_token (will be used in STEP3, see below)
+    const url = new URL(window.location.href);
+    const conditionId = url.searchParams.get("condition_id") || 1; // value from get parameter or 1 (default)
+    const loggerKey = url.searchParams.get("logger_key"); // needed for logging
+
+    const sal = new studyAlignLib("http://localhost:8080", 1); // params: backend_url and studyId
+    sal.storeLoggerKey(loggerKey);
+
+    // IGNORE:
+    // Example code to participate in the study and store access tokens in the localstorage of the browser
+    // There is no need to implement this in your prototypes, since authentication will be managed by the study-frontend
     function init() {
         console.log("init()");
         sal.participate()
@@ -43,154 +63,124 @@
                 console.log(error);
             });
     }
+    // Execute init method when document is loaded
     window.addEventListener("load", init);
 
+
+    //STEP2: LOG DATA
+
     function mouseEvent() {
-        const button2 = document.getElementById('2');
+        // Save mouseenter events on button2 to local storage (can be transmitted in chunks later)
+        const button2 = document.getElementById('button2');
         button2.addEventListener('mouseenter', event => {
             const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
-
-            sal.addMouseInteraction('click', event, timestamp, {"aha": "ok"}, {"metos": "datos"});
-
-/*
-            sal.logMouseInteraction(1, 'click', event, timestamp).then(response => {
-                console.log("createMouseInteraction");
-                console.log(response)
-            }).catch(error => {
-                console.log("ERROR");
-                console.log(error);
-            });
-
- */
+            sal.addMouseInteraction('mouseenter', event, timestamp, event.relatedTarget, {"custom_meta": "data goes here"});
+            console.log("Added mouseenter event to local storage")
         });
 
-
-        const button3 = document.getElementById('3');
+        // Save click events on button3 to local storage (can be transmitted in chunks later)
+        const button3 = document.getElementById('button3');
         button3.addEventListener('click', event => {
             const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
+            sal.addMouseInteraction('click', event, timestamp, event.relatedTarget, {"custom_meta": "data goes here"});
+            console.log("Added click event to local storage")
+        });
 
-
-            sal.logMouseInteractionBulk(1, 10).then(response => {
-                console.log(response)
-            }).catch(error => {
-                console.log(error);
-            });
-
-            /*
-            sal.logMouseInteraction(1, 'click', event, timestamp, {"jokey": "joke"}, {"dis":"metadata"}).then(response => {
+        // Log the click events on button4 directly to the backend
+        const button4 = document.getElementById('button4');
+        button4.addEventListener('click', event => {
+            const timestamp = sal.getTimestampWithOffset();
+            //relatedTarget and metaData are optional params:
+            sal.logMouseInteraction(conditionId, 'click', event, timestamp).then(response => {
                 console.log("createMouseInteraction");
                 console.log(response)
             }).catch(error => {
                 console.log("ERROR");
                 console.log(error);
             });
-*/
-
         });
 
-        const button4 = document.getElementById('4');
+        // On click on button5 transmit mouse interaction bulks
+        const button5 = document.getElementById('button5');
+        button5.addEventListener('click', event => {
+            // Log locally stored mouse interactions in bulks / chunks.
+            // Chunks have a length of 10 and are going to be related to condition 1.
+            sal.logMouseInteractionBulk(conditionId, 10).then(response => {
+                console.log(response)
+            }).catch(error => {
+                console.log(error);
+            });
+        });
+
+        /* CAN BE IGNORED
+        const button4 = document.getElementById('button4');
         button4.addEventListener('click', event => {
             const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
-
             let failure = sal.mouseInteractionList.slice(12,13);
             sal.mouseInteractionList.push(failure);
-
-            /*
-                        sal.logMouseInteraction(1, 'click', event, timestamp).then(response => {
-                            console.log("createMouseInteraction");
-                            console.log(response)
-                        }).catch(error => {
-                            console.log("ERROR");
-                            console.log(error);
-                        });
-
-             */
         });
+         */
     }
+    //Add mouse events after document is loaded
     window.addEventListener("load", mouseEvent);
 
 
     function keyboardEvent() {
         const textinput = document.getElementById('textinput');
         textinput.addEventListener('keydown', event => {
-            const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
 
-            sal.addKeyboardInteraction('keydown', event, timestamp, event, {"metos": "datos"});
-/*
-            sal.logKeyboardInteraction(1, 'keydown', event, timestamp).then(response => {
+            // Log keyboard events to local storage
+            const timestamp = sal.getTimestampWithOffset();
+            const metaData = {"custom_meta_data": "for example", "text": textinput.value};
+            sal.addKeyboardInteraction('keydown', event, timestamp, metaData);
+
+            /*
+            //Alternatively: Log keyboard events directly!
+            sal.logKeyboardInteraction(conditionId, 'keydown', event, timestamp, metaData).then(response => {
                 console.log(response)
             }).catch(error => {
                 console.log(error);
             });
-*/
+            */
 
         });
 
+        // Log chunks of keyboard events to the backend. Bulk / chunk size is 10, condition id is 1
         const keyboardBulkButton = document.getElementById('keyboardBulkButton');
         keyboardBulkButton.addEventListener('click', event => {
-            const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
-
-            sal.logKeyboardInteractionBulk(1, 10).then(response => {
+            sal.logKeyboardInteractionBulk(conditionId, 10).then(response => {
                 console.log(response)
             }).catch(error => {
                 console.log(error);
             });
-
         });
     }
+    //Add keyboard events after document is loaded
     window.addEventListener("load", keyboardEvent);
-
 
 
     function touchEvent() {
         const touchInput = document.getElementById('touchInput');
         touchInput.addEventListener('touchstart', event => {
-            const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
 
-            sal.addTouchInteraction('touchstart', event, timestamp, {"aha": "ok"}, {"metos": "datos"});
-/*
-            sal.logTouchInteraction(1, 'touchstart', event, timestamp).then(response => {
+            // Log touch events to local storage
+            const timestamp = sal.getTimestampWithOffset();
+            sal.addTouchInteraction('touchstart', event, timestamp, {"meta_data": "is optional and can be any JSON object"});
+
+            /*
+            //Alternatively: Log touch events directly! metaData is optional
+            sal.logTouchInteraction(conditionId, 'touchstart', event, timestamp).then(response => {
                 console.log(response)
             }).catch(error => {
                 console.log(error);
             });
-
-*/
+            */
         });
 
+        // Log chunks of touch events to the backend. Bulk / chunk size is 10, condition id is 1
         const touchBulkButton = document.getElementById('touchBulkButton');
         touchBulkButton.addEventListener('click', event => {
-            const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
-
-            sal.logTouchInteractionBulk(1, 10).then(response => {
+            sal.logTouchInteractionBulk(conditionId, 10).then(response => {
                 console.log(response)
             }).catch(error => {
                 console.log(error);
@@ -198,50 +188,62 @@
 
         });
     }
+    //Add touch events after document is loaded
     window.addEventListener("load", touchEvent);
 
 
     function genericEvent() {
         const genericGenerator = document.getElementById('genericGenerator');
         genericGenerator.addEventListener('click', event => {
+
+            // Log generic events (custom events) to local storage
             const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
+            let genericEvent = {"hey": "this JSON object can hold any data"};
+            sal.addGenericInteraction('YOUR_EVENT_TYPE', genericEvent, timestamp, {"custom_name": "meta_data"});
 
-            let genericEvent = {"hey": "ho"};
-
-            sal.addGenericInteraction('agado', genericEvent, timestamp, {"metos": "datos"});
-/*
-            sal.logGenericInteraction(1, 'agadomandango', genericEvent, timestamp).then(response => {
+            /*
+            //Alternatively: Log generic events directly! metaData is optional
+            sal.logGenericInteraction(conditionId, 'CUSTOM_EVENT', genericEvent, timestamp).then(response => {
                 console.log(response)
             }).catch(error => {
                 console.log(error);
             });
-*/
-
+            */
         });
 
+        // Log chunks of generic events to the backend. Bulk / chunk size is 10, condition id is 1
         const genericBulkButton = document.getElementById('genericBulkButton');
         genericBulkButton.addEventListener('click', event => {
-            const timestamp = sal.getTimestampWithOffset();
-            console.log(event);
-            console.log(sal);
-            console.log(Date.now());
-            console.log(event.timeStamp);
-
-            sal.logGenericInteractionBulk(1, 10).then(response => {
+            sal.logGenericInteractionBulk(conditionId, 10).then(response => {
                 console.log(response)
             }).catch(error => {
                 console.log(error);
             });
-
         });
     }
+    //Add generic events after document is loaded
     window.addEventListener("load", genericEvent);
 
 
+
+    // STEP3: Finish procedure step
+
+    // Needs to binded, e.g. on a "Save text" button or similar
+    const proceed = async () => {
+        const url = new URL(window.location.href);
+        const participantToken = url.searchParams.get("participant_token");
+        try {
+            await sal.updateNavigator(participantToken, "condition", "done");
+        } catch (e) {
+            console.warn("StudyAlign Navigator could not be updated");
+        }
+    };
+
+
+
+    //IGNORE:
+    // SSE to allow bidirectional between backend and frontend
+    // There is no need to implement this in your prototypes, since authentication will be managed by the study-frontend
     function sse() {
         const sseStart = document.getElementById('sseStart');
         sseStart.addEventListener('click', event => {
@@ -264,6 +266,8 @@
     }
     window.addEventListener("load", sse);
 
+    // Refresh access token
+    // There is no need to implement this in your prototypes, since authentication will be managed by the study-frontend
     function refreshToken() {
         const refreshTokenButton = document.getElementById('refresh');
         refreshTokenButton.addEventListener('click', event => {

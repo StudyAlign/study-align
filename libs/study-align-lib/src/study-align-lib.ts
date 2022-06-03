@@ -49,6 +49,7 @@ class StudyAlignLib {
         if (loggerKey) {
             options.headers["Studyalign-Logger-Key"] = loggerKey;
         }
+        options.headers["Content-type"] = "application/json";
     }
 
     request(options: Options) {
@@ -232,11 +233,9 @@ class StudyAlignLib {
         const options: Options = {
             method: "POST",
             path: path,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: {}
         }
-        this.setHeaders(options);
+        this.setLoggerHeaders(options);
         options.body = {
             condition_id: conditionId,
             interactions: interactions
@@ -248,9 +247,7 @@ class StudyAlignLib {
         const options: Options = {
             method: "POST",
             path: path,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: {}
         }
         this.setLoggerHeaders(options);
         options.body = {
@@ -449,9 +446,7 @@ class StudyAlignLib {
         const options: Options = {
             method: "POST",
             path: "procedures/navigator",
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: {}
         }
         this.setHeaders(options);
         options.body = {
