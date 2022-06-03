@@ -50,7 +50,7 @@ class QuestionnairePatch(BaseModel):
 
 class Questionnaire(QuestionnaireBase):
     id: int
-    study_id: Optional[int]
+    study_id: int
 
     class Config:
         orm_mode = True

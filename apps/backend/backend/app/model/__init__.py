@@ -9,6 +9,9 @@ from .questionnaire_result import QuestionnaireResult
 from .study import Study
 from .task import Task
 from .text import Text
+from .user import User
+from .role import Role
+from .collaborators import Collaborator
 
 from .interaction.generic_interaction import GenericInteraction
 from .interaction.keyboard_interaction import KeyboardInteraction

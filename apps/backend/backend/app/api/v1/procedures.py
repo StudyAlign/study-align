@@ -9,6 +9,7 @@ from sqlalchemy import exc
 from sse_starlette.sse import EventSourceResponse
 from starlette import status
 
+from methods.dependencies.security import ParticipantValidator, UserValidator
 from methods.procedure_navigator import ProcedureNavigator, navigator_sse
 from model.base import Session
 from api import get_db, if_exists
@@ -378,15 +379,16 @@ async def update_procedure_navigator(connection_update: schema.procedure_navigat
     raise HTTPException(status_code=409, detail="Navigator state change failed.")
 
 
-@router.get("/procedures/{procedure_id}", response_model=schema.populated.ProcedurePopulated,
-            dependencies=[Depends(methods.switchAccessTokenValidator)])
-async def read_procedure(procedure_id: int, db: Session = Depends(get_db)):
+@router.get("/procedures/{procedure_id}", response_model=schema.populated.ProcedurePopulated)
+async def read_procedure(procedure_id: int, db: Session = Depends(get_db),
+                         participant: schema.participant.Participant = Depends(ParticipantValidator()),
+                         user: schema.user.User = Depends(UserValidator())):
     procedure = methods.read(db, model.Procedure, procedure_id)
     if_exists(procedure, ENTITY)
     return procedure
 
 
 @router.get("/procedures", response_model=List[schema.procedure.Procedure],
-            dependencies=[Depends(methods.adminAccessTokenValidator)])
+            dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_procedures_by_study_id(study_id: int, db: Session = Depends(get_db)):
     return methods.read_list_by(db, model.Procedure, "study_id", study_id)

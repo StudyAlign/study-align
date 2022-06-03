@@ -3,6 +3,7 @@ from typing import List, Union
 
 from fastapi import Depends, APIRouter, HTTPException
 
+from methods import ParticipantValidator
 from model.base import Session
 from api import get_db, if_exists
 
@@ -26,23 +27,23 @@ async def read_participant_me(participant: schema.participant.Participant = Depe
 
 @router.get("/participants/refresh", response_model=schema.api.AccessToken)
 async def refresh_participant_token(
-        participant: schema.participant.Participant = Depends(methods.participantRefreshTokenValidator),
+        participant: schema.participant.Participant = Depends(ParticipantValidator(type=methods.REFRESH)),
         db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, participant.study_id)
     if_exists(study, "Study")
-    if not study.isActive and datetime.utcnow() >= study.endDate:
+    if not study.is_active and datetime.utcnow() >= study.endDate:
         raise HTTPException(status_code=403, detail="Study is too old, or inactive")
-    return methods.api.issue_access_token(str(participant.token), role=methods.Role.PARTICIPANT)
+    return methods.api.issue_access_token(str(participant.token), auth_method=methods.AuthMethod.PARTICIPANT_KEY)
 
 
-@router.get("/participants/{participant_id}", response_model=schema.populated.ParticipantPopulated, dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.get("/participants/{participant_id}", response_model=schema.populated.ParticipantPopulated, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_participant(participant_id: int, db: Session = Depends(get_db)):
     participant = methods.read(db, model.Participant, participant_id)
     if_exists(participant, ENTITY)
     return participant
 
 
-@router.get("/participants", response_model=List[schema.populated.ParticipantPopulated], dependencies=[Depends(methods.adminAccessTokenValidator)])
+@router.get("/participants", response_model=List[schema.populated.ParticipantPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_participants_by_procedure(procedure_id: int, db: Session = Depends(get_db)):
     procedure = methods.read(db, model.Procedure, procedure_id)
     if_exists(procedure, "Procedure")

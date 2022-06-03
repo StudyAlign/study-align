@@ -15,6 +15,7 @@ import requests
 import methods
 from api import get_db, if_exists
 from definitions import MODELS_DIR
+from methods.dependencies.security import ParticipantValidator, UserValidator
 
 from model.base import Session
 import model
@@ -30,7 +31,7 @@ ENTITY = "Machine Learning"
 
 @router.get("/machine-learning/generate-key",
             response_model=uuid.UUID,
-            dependencies=[Depends(methods.adminAccessTokenValidator)])
+            dependencies=[Depends(methods.userAccessTokenValidator)])
 async def generate_key_for_cloud_model(db: Session = Depends(get_db)):
     key = uuid.uuid4()
     while methods.read_by(db, model.MLModel, "key", str(key)):
@@ -40,9 +41,12 @@ async def generate_key_for_cloud_model(db: Session = Depends(get_db)):
 
 @router.get("/machine-learning/models",
             response_model=List[
-                Union[schema.populated.MLModelCloudPopulated, schema.populated.MLModelDistributePopulated]],
-            dependencies=[Depends(methods.switchAccessTokenValidator)])
-async def read_machine_learning_models_by_condition_id(condition_id: int, db: Session = Depends(get_db)):
+                Union[schema.populated.MLModelCloudPopulated, schema.populated.MLModelDistributePopulated]])
+async def read_machine_learning_models_by_condition_id(condition_id: int, db: Session = Depends(get_db),
+                                                       participant: schema.participant.Participant = Depends(
+                                                           ParticipantValidator()),
+                                                       user: schema.user.User = Depends(UserValidator())
+                                                       ):
     machine_learning_models = methods.read_model_list_by_condition_id(db, model.MLModel, "condition_id", condition_id,
                                                                       "condition")
 
@@ -58,7 +62,7 @@ async def read_machine_learning_models_by_condition_id(condition_id: int, db: Se
 @router.get("/machine-learning/{machine_learning_id}",
             response_model=Union[schema.populated.MLModelCloudPopulated, schema.populated.MLModelDistributePopulated])
 async def read_machine_learning_model(machine_learning_id: int,
-                                      participant: model.Participant = Depends(methods.access_switch_participant),
+                                      participant: model.Participant = Depends(ParticipantValidator()),
                                       db: Session = Depends(get_db)):
     machine_learning = methods.read_with_join(db, model.MLModel, machine_learning_id, "condition")
     if_exists(machine_learning, ENTITY)
@@ -70,7 +74,7 @@ async def read_machine_learning_model(machine_learning_id: int,
 
 
 @router.post("/machine-learning/cloud", response_model=schema.machine_learning.ml_model.MLModelCloud,
-             dependencies=[Depends(methods.adminAccessTokenValidator)])
+             dependencies=[Depends(methods.userAccessTokenValidator)])
 async def create_machine_learning_cloud(machine_learning: schema.machine_learning.ml_model.MLModelCreateCloud,
                                         db: Session = Depends(get_db)):
     condition = methods.read(db, model.Condition, machine_learning.condition_id)
@@ -86,7 +90,7 @@ async def create_machine_learning_cloud(machine_learning: schema.machine_learnin
 
 
 @router.post("/machine-learning/distribute", response_model=schema.machine_learning.ml_model.MLModelDistribute,
-             dependencies=[Depends(methods.adminAccessTokenValidator)])
+             dependencies=[Depends(methods.userAccessTokenValidator)])
 async def create_machine_learning_distribute(ml_model: UploadFile = File(...),
                                              name: str = Form(...),
                                              description: str = Form(...),
@@ -118,7 +122,7 @@ async def create_machine_learning_distribute(ml_model: UploadFile = File(...),
 
 @router.get("/machine-learning/{machine_learning_id}/distribute")
 async def download_machine_learning_model(machine_learning_id: int,
-                                          participant: BaseModel = Depends(methods.access_switch_participant),
+                                          participant: BaseModel = Depends(ParticipantValidator()),
                                           db: Session = Depends(get_db)):
     machine_learning = methods.read(db, model.MLModel, machine_learning_id)
     if_exists(machine_learning, ENTITY)
@@ -132,7 +136,7 @@ async def download_machine_learning_model(machine_learning_id: int,
 
 @router.put("/machine-learning/distribute/{machine_learning_id}/new-version",
             response_model=schema.machine_learning.ml_model.MLModelDistribute,
-            dependencies=[Depends(methods.adminAccessTokenValidator)])
+            dependencies=[Depends(methods.userAccessTokenValidator)])
 async def update_machine_learning_distribute_new(machine_learning_id: int,
                                                  ml_model: UploadFile = File(...),
                                                  name: Optional[str] = Form(None),
@@ -174,7 +178,7 @@ async def update_machine_learning_distribute_new(machine_learning_id: int,
 
 @router.put("/machine-learning/distribute/{machine_learning_id}/replace-version",
             response_model=schema.machine_learning.ml_model.MLModelDistribute,
-            dependencies=[Depends(methods.adminAccessTokenValidator)])
+            dependencies=[Depends(methods.userAccessTokenValidator)])
 async def update_machine_learning_distribute_replace(machine_learning_id: int,
                                                      ml_model: Optional[UploadFile] = File(None),
                                                      name: Optional[str] = Form(None),
@@ -228,7 +232,7 @@ async def update_machine_learning_distribute_replace(machine_learning_id: int,
 
 @router.put("/machine-learning/cloud/{machine_learning_id}/new-version",
             response_model=schema.machine_learning.ml_model.MLModelCloud,
-            dependencies=[Depends(methods.adminAccessTokenValidator)])
+            dependencies=[Depends(methods.userAccessTokenValidator)])
 async def update_machine_learning_cloud_new(machine_learning_id: int,
                                             machine_learning_update: schema.machine_learning.ml_model.MLModelUpdateCloud,
                                             db: Session = Depends(get_db)):
@@ -262,7 +266,7 @@ async def update_machine_learning_cloud_new(machine_learning_id: int,
 
 @router.put("/machine-learning/cloud/{machine_learning_id}/replace-version",
             response_model=schema.machine_learning.ml_model.MLModelCloud,
-            dependencies=[Depends(methods.adminAccessTokenValidator)])
+            dependencies=[Depends(methods.userAccessTokenValidator)])
 async def update_machine_learning_cloud_replace(machine_learning_id: int,
                                                 machine_learning_update: schema.machine_learning.ml_model.MLModelUpdateCloud,
                                                 db: Session = Depends(get_db)):
@@ -285,7 +289,7 @@ async def update_machine_learning_cloud_replace(machine_learning_id: int,
              response_model=schema.machine_learning.Prediction)
 async def make_prediction_cloud(machine_learning_id: int,
                                 data: schema.machine_learning.prediction.PredictionInput,
-                                participant: model.Participant = Depends(methods.participantAccessTokenValidator),
+                                participant: model.Participant = Depends(ParticipantValidator()),
                                 db: Session = Depends(get_db)):
     machine_learning = methods.read(db, model.MLModel, machine_learning_id)
     if_exists(machine_learning, ENTITY)
@@ -325,10 +329,11 @@ async def make_prediction_cloud(machine_learning_id: int,
     raise HTTPException(status_code=409, detail=detail)
 
 
-@router.get("/machine-learning/cloud/{machine_learning_id}/ping",
-            dependencies=[Depends(methods.switchAccessTokenValidator)])
+@router.get("/machine-learning/cloud/{machine_learning_id}/ping")
 async def ping_cloud_model(machine_learning_id: int,
-                           db: Session = Depends(get_db)):
+                           db: Session = Depends(get_db),
+                           participant: schema.participant.Participant = Depends(ParticipantValidator()),
+                           user: schema.user.User = Depends(UserValidator())):
     machine_learning = methods.read(db, model.MLModel, machine_learning_id)
     if_exists(machine_learning, ENTITY)
     api_url = machine_learning.path

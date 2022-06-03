@@ -4,7 +4,7 @@ from decouple import config
 import logging
 
 from api.v1 import studies, conditions, procedures, tasks, texts, questionnaires, participants, procedure_steps, \
-    admin, interaction, machine_learning
+    users, interaction, machine_learning
 
 logging.config.fileConfig("logging.conf", disable_existing_loggers=False)
 logger = logging.getLogger('studyalign')
@@ -26,9 +26,9 @@ app.add_middleware(
 )
 
 app.include_router(
-    admin.router,
+    users.router,
     prefix=API_PREFIX,
-    tags=["Admin"]
+    tags=["Users"]
 )
 
 app.include_router(

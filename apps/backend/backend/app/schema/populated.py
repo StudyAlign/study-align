@@ -11,6 +11,8 @@ from schema.questionnaire import Questionnaire, QuestionnaireStep
 from schema.study import Study
 from schema.task import Task
 from schema.text import Text, TextStep
+from schema.user import User
+from schema.role import Role
 
 
 class ConditionPopulated(Condition):
@@ -101,6 +103,13 @@ class TextPopulated(Text):
 
 class QuestionnairePopulated(Questionnaire):
     study: Optional[Study]
+
+    class Config:
+        orm_mode = True
+
+
+class UserPopulated(User):
+    role: Optional[Role]
 
     class Config:
         orm_mode = True
