@@ -1,13 +1,31 @@
 from typing import List
+from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy import Boolean, cast, JSON, not_
+from sqlalchemy.orm import Session, joinedload
 
 import model
 
 import methods
 from itertools import cycle
 from api import if_not_zero, if_exists
+from schema.participant import ParticipantEnum
+from schema.pause import PauseTypeEnum
+
+
+def read_participants_with_filters(db: Session, study_id: int,
+                                   participant_state: ParticipantEnum,
+                                   paused: bool,
+                                   proceed: bool):
+    participants = db.query(model.Participant).filter(model.Participant.study_id == study_id)
+    if participant_state:
+        participants = participants.filter(model.Participant.state == participant_state)
+    if paused:
+        participants = participants.join(model.ProcedureStep).join(model.Pause)
+        if proceed:
+            participants = participants.filter(model.Participant.current_procedure_step_config['proceed'].astext.cast(Boolean).is_(True))
+    return participants.all()
 
 
 def create_participants(db: Session, study_id: int, amount: int):
@@ -40,6 +58,14 @@ def draw_participant(db: Session, study_id: int):
 
     participant.state = "in_progress"
     db.commit()
+    return participant
+
+
+def read_participant_by_token(study_id: int, participant_token: UUID, db: Session):
+    participant = db.query(model.Participant). \
+        filter(model.Participant.study_id == study_id). \
+        filter(model.Participant.token == participant_token). \
+        one_or_none()
     return participant
 
 

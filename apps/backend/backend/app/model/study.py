@@ -13,6 +13,7 @@ class Study(Base):
     startDate = Column(DateTime(timezone=False))
     endDate = Column(DateTime(timezone=False))
     is_active = Column(Boolean, nullable=False)
+    invite_only = Column(Boolean, nullable=False, default=False)
 
     conditions = relationship("Condition", back_populates="study")
     procedures = relationship("Procedure", back_populates="study")

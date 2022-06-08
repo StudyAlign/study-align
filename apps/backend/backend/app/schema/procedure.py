@@ -33,3 +33,7 @@ class ProcedureText(BaseModel):
 
 class ProcedureQuestionnaire(BaseModel):
     questionnaire_id: int
+
+
+class ProcedurePause(BaseModel):
+    pause_id: int

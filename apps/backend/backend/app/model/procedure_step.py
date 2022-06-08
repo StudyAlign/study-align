@@ -20,9 +20,12 @@ class ProcedureStep(Base):
     questionnaire_id = Column(Integer, ForeignKey('questionnaires.id'))
     questionnaire = relationship("Questionnaire")
 
+    pause_id = Column(Integer, ForeignKey('pauses.id'))
+    pause = relationship("Pause")
+
     order = Column(Integer)
 
-    __table_args__ = (UniqueConstraint('condition_id', 'text_id', 'questionnaire_id', name='_unique_step_ix'),)
+    __table_args__ = (UniqueConstraint('condition_id', 'text_id', 'questionnaire_id', 'pause_id', name='_unique_step_ix'),)
 
     def __repr__(self):
         return "<ProcedureStep (id='%d', order='%d')>" % (self.id, self.order)

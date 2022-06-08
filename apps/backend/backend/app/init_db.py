@@ -6,6 +6,7 @@ from api import get_db
 from model.base import Base, engine
 from model.collaborators import Collaborator
 from model.condition import Condition
+from model.pause import Pause
 from model.procedure import Procedure
 from model.participant import Participant
 from model.procedure_progress import ProcedureProgress
@@ -27,6 +28,7 @@ from schema.user import UserCreate
 Condition.__table__
 Procedure.__table__
 Participant.__table__
+Pause.__table__
 ProcedureStep.__table__
 ProcedureProgress.__table__
 Questionnaire.__table__

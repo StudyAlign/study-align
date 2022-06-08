@@ -1,6 +1,6 @@
 from model.base import Base
 from sqlalchemy import Column, Integer, Enum, ForeignKey, String, DateTime
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSON
 from sqlalchemy.orm import relationship
 import uuid
 
@@ -27,6 +27,8 @@ class Participant(Base):
     # to track progress, e.g. step x of y
     current_procedure_step = Column(Integer, ForeignKey('procedure_steps.id'))
     procedure_step = relationship("ProcedureStep")
+
+    current_procedure_step_config = Column(JSON)
 
     questionnaire_results = relationship("QuestionnaireResult", back_populates="participant")
 
