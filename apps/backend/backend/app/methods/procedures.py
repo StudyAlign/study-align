@@ -11,7 +11,7 @@ import model
 
 import methods.conditions
 
-from schema.procedure import ProcedureCondition, ProcedureText, ProcedureQuestionnaire
+from schema.procedure import ProcedureCondition, ProcedureText, ProcedureQuestionnaire, ProcedurePause
 from schema.procedure_progress import ProcedureProgressStateEnum, ProcedureProgressCreate
 from schema.populated import ProcedureStepPopulated
 
@@ -27,7 +27,8 @@ def read_procedure_ids_by_study(db: Session, study_id: int):
 
 def create_procedures_with_steps(db: Session, study_id: int, steps: List[Union[ProcedureCondition,
                                                                                ProcedureText,
-                                                                               ProcedureQuestionnaire]]):
+                                                                               ProcedureQuestionnaire,
+                                                                               ProcedurePause]]):
     condition_ids = methods.conditions.read_condition_ids_by_study(db, study_id)
     latin_squared_ids = _latin_square(condition_ids)
     return _create_procedure_steps_bulk(db, study_id, steps, latin_squared_ids)
@@ -37,7 +38,8 @@ def _create_procedure_steps_bulk(db: Session,
                                  study_id: int,
                                  procedure_steps: List[Union[ProcedureCondition,
                                                              ProcedureText,
-                                                             ProcedureQuestionnaire]],
+                                                             ProcedureQuestionnaire,
+                                                             ProcedurePause]],
                                  latin_squared_ids: List[List[int]]):
     bulk_insert = []
     for i in range(len(latin_squared_ids)):
@@ -54,6 +56,8 @@ def _create_procedure_steps_bulk(db: Session,
                 procedure_step.text_id = procedure_steps[k].text_id
             if isinstance(procedure_steps[k], ProcedureQuestionnaire):
                 procedure_step.questionnaire_id = procedure_steps[k].questionnaire_id
+            if isinstance(procedure_steps[k], ProcedurePause):
+                procedure_step.pause_id = procedure_steps[k].pause_id
             bulk_insert.append(procedure_step)
     db.add_all(bulk_insert)
     return db.commit()

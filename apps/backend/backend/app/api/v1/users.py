@@ -32,7 +32,7 @@ async def user_login(db: Session = Depends(get_db), form_data: OAuth2PasswordReq
 
 
 @router.get("/users/me", response_model=schema.populated.UserPopulated)
-async def user_me(user: schema.user.User = Depends(UserValidator())):
+async def user_me(user: schema.user.User = Depends(UserValidator(strict_auth_method=True))):
     return user
 
 

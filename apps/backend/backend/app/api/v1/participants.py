@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import List, Union
 
+import uuid
 from fastapi import Depends, APIRouter, HTTPException
+from starlette import status
 
 from methods import ParticipantValidator
 from model.base import Session
@@ -48,3 +50,17 @@ async def read_participants_by_procedure(procedure_id: int, db: Session = Depend
     procedure = methods.read(db, model.Procedure, procedure_id)
     if_exists(procedure, "Procedure")
     return methods.read_list_by(db, model.Participant, "procedure_id", procedure_id)
+
+
+@router.get("/participants/{participant_token}/end-pause", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def end_participants_step_pause(participant_token: uuid.UUID, db: Session = Depends(get_db)):
+    participant = methods.read_by(db, model.Participant, "token", str(participant_token))
+    if_exists(participant, ENTITY)
+    procedure_step = participant.procedure_step
+    if participant.procedure_step.pause is not None:
+        pause_type = schema.pause.PauseTypeEnum(procedure_step.pause.type)
+        if pause_type is schema.pause.PauseTypeEnum.controlled:
+            participant.current_procedure_step_config = {"proceed": True}
+            db.commit()
+    return
+

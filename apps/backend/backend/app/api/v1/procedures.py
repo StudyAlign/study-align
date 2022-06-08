@@ -22,6 +22,7 @@ import methods
 import schema.condition
 import schema.questionnaire
 import schema.text
+import schema.pause
 import schema.populated
 import schema.procedure
 import schema.procedure_progress
@@ -41,7 +42,8 @@ navigator = ProcedureNavigator()
 @router.get("/procedures/start",
             response_model=Union[schema.condition.ConditionStep,
                                  schema.questionnaire.QuestionnaireStep,
-                                 schema.text.TextStep])
+                                 schema.text.TextStep,
+                                 schema.pause.PauseStep])
 async def procedure_start(participant: schema.populated.ParticipantPopulated = Depends(methods.get_active_participant),
                           db: Session = Depends(get_db)):
     if participant.current_procedure_step is not None:
@@ -50,6 +52,7 @@ async def procedure_start(participant: schema.populated.ParticipantPopulated = D
     try:
         first_step = participant.procedure.procedure_steps[0]
         participant.current_procedure_step = first_step.id
+        participant = methods.set_current_procedure_step_config(first_step, participant)
         start_time = datetime.utcnow()
         progress_start_experiment = schema.procedure_progress.ProcedureProgressCreate(
             state=ProcedureProgressStateEnum.start_experiment,
@@ -83,6 +86,10 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
                          db: Session = Depends(get_db)):
     if participant.current_procedure_step is None:
         raise HTTPException(status_code=409, detail="Procedure not started yet.")
+
+    # check if participant current step config allows to proceed, if not raise excception
+    if not methods.allows_config_to_proceed(participant, db):
+        raise HTTPException(status_code=409, detail="Step config disallows to proceed.")
 
     try:
         next_time = datetime.utcnow()
@@ -140,6 +147,7 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
         # previous step is last step
         if previous_step_index == len(participant.procedure.procedure_steps) - 1:
             participant.current_procedure_step = None
+            participant.current_procedure_step_config = None
             participant.state = ParticipantEnum.finished
             progress_end_experiment = schema.procedure_progress.ProcedureProgressCreate(
                 state=ProcedureProgressStateEnum.end_experiment,
@@ -157,6 +165,7 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
 
         next_step = participant.procedure.procedure_steps[previous_step_index + 1]
         participant.current_procedure_step = next_step.id
+        participant = methods.set_current_procedure_step_config(next_step, participant)
         progress_start_step = schema.procedure_progress.ProcedureProgressCreate(
             state=ProcedureProgressStateEnum.start_step,
             time=next_time,
@@ -199,6 +208,9 @@ async def procedure_end(participant: schema.participant.Participant = Depends(me
                         db: Session = Depends(get_db)):
     if participant.current_procedure_step is None:
         raise HTTPException(status_code=409, detail="Procedure not started yet.")
+
+    if not methods.allows_config_to_proceed(participant, db):
+        raise HTTPException(status_code=409, detail="Step config disallows to proceed.")
 
     try:
         end_time = datetime.utcnow()
@@ -254,6 +266,7 @@ async def procedure_end(participant: schema.participant.Participant = Depends(me
         # previous step is last step
         if previous_step_index == len(participant.procedure.procedure_steps) - 1:
             participant.current_procedure_step = None
+            participant.current_procedure_step_config = None
             participant.state = ParticipantEnum.finished
             progress_end_step = schema.procedure_progress.ProcedureProgressCreate(
                 state=ProcedureProgressStateEnum.end_step,

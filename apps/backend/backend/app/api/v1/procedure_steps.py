@@ -10,6 +10,10 @@ import methods
 
 import schema.populated
 import schema.procedure
+import schema.condition
+import schema.questionnaire
+import schema.text
+import schema.pause
 
 router = APIRouter()
 
@@ -18,7 +22,8 @@ ENTITY = "ProcedureStep"
 
 @router.get("/procedure-steps", response_model=Union[schema.condition.ConditionStep,
                                  schema.questionnaire.QuestionnaireStep,
-                                 schema.text.TextStep])
+                                 schema.text.TextStep,
+                                 schema.pause.PauseStep])
 async def read_current_procedure_step(participant: schema.populated.ParticipantPopulated = Depends(methods.get_active_participant),
                           db: Session = Depends(get_db)):
     if participant.current_procedure_step is None:

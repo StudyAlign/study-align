@@ -13,6 +13,7 @@ from schema.task import Task
 from schema.text import Text, TextStep
 from schema.user import User
 from schema.role import Role
+from schema.pause import Pause, PauseStep
 
 
 class ConditionPopulated(Condition):
@@ -26,6 +27,7 @@ class ProcedureStepPopulated(ProcedureStep):
     condition: Optional[ConditionStep] = None
     text: Optional[TextStep] = None
     questionnaire: Optional[QuestionnaireStep] = None
+    pause: Optional[PauseStep] = None
 
     class Config:
         orm_mode = True
@@ -102,6 +104,13 @@ class TextPopulated(Text):
 
 
 class QuestionnairePopulated(Questionnaire):
+    study: Optional[Study]
+
+    class Config:
+        orm_mode = True
+
+
+class PausePopulated(Pause):
     study: Optional[Study]
 
     class Config:

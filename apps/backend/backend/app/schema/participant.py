@@ -1,6 +1,6 @@
 from enum import Enum
 import uuid
-from typing import Optional
+from typing import Optional, Union
 from pydantic import BaseModel
 
 
@@ -27,6 +27,7 @@ class Participant(ParticipantBase):
     procedure_id: Optional[int] = None
 
     current_procedure_step: Optional[int] = None
+    current_procedure_step_config: Optional[Union[dict, list, set, float, int, str, bytes, bool]] = None
 
     logger_key: uuid.UUID
 

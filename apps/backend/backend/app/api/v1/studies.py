@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from uuid import UUID
 
 from fastapi import Depends, APIRouter, status, HTTPException
 from typing import List, Union
@@ -15,6 +16,7 @@ from methods import AuthMethod, UserRole
 import schema.study
 import schema.procedure
 import schema.api
+from schema.participant import ParticipantEnum
 from schema.questionnaire import QuestionnaireSystemEnum
 
 router = APIRouter()
@@ -49,7 +51,8 @@ async def update_study(study_id: int, study: schema.study.StudyUpdate, db: Sessi
 async def generate_procedures_with_steps(study_id: int,
                                          steps: List[Union[schema.procedure.ProcedureCondition,
                                                            schema.procedure.ProcedureText,
-                                                           schema.procedure.ProcedureQuestionnaire]],
+                                                           schema.procedure.ProcedureQuestionnaire,
+                                                           schema.procedure.ProcedurePause]],
                                          db: Session = Depends(get_db)):
     procedures = methods.read_list_by(db, model.Procedure, "study_id", study_id)
     if procedures:
@@ -65,6 +68,19 @@ async def generate_participants(study_id: int, amount: int, db: Session = Depend
     if participant_count != 0:
         raise HTTPException(status_code=409, detail="Participants have already been generated")
     return methods.create_participants(db, study_id, amount)
+
+
+@router.get("/studies/{study_id}/participants", response_model=List[schema.populated.ParticipantPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_participants(study_id: int, participant_state: Union[ParticipantEnum, None] = None,
+                            paused: Union[bool, None] = None, proceed: Union[bool, None] = None, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+
+    participants = methods.read_participants_with_filters(db, study_id, participant_state, paused, proceed)
+    if not participants:
+        raise HTTPException(status_code=409, detail="Study has no participants")
+    
+    return participants
 
 
 @router.get("/studies/{study_id}/survey-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
@@ -109,4 +125,23 @@ async def participate(study_id: int, db: Session = Depends(get_db)):
     participant = methods.draw_participant(db, study_id)
     if not participant:
         raise HTTPException(status_code=409, detail="No Participants found")
-    return methods.api.issue_tokens(str(participant.token), study.endDate, role=methods.AuthMethod.PARTICIPANT_KEY)
+    return methods.api.issue_tokens(str(participant.token), study.endDate, auth_method=methods.AuthMethod.PARTICIPANT_KEY)
+
+
+@router.get("/studies/{study_id}/participate/{participant_token}", response_model=schema.api.Tokens)
+async def participate(study_id: int, participant_token: UUID, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, "Study")
+    if not study.is_active and datetime.datetime.utcnow() >= study.endDate:
+        raise HTTPException(status_code=403, detail="Study is too old, or inactive")
+
+    participant = methods.read_participant_by_token(study_id, participant_token, db)
+    if not participant:
+        raise HTTPException(status_code=409, detail="No Participant found")
+    if ParticipantEnum(participant.state) is ParticipantEnum.finished:
+        raise HTTPException(status_code=403, detail="Already participated")
+    if ParticipantEnum(participant.state) is ParticipantEnum.free:
+        participant.state = ParticipantEnum.in_progress
+        db.commit()
+
+    return methods.api.issue_tokens(str(participant.token), study.endDate, auth_method=methods.AuthMethod.PARTICIPANT_KEY)
