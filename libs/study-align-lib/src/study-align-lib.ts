@@ -129,10 +129,16 @@ class StudyAlignLib {
 
     // Participation related methods
 
-    participate() {
-        const options: Options = {
+    participate(participantToken?: string) {
+        let options: Options = {
             method: "GET",
             path: "studies/" + this.studyId + "/participate"
+        }
+        if (participantToken) {
+            options = {
+                method: "GET",
+                path: "studies/" + this.studyId + "/participate/" + participantToken
+            }
         }
         return this.request(options);
     }
