@@ -10,6 +10,7 @@ class StudyBase(BaseModel):
     endDate: datetime
     is_active: bool
     owner_id: int
+    invite_only: bool
 
 
 class StudyCreate(StudyBase):
@@ -28,6 +29,7 @@ class StudyUpdate(BaseModel):
     endDate: Optional[datetime]
     is_active: Optional[bool]
     owner_id: Optional[int]
+    invite_only: Optional[bool]
 
     class Config:
         extra = 'forbid'

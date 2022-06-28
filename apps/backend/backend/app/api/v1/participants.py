@@ -45,6 +45,16 @@ async def read_participant(participant_id: int, db: Session = Depends(get_db)):
     return participant
 
 
+@router.get("/participants/token/{participant_token}", response_model=schema.populated.ParticipantPopulated)
+async def read_participant_by_token(participant_token: uuid.UUID, db: Session = Depends(get_db)):
+    participant = methods.read_by(db, model.Participant, "token", participant_token)
+    if not participant:
+        raise HTTPException(status_code=409, detail="No Participant found")
+    if schema.participant.ParticipantEnum(participant.state) is schema.participant.ParticipantEnum.finished:
+        raise HTTPException(status_code=403, detail="Already participated")
+    return participant
+
+
 @router.get("/participants", response_model=List[schema.populated.ParticipantPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_participants_by_procedure(procedure_id: int, db: Session = Depends(get_db)):
     procedure = methods.read(db, model.Procedure, procedure_id)
