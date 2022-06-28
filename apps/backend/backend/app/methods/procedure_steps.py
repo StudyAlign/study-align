@@ -37,7 +37,7 @@ def allows_config_to_proceed(participant: schema.populated.ParticipantPopulated,
                 one_or_none()
             procedure_progress_time = procedure_progress.time
             now = datetime.now()
-            waiting_time = current_step_config.get("waiting_time")
+            waiting_time = procedure_step.pause.config.get("waiting_time")
             return procedure_progress_time + timedelta(seconds=waiting_time) < now
         return False
     return True

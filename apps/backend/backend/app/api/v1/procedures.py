@@ -81,6 +81,7 @@ async def procedure_start(participant: schema.populated.ParticipantPopulated = D
 @router.get("/procedures/next",
             response_model=Union[schema.condition.ConditionStep,
                                  schema.questionnaire.QuestionnaireStep,
+                                 schema.pause.PauseStep,
                                  schema.text.TextStep])
 async def procedure_next(participant: schema.populated.ParticipantPopulated = Depends(methods.get_active_participant),
                          db: Session = Depends(get_db)):
