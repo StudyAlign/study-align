@@ -38,7 +38,7 @@ async def user_me(user: schema.user.User = Depends(UserValidator(strict_auth_met
 
 @router.get("/users/refresh", response_model=schema.api.AccessToken)
 async def refresh_user_token(user: schema.user.User = Depends(UserValidator(type=REFRESH))):
-    return methods.api.issue_access_token(user.name, auth_method=methods.AuthMethod.USER_LOGIN)
+    return methods.api.issue_access_token(str(user.id), auth_method=methods.AuthMethod.USER_LOGIN)
 
 
 @router.get("/users", response_model=List[schema.user.User], dependencies=[Depends(methods.userAccessTokenValidator)])
