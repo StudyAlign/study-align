@@ -6,6 +6,8 @@ import {
     TouchInteraction
 } from "./interactions";
 
+
+
 class StudyAlignLib {
 
     apiVersion: string;
@@ -53,6 +55,11 @@ class StudyAlignLib {
     }
 
     request(options: Options) {
+        const encodeParams = (data) => {
+            return Object.keys(data).map((key) => {
+                return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+            }).join('&');
+        }
         return new Promise( (resolve, reject) => {
             let url = this.apiUrl + "/" + options.path;
             let xhr = new XMLHttpRequest();
@@ -101,33 +108,293 @@ class StudyAlignLib {
                 let params = options.params;
                 let encodedParams = "";
                 if (params && typeof params === 'object') {
-                    encodedParams = Object.keys(params).map((key) => {
-                        return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-                    }).join('&');
+                    encodedParams = encodeParams(params)
                 }
                 xhr.send(encodedParams);
             }
 
-            if (options.method === "POST") {
-                xhr.send(JSON.stringify(options.body));
+            if (options.method === "POST" || options.method === "PATCH") {
+                xhr.send(options.formData ? encodeParams(options.body) : JSON.stringify(options.body));
             }
         });
     }
+
+    basicCreate(path: string, data: object) {
+        const options: Options = {
+            method: "PATCH",
+            path: path,
+            headers: {}
+        }
+        this.setHeaders(options);
+        options.body = data;
+        return this.request(options);
+    }
+
+    basicRead(path: string) {
+        const options: Options = {
+            method: "GET",
+            path: path,
+            headers: {}
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    basicUpdate(path: string, data: object) {
+        const options: Options = {
+            method: "PATCH",
+            path: path,
+            headers: {}
+        }
+        this.setHeaders(options);
+        options.body = data;
+        return this.request(options);
+    }
+
+    // Admin related functions
+    userLogin(username, password) {
+        const options: Options = {
+            method: "POST",
+            path: "users/login",
+            headers: {},
+            body: {username: username, password: password},
+            formData: true
+        };
+        options.headers["Content-type"] = "application/x-www-form-urlencoded";
+        return this.request(options);
+    }
+
+    userMe(): Promise<any> {
+        return this.basicRead("users/me");
+    }
+
+    userRefreshToken() {
+        const options: Options = {
+            method: "GET",
+            path: "users/refresh",
+            headers: {}
+        }
+        this.setHeaders(options, true);
+        return this.request(options);
+    }
+
+    getUsers() {
+        return this.basicRead("users");
+    }
+
+    getUser(userId: number) {
+        return this.basicRead("users/" + userId);
+    }
+
+    createUser(user: object) {
+        return this.basicCreate("users", user)
+    }
+
+    updateUser(userId: number, user: object) {
+        return this.basicUpdate("users/" + userId, user);
+    }
+
+    // ---- MAINLY FOR USE IN ADMIN FRONTEND ---- //
+
+    // Studies
+
+    getStudies() {
+        return this.basicRead("studies");
+    }
+
+    createStudy(study: object) {
+        return this.basicCreate("studies", study);
+    }
+
+    updateStudy(studyId: number, study: object) {
+        return this.basicUpdate("studies/" + studyId, study);
+    }
+
+    generateProcedureWithSteps(studyId: number, procedure_scheme: object) {
+        this.basicCreate("studies/" + studyId + "/procedures", procedure_scheme);
+    }
+
+    getParticipants(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/participants");
+    }
+
+    generateParticipants(studyId: number, amount: number) {
+        const options: Options = {
+            method: "POST",
+            path: "studies/" + studyId + "/participants",
+            headers: {},
+            body: {amount: amount},
+            formData: true,
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    populateSurveyParticipants(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/survey-participants");
+    }
+
+    // Conditions
+
+    getConditionIds(studyId: number) {
+        const options: Options = {
+            method: "GET",
+            path: "conditions/ids",
+            headers: {},
+            body: {study_id: studyId},
+            formData: true,
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    getCondition(conditionId: number) {
+        return this.basicRead("conditions/" + conditionId);
+    }
+
+    createCondition(condition: object) {
+        return this.basicCreate("conditions", condition);
+    }
+
+    updateCondition(conditionId: number, condition: object) {
+        return this.basicUpdate("conditions/" + conditionId, condition);
+    }
+
+    getConditions() {
+        return this.basicRead("conditions");
+    }
+
+    // Procedures
+
+    getProcedures(studyId: number) {
+        const options: Options = {
+            method: "GET",
+            path: "procedures",
+            headers: {},
+            body: {study_id: studyId},
+            formData: true,
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    // Participants
+
+    getParticipantsByProcedure(procedureId: number) {
+        const options: Options = {
+            method: "GET",
+            path: "participants",
+            headers: {},
+            body: {procedure_id: procedureId},
+            formData: true,
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    getParticipantById(participantId: number) {
+        return this.basicRead("participants/" + participantId);
+    }
+
+    endParticipantPause(participantToken: string) {
+        return this.basicRead("participants/" + participantToken + "/end-pause");
+    }
+
+    //Tasks
+
+    createTask(task: object) {
+        return this.basicCreate("tasks", task);
+    }
+
+    getTask(taskId: number) {
+        return this.basicRead("tasks/" + taskId);
+    }
+
+    updateTask(taskId: number, task: object) {
+        return this.basicUpdate("tasks/" + taskId, task);
+    }
+
+    getTasks() {
+        return this.basicRead("tasks");
+    }
+
+    //Texts
+
+    createText(text: object) {
+        return this.basicCreate("texts", text);
+    }
+
+    getText(textId: number) {
+        return this.basicRead("texts/" + textId);
+    }
+
+    updateText(textId: number, text: object) {
+        return this.basicUpdate("texts/" + textId, text);
+    }
+
+    getTexts() {
+        return this.basicRead("texts");
+    }
+
+    //Questionnaires
+
+    createQuestionnaire(questionnaire: object) {
+        return this.basicCreate("questionnaires", questionnaire);
+    }
+
+    getQuestionnaire(questionnaireId: number) {
+        return this.basicRead("questionnaires/" + questionnaireId);
+    }
+
+    updateQuestionnaire(questionnaireId: number, questionnaire: object) {
+        return this.basicUpdate("questionnaires/" + questionnaireId, questionnaire);
+    }
+
+    getQuestionnaires() {
+        return this.basicRead("questionnaires");
+    }
+
+    //Pauses
+
+    createPause(pause: object) {
+        return this.basicCreate("pauses", pause);
+    }
+
+    getPause(pauseId: number) {
+        return this.basicRead("pauses/" + pauseId);
+    }
+
+    updatePause(pauseId: number, pause: object) {
+        return this.basicUpdate("pauses/" + pauseId, pause);
+    }
+
+    getPauses() {
+        return this.basicRead("pauses");
+    }
+
+    // ---- MAINLY FOR USE IN STUDY FRONTEND ---- //
+
+    //TODO: read condition config
+
+    //Study Frontend related functions
 
     getStudy() {
         const options: Options = {
             method: "GET",
             path: "studies/" + this.studyId,
-            /*onprogress: (event) => {
-                event.loaded;
-                event.total;
-                console.log(event.loaded + " " + event.total);
-            }*/
         }
         return this.request(options);
     }
 
     // Participation related methods
+
+    getParticipant(participantToken: string) {
+        const options: Options = {
+            method: "GET",
+            path: "participants/token/" + participantToken,
+        }
+        return this.request(options);
+    }
 
     participate(participantToken?: string) {
         let options: Options = {
