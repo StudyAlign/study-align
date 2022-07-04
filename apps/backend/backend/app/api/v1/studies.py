@@ -83,6 +83,71 @@ async def read_participants(study_id: int, participant_state: Union[ParticipantE
     return participants
 
 
+@router.get("/studies/{study_id}/conditions", response_model=List[schema.populated.ConditionPopulated],
+            dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_conditions(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+
+    conditions = methods.read_list_by(db, model.Condition, "study_id", study_id)
+    if not conditions:
+        raise HTTPException(status_code=409, detail="Study has no conditions")
+
+    return conditions
+
+
+@router.get("/studies/{study_id}/tasks", response_model=List[schema.populated.TaskPopulated],
+            dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_tasks(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+
+    tasks = methods.read_list_by(db, model.Task, "study_id", study_id)
+    if not tasks:
+        raise HTTPException(status_code=409, detail="Study has no tasks")
+
+    return tasks
+
+
+@router.get("/studies/{study_id}/texts", response_model=List[schema.populated.TextPopulated],
+            dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_texts(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+
+    texts = methods.read_list_by(db, model.Text, "study_id", study_id)
+    if not texts:
+        raise HTTPException(status_code=409, detail="Study has no texts")
+
+    return texts
+
+
+@router.get("/studies/{study_id}/questionnaires", response_model=List[schema.populated.QuestionnairePopulated],
+            dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_questionnaires(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+
+    questionnaires = methods.read_list_by(db, model.Questionnaire, "study_id", study_id)
+    if not questionnaires:
+        raise HTTPException(status_code=409, detail="Study has no questionnaires")
+
+    return questionnaires
+
+
+@router.get("/studies/{study_id}/pauses", response_model=List[schema.populated.PausePopulated],
+            dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_pauses(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+
+    pauses = methods.read_list_by(db, model.Pause, "study_id", study_id)
+    if not pauses:
+        raise HTTPException(status_code=409, detail="Study has no pauses")
+
+    return pauses
+
+
 @router.get("/studies/{study_id}/survey-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def populate_survey_participants(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
