@@ -120,8 +120,8 @@ class StudyAlignLib {
     }
 
     basicCreate(path: string, data: object) {
-        const options: Options = {
-            method: "PATCH",
+        let options: Options = {
+            method: "POST",
             path: path,
             headers: {}
         }
@@ -141,7 +141,7 @@ class StudyAlignLib {
     }
 
     basicUpdate(path: string, data: object) {
-        const options: Options = {
+        let options: Options = {
             method: "PATCH",
             path: path,
             headers: {}
@@ -152,7 +152,7 @@ class StudyAlignLib {
     }
 
     // Admin related functions
-    userLogin(username, password) {
+    userLogin(username: string, password: string) {
         const options: Options = {
             method: "POST",
             path: "users/login",
@@ -210,8 +210,8 @@ class StudyAlignLib {
         return this.basicUpdate("studies/" + studyId, study);
     }
 
-    generateProcedureWithSteps(studyId: number, procedure_scheme: object) {
-        this.basicCreate("studies/" + studyId + "/procedures", procedure_scheme);
+    generateProcedureWithSteps(studyId: number, procedureScheme: object) {
+        this.basicCreate("studies/" + studyId + "/procedures", procedureScheme);
     }
 
     getParticipants(studyId: number) {
@@ -260,9 +260,26 @@ class StudyAlignLib {
         return this.basicUpdate("conditions/" + conditionId, condition);
     }
 
-    getConditions() {
-        return this.basicRead("conditions");
+    getConditions(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/conditions");
     }
+
+    getTasks(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/tasks");
+    }
+
+    getTexts(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/texts");
+    }
+
+    getQuestionnaires(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/questionnaires");
+    }
+
+    getPauses(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/pauses");
+    }
+
 
     // Procedures
 
@@ -314,10 +331,6 @@ class StudyAlignLib {
         return this.basicUpdate("tasks/" + taskId, task);
     }
 
-    getTasks() {
-        return this.basicRead("tasks");
-    }
-
     //Texts
 
     createText(text: object) {
@@ -330,10 +343,6 @@ class StudyAlignLib {
 
     updateText(textId: number, text: object) {
         return this.basicUpdate("texts/" + textId, text);
-    }
-
-    getTexts() {
-        return this.basicRead("texts");
     }
 
     //Questionnaires
@@ -350,10 +359,6 @@ class StudyAlignLib {
         return this.basicUpdate("questionnaires/" + questionnaireId, questionnaire);
     }
 
-    getQuestionnaires() {
-        return this.basicRead("questionnaires");
-    }
-
     //Pauses
 
     createPause(pause: object) {
@@ -368,20 +373,16 @@ class StudyAlignLib {
         return this.basicUpdate("pauses/" + pauseId, pause);
     }
 
-    getPauses() {
-        return this.basicRead("pauses");
-    }
-
     // ---- MAINLY FOR USE IN STUDY FRONTEND ---- //
 
     //TODO: read condition config
 
     //Study Frontend related functions
 
-    getStudy() {
+    getStudy(studyId?: number) {
         const options: Options = {
             method: "GET",
-            path: "studies/" + this.studyId,
+            path: "studies/" + (studyId || this.studyId),
         }
         return this.request(options);
     }
