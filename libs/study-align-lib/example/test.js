@@ -1,4 +1,3 @@
-    //import studyAlignLib from "./dist/study-align-lib-bundle.js";
 
     /* Integrate the Library in three steps:
         1. Initialize studyAlignLib (STEP1)
@@ -6,15 +5,17 @@
         3. Finish procedure step (STEP3)
      */
 
-
     //STEP1: Initialize new studyAlignLib object and
     //The study frontend will pass three GET parameters to your prototype:
     // 1. condition_id
     // 2. logger_key
     // 3. participant_token (will be used in STEP3, see below)
     const url = new URL(window.location.href);
+
     const conditionId = url.searchParams.get("condition_id") || 1; // value from get parameter or 1 (default)
     const loggerKey = url.searchParams.get("logger_key"); // needed for logging
+
+    // You can also call: `studyAlignLib.getParamsFromURL()` to retrieve the url parameters from URL
 
     const sal = new studyAlignLib("http://localhost:8080", 1); // params: backend_url and studyId
     sal.storeLoggerKey(loggerKey);

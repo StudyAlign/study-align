@@ -6,8 +6,6 @@ import {
     TouchInteraction
 } from "./interactions";
 
-
-
 class StudyAlignLib {
 
     apiVersion: string;
@@ -28,6 +26,19 @@ class StudyAlignLib {
         this.url = url;
         this.studyId = studyId;
         this.apiUrl = this.url + "/api/" + this.apiVersion;
+    }
+
+    static getParamsFromURL = () => {
+        const url = new URL(window.location.href);
+        const studyId = url.searchParams.get("study_id");
+        const conditionId = url.searchParams.get("condition_id") || 1; // value from get parameter or 1 (default)
+        const loggerKey = url.searchParams.get("logger_key"); // needed for logging
+
+        return {
+            studyId: studyId,
+            conditionId: conditionId,
+            loggerKey: loggerKey
+        }
     }
 
     getTimestamp() {
