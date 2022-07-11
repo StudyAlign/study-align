@@ -9,6 +9,18 @@ import schema
 from model.base import Base
 
 
+def read_interactions(db: Session, study_id: int, limit: int = 100):
+    generic_interactions = db.query(model.GenericInteraction).filter(model.GenericInteraction.study_id == study_id).limit(limit).all()
+    mouse_interactions = db.query(model.MouseInteraction).filter(model.MouseInteraction.study_id == study_id).limit(limit).all()
+    keyboard_interactions = db.query(model.KeyboardInteraction).filter(model.KeyboardInteraction.study_id == study_id).limit(limit).all()
+    drag_interactions = db.query(model.DragInteraction).filter(model.DragInteraction.study_id == study_id).limit(limit).all()
+    touch_interactions = db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).limit(limit).all()
+
+    result = [] + generic_interactions + mouse_interactions + keyboard_interactions + drag_interactions + touch_interactions
+
+    return sorted(result, key=lambda x: x.time, reverse=True)
+
+
 def prepare_interaction_data(data: BaseModel, participant: schema.participant.Participant):
     interaction = data.interaction
     interaction_data = interaction.dict()

@@ -1,9 +1,10 @@
 from fastapi import Depends, APIRouter, status, HTTPException
 
 from sqlalchemy import exc
+from typing import List, Union
 
 import methods
-from api import get_db
+from api import get_db, if_exists
 
 from model.base import Session
 import model
@@ -15,7 +16,23 @@ import schema.condition
 
 router = APIRouter()
 
-# TO-DO: get_active_logger_participant for all routes in interaction.py
+# TODO: get_active_logger_participant for all routes in interaction.py
+
+@router.get("/interactions", response_model=List[Union[schema.interaction.interactions.GenericInteraction,
+                                                       schema.interaction.interactions.MouseInteraction,
+                                                       schema.interaction.interactions.DragInteraction,
+                                                       schema.interaction.interactions.KeyboardInteraction,
+                                                       schema.interaction.interactions.TouchInteraction]],
+            dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_interactions(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, "Study")
+
+    interactions = methods.read_interactions(db, study_id)
+    if not interactions:
+        raise HTTPException(status_code=409, detail="Study has no interactions")
+
+    return interactions
 
 @router.post("/interaction/generic", response_model=schema.interaction.interactions.GenericInteraction)
 async def log_generic_interaction_single(data: schema.interaction.interactions.GenericInteractionCreateSingle,
