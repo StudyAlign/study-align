@@ -47,6 +47,13 @@ async def update_study(study_id: int, study: schema.study.StudyUpdate, db: Sessi
     return study_update
 
 
+@router.get("/studies/{study_id}/setup-info", response_model=schema.study.StudySetupInfo, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_study_setup_info(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+    return study
+
+
 @router.post("/studies/{study_id}/procedures", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def generate_procedures_with_steps(study_id: int,
                                          steps: List[Union[schema.procedure.ProcedureCondition,
