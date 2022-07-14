@@ -398,6 +398,10 @@ class StudyAlignLib {
         return this.request(options);
     }
 
+    getStudySetupInfo(studyId?: number) {
+        return this.basicRead("studies/" + studyId + "/setup-info")
+    }
+
     // Participation related methods
 
     getParticipant(participantToken: string) {
