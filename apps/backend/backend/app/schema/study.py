@@ -25,7 +25,7 @@ class StudyBase(BaseModel):
 class StudyCreate(StudyBase):
     description: str
     consent: str
-    planned_amount_participants: Optional[int]
+    planned_number_participants: Optional[int]
     current_setup_step: Optional[CurrentSetupStepEnum]
 
     class Config:
