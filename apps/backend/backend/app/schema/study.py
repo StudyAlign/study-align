@@ -41,7 +41,7 @@ class StudyUpdate(BaseModel):
     is_active: Optional[bool]
     owner_id: Optional[int]
     invite_only: Optional[bool]
-    planned_amount_participants: Optional[int]
+    planned_number_participants: Optional[int]
     current_setup_step: Optional[CurrentSetupStepEnum]
 
     class Config:
