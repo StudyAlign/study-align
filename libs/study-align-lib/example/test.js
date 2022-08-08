@@ -17,8 +17,8 @@
 
     // You can also call: `studyAlignLib.getParamsFromURL()` to retrieve the url parameters from URL
 
-    const sal = new studyAlignLib("http://localhost:8080", 1); // params: backend_url and studyId
-    sal.storeLoggerKey(loggerKey);
+    const sal = new studyAlignLib("http://localhost:8000", 1); // params: backend_url and studyId
+    sal.setLoggerKey(loggerKey);
 
     // IGNORE:
     // Example code to participate in the study and store access tokens in the localstorage of the browser

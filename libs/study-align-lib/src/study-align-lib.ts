@@ -12,6 +12,7 @@ class StudyAlignLib {
     url: string;
     studyId: number;
     apiUrl: string;
+    loggerKey: string;
     sse: EventSource;
 
     // Interaction Lists (Web Events only), needed for bulk saving
@@ -33,11 +34,13 @@ class StudyAlignLib {
         const studyId = url.searchParams.get("study_id");
         const conditionId = url.searchParams.get("condition_id") || 1; // value from get parameter or 1 (default)
         const loggerKey = url.searchParams.get("logger_key"); // needed for logging
+        const participantToken = url.searchParams.get("participant_token");
 
         return {
             studyId: studyId,
             conditionId: conditionId,
-            loggerKey: loggerKey
+            loggerKey: loggerKey,
+            participantToken: participantToken
         }
     }
 
@@ -58,9 +61,8 @@ class StudyAlignLib {
     }
 
     setLoggerHeaders(options: Options) {
-        const loggerKey = this.readLoggerKey();
-        if (loggerKey) {
-            options.headers["Studyalign-Logger-Key"] = loggerKey;
+        if (this.loggerKey) {
+            options.headers["Studyalign-Logger-Key"] = this.loggerKey;
         }
         options.headers["Content-type"] = "application/json";
     }
@@ -123,7 +125,6 @@ class StudyAlignLib {
                 }
                 xhr.send(encodedParams);
             }
-
             if (options.method === "POST" || options.method === "PATCH") {
                 xhr.send(options.formData ? encodeParams(options.body) : JSON.stringify(options.body));
             }
@@ -426,6 +427,10 @@ class StudyAlignLib {
         return this.request(options);
     }
 
+    setLoggerKey(loggerKey) {
+        this.loggerKey = loggerKey;
+    }
+
     storeTokens(responseJson) {
         localStorage.setItem("tokens", JSON.stringify(responseJson));
     }
@@ -460,18 +465,6 @@ class StudyAlignLib {
         }
         this.setHeaders(options, true);
         return this.request(options);
-    }
-
-    storeLoggerKey(key: string) {
-        localStorage.setItem("loggerKey", key);
-    }
-
-    readLoggerKey(): string {
-        return localStorage.getItem("loggerKey");
-    }
-
-    deleteLoggerKey() {
-        localStorage.removeItem("loggerKey");
     }
 
     me(): Promise<any> {
@@ -735,9 +728,10 @@ class StudyAlignLib {
         const options: Options = {
             method: "POST",
             path: "procedures/navigator",
-            headers: {}
+            headers: {
+                "Content-type": "application/json"
+            }
         }
-        this.setHeaders(options);
         options.body = {
             participant_token: participantToken,
             source: source,
