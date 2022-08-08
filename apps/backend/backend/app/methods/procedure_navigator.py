@@ -33,8 +33,8 @@ class ProcedureNavigator(object):
 
 
 async def navigator_sse(request: Request, procedure_navigator: ProcedureNavigator, participant_id: int):
-    delay = 5
-    retry_timeout = 5000
+    delay = 2
+    retry_timeout = 2000
     previous_navigator_state = None
     event_id = 0
     no_sub_count = 0
