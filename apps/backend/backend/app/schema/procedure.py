@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Optional
 
 from pydantic import BaseModel
 
@@ -25,6 +25,7 @@ class Procedure(ProcedureBase):
 # Dummy models are needed to generate procedures
 class ProcedureCondition(BaseModel):
     dummy: bool
+    condition_id: Optional[int]
 
 
 class ProcedureText(BaseModel):

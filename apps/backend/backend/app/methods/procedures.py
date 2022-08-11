@@ -30,6 +30,9 @@ def create_procedures_with_steps(db: Session, study_id: int, steps: List[Union[P
                                                                                ProcedureQuestionnaire,
                                                                                ProcedurePause]]):
     condition_ids = methods.conditions.read_condition_ids_by_study(db, study_id)
+    for i in range(len(steps)):
+        if isinstance(steps[i], ProcedureCondition) and steps[i].dummy is False:
+            condition_ids.remove(steps[i].condition_id)
     latin_squared_ids = _latin_square(condition_ids)
     return _create_procedure_steps_bulk(db, study_id, steps, latin_squared_ids)
 
@@ -51,7 +54,10 @@ def _create_procedure_steps_bulk(db: Session,
         for k in range(len(procedure_steps)):
             procedure_step = model.ProcedureStep(procedure_id=procedure.id, order=k)
             if isinstance(procedure_steps[k], ProcedureCondition):
-                procedure_step.condition_id = latin_squared_ids[i].pop(0)
+                if procedure_steps[k].dummy is False:
+                    procedure_step.condition_id = procedure_steps[k].condition_id
+                else:
+                    procedure_step.condition_id = latin_squared_ids[i].pop(0)
             if isinstance(procedure_steps[k], ProcedureText):
                 procedure_step.text_id = procedure_steps[k].text_id
             if isinstance(procedure_steps[k], ProcedureQuestionnaire):
