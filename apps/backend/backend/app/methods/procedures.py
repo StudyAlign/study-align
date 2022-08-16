@@ -31,6 +31,7 @@ def create_procedures_with_steps(db: Session, study_id: int, steps: List[Union[P
                                                                                ProcedurePause]]):
     condition_ids = methods.conditions.read_condition_ids_by_study(db, study_id)
     for i in range(len(steps)):
+        # remove static conditions from counterblanacing
         if isinstance(steps[i], ProcedureCondition) and steps[i].dummy is False:
             condition_ids.remove(steps[i].condition_id)
     latin_squared_ids = _latin_square(condition_ids)
