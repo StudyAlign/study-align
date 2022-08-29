@@ -51,7 +51,7 @@ export const getText = createAsyncThunk(
 );
 
 export const createText = createAsyncThunk(
-    'createStudy',
+    'createText',
     async (text, { dispatch, getState, rejectWithValue, requestId}) => {
         const { api, currentRequestId } = getState().texts
         if (api !== LOADING || requestId !== currentRequestId) {
