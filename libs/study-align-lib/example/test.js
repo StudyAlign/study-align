@@ -17,7 +17,11 @@
 
     // You can also call: `studyAlignLib.getParamsFromURL()` to retrieve the url parameters from URL
 
-    const sal = new studyAlignLib("http://localhost:8000", 1); // params: backend_url and studyId
+    console.log(conditionId)
+    console.log(loggerKey)
+
+    const sal = new studyAlignLib("http://localhost:8000", 2); // params: backend_url and studyId
+    console.log(sal)
     sal.setLoggerKey(loggerKey);
 
     // IGNORE:
@@ -107,6 +111,16 @@
             // Log locally stored mouse interactions in bulks / chunks.
             // Chunks have a length of 10 and are going to be related to condition 1.
             sal.logMouseInteractionBulk(conditionId, 10).then(response => {
+                console.log(response)
+            }).catch(error => {
+                console.log(error);
+            });
+        });
+
+        // On click on button6 study will be deleted
+        const button6 = document.getElementById('button6');
+        button6.addEventListener('click', event => {
+            sal.deleteCondition(conditionId).then(response => {
                 console.log(response)
             }).catch(error => {
                 console.log(error);

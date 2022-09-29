@@ -117,7 +117,7 @@ class StudyAlignLib {
                 });
             }
 
-            if (options.method === "GET") {
+            if (options.method === "GET" || options.method === "DELETE") {
                 let params = options.params;
                 let encodedParams = "";
                 if (params && typeof params === 'object') {
@@ -163,6 +163,18 @@ class StudyAlignLib {
         return this.request(options);
     }
 
+    basicDelete(path: string) {
+        let options: Options = {
+            method: "DELETE",
+            path: path,
+            headers: {}
+        }
+        this.setHeaders(options);
+        const yo = this.request(options);
+        console.log(yo)
+        return yo
+    }
+
     // Admin related functions
     userLogin(username: string, password: string) {
         const options: Options = {
@@ -206,6 +218,10 @@ class StudyAlignLib {
         return this.basicUpdate("users/" + userId, user);
     }
 
+    deleteUser(userId: number) {
+        return this.basicDelete("users/" + userId);
+    }
+
     // ---- MAINLY FOR USE IN ADMIN FRONTEND ---- //
 
     // Studies
@@ -220,6 +236,10 @@ class StudyAlignLib {
 
     updateStudy(studyId: number, study: object) {
         return this.basicUpdate("studies/" + studyId, study);
+    }
+
+    deleteStudy(studyId: number) {
+        return this.basicDelete("studies/" + studyId);
     }
 
     generateProcedureWithSteps(studyId: number, procedureScheme: object) {
@@ -264,6 +284,10 @@ class StudyAlignLib {
         return this.basicRead("conditions/" + conditionId);
     }
 
+    getConditions(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/conditions");
+    }
+
     createCondition(condition: object) {
         return this.basicCreate("conditions", condition);
     }
@@ -272,8 +296,8 @@ class StudyAlignLib {
         return this.basicUpdate("conditions/" + conditionId, condition);
     }
 
-    getConditions(studyId: number) {
-        return this.basicRead("studies/" + studyId + "/conditions");
+    deleteCondition(conditionId: number) {
+        return this.basicDelete("conditions/" + conditionId);
     }
 
     getTasks(studyId: number) {
@@ -343,6 +367,10 @@ class StudyAlignLib {
         return this.basicUpdate("tasks/" + taskId, task);
     }
 
+    deleteTask(taskId: number) {
+        return this.basicDelete("tasks/" + taskId);
+    }
+
     //Texts
 
     createText(text: object) {
@@ -355,6 +383,10 @@ class StudyAlignLib {
 
     updateText(textId: number, text: object) {
         return this.basicUpdate("texts/" + textId, text);
+    }
+
+    deleteText(textId: number) {
+        return this.basicDelete("texts/" + textId);
     }
 
     //Questionnaires
@@ -371,6 +403,10 @@ class StudyAlignLib {
         return this.basicUpdate("questionnaires/" + questionnaireId, questionnaire);
     }
 
+    deleteQuestionnaire(questionnaireId: number) {
+        return this.basicDelete("questionnaires/" + questionnaireId);
+    }
+
     //Pauses
 
     createPause(pause: object) {
@@ -383,6 +419,10 @@ class StudyAlignLib {
 
     updatePause(pauseId: number, pause: object) {
         return this.basicUpdate("pauses/" + pauseId, pause);
+    }
+
+    deletePause(pauseId: number) {
+        return this.basicDelete("pauses/" + pauseId);
     }
 
     // ---- MAINLY FOR USE IN STUDY FRONTEND ---- //
