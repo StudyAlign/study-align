@@ -12,10 +12,10 @@ class QuestionnaireResult(Base):
 
     result = Column(JSONB)
 
-    participant_id = Column(Integer, ForeignKey('participants.id'))
+    participant_id = Column(Integer, ForeignKey('participants.id', ondelete="CASCADE"))
     participant = relationship("Participant", back_populates="questionnaire_results")
 
-    questionnaire_id = Column(Integer, ForeignKey('questionnaires.id'))
+    questionnaire_id = Column(Integer, ForeignKey('questionnaires.id', ondelete="CASCADE"))
     questionnaire = relationship("Questionnaire", back_populates="questionnaire_results")
 
     def __repr__(self):

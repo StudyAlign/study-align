@@ -21,7 +21,7 @@ class MLModel(Base):
     old_model_id = Column(Integer(), ForeignKey('ml_models.id'))
     old_model = relationship('MLModel', remote_side=[id])
 
-    condition_id = Column(Integer, ForeignKey('conditions.id'))
+    condition_id = Column(Integer, ForeignKey('conditions.id', ondelete="SET NULL"))
     condition = relationship("Condition", back_populates="ml_model")
 
     predictions = relationship("Prediction", back_populates="ml_model")

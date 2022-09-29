@@ -45,3 +45,13 @@ async def update_task(task_id: int, task: schema.task.TaskPatch, db: Session = D
     task_update = methods.patch(db, model.Task, task, task_id)
     if_not_zero(task_update, ENTITY)
     return task_update
+
+
+@router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def delete_task(task_id: int, db: Session = Depends(get_db)):
+    task = methods.read(db, model.Task, task_id)
+    if_exists(task, ENTITY)
+    db.delete(task)
+    db.commit()
+    return
+

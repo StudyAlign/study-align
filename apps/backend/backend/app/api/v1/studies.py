@@ -47,6 +47,15 @@ async def update_study(study_id: int, study: schema.study.StudyUpdate, db: Sessi
     return study_update
 
 
+@router.delete("/studies/{study_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def delete_study(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+    db.delete(study)
+    db.commit()
+    return
+
+
 @router.get("/studies/{study_id}/setup-info", response_model=schema.study.StudySetupInfo, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_study_setup_info(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
@@ -192,8 +201,10 @@ async def populate_survey_participants(study_id: int, db: Session = Depends(get_
 async def participate(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, "Study")
-    if not study.is_active and datetime.datetime.utcnow() >= study.endDate:
-        raise HTTPException(status_code=403, detail="Study is too old, or inactive")
+    if not study.is_active:
+        raise HTTPException(status_code=403, detail="Study is inactive")
+    if datetime.utcnow() >= study.endDate:
+        raise HTTPException(status_code=403, detail="Study has ended")
     participant = methods.draw_participant(db, study_id)
     if not participant:
         raise HTTPException(status_code=409, detail="No Participants found")

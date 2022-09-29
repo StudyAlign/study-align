@@ -12,13 +12,13 @@ class Prediction(Base):
     input = Column(JSONB, nullable=False)
     prediction = Column(JSONB, nullable=False)
 
-    ml_model_id = Column(Integer, ForeignKey('ml_models.id'))
+    ml_model_id = Column(Integer, ForeignKey('ml_models.id', ondelete="CASCADE"))
     ml_model = relationship("MLModel", back_populates="predictions")
 
-    participant_id = Column(Integer, ForeignKey('participants.id'))
+    participant_id = Column(Integer, ForeignKey('participants.id', ondelete="CASCADE"))
     #participant = relationship("Participant", back_populates="predictions")
 
-    condition_id = Column(Integer, ForeignKey('conditions.id'))
+    condition_id = Column(Integer, ForeignKey('conditions.id', ondelete="CASCADE"))
     condition = relationship("Condition", back_populates="predictions")
 
     def __repr__(self):

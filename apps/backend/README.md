@@ -88,10 +88,8 @@ The port 5433 gets mapped to port 5432 in the database container.
 Since we are using SQLalchemy with alembic for migrating, check out the official tutorial: https://alembic.sqlalchemy.org/en/latest/tutorial.html
 
 #### Create migrations
-Activate the python virtual environment locally in `backend/app`. Ensure that you are running Python 3.8.
 ```commandline
-source venv/bin/activate
-alembic revision -m "description of the the migration"
+docker exec -it studyctrl-backend alembic revision -m "short description of migration"
 ```
 
 #### Execute migrations

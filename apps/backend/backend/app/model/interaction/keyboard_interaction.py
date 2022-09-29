@@ -16,13 +16,13 @@ class KeyboardInteraction(Base):
 
     time = Column(DateTime(timezone=False))
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     #study = relationship("Study", back_populates="keyboard_interactions")
 
-    participant_id = Column(Integer, ForeignKey('participants.id'))
+    participant_id = Column(Integer, ForeignKey('participants.id', ondelete="CASCADE"))
     #participant = relationship("Participant", back_populates="keyboard_interactions")
 
-    condition_id = Column(Integer, ForeignKey('conditions.id'))
+    condition_id = Column(Integer, ForeignKey('conditions.id', ondelete="CASCADE"))
     #condition = relationship("Condition", back_populates="keyboard_interactions")
 
     event = Column(Enum("keydown", "keypress", "keyup", name="keyboard_event_enum", create_type=False))

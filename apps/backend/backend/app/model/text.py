@@ -10,7 +10,7 @@ class Text(Base):
     title = Column(String)
     body = Column(String)
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     study = relationship("Study")
 
     def __repr__(self):

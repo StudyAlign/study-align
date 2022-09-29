@@ -13,13 +13,13 @@ class GenericInteraction(Base):
 
     time = Column(DateTime(timezone=False))
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     #study = relationship("Study", back_populates="generic_interactions")
 
-    participant_id = Column(Integer, ForeignKey('participants.id'))
+    participant_id = Column(Integer, ForeignKey('participants.id', ondelete="CASCADE"))
     #participant = relationship("Participant", back_populates="generic_interactions")
 
-    condition_id = Column(Integer, ForeignKey('conditions.id'))
+    condition_id = Column(Integer, ForeignKey('conditions.id', ondelete="CASCADE"))
     #condition = relationship("Condition", back_populates="generic_interactions")
 
     event = Column(String)

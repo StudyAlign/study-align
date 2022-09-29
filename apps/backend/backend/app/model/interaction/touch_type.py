@@ -6,8 +6,8 @@ class TouchType(Base):
 
     id = Column(Integer, primary_key=True)
 
-    touch_interaction_id = Column(Integer, ForeignKey('touch_interactions.id'))
-    touch_id = Column(Integer, ForeignKey('touches.id'))
+    touch_interaction_id = Column(Integer, ForeignKey('touch_interactions.id', ondelete="CASCADE"))
+    touch_id = Column(Integer, ForeignKey('touches.id', ondelete="CASCADE"))
 
     type = Column(Enum("all", "changed", "target", name="touch_type_enum", create_type=False))
 

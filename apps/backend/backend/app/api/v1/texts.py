@@ -50,3 +50,13 @@ async def update_text(text_id: int, text: schema.text.TextPatch, db: Session = D
     text_update = methods.patch(db, model.Text, text, text_id)
     if_not_zero(text_update, ENTITY)
     return text_update
+
+
+@router.delete("/texts/{text_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def delete_text(text_id: int, db: Session = Depends(get_db)):
+    text = methods.read(db, model.Text, text_id)
+    if_exists(text, ENTITY)
+    methods.check_if_study_active(db, text.study_id)
+    db.delete(text)
+    db.commit()
+    return

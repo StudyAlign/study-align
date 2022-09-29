@@ -9,12 +9,19 @@ class Procedure(Base):
 
     id = Column(Integer, primary_key=True)
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     study = relationship("Study", back_populates="procedures")
 
-    procedure_steps = relationship("ProcedureStep", back_populates="procedure", order_by="asc(ProcedureStep.order)")
+    procedure_steps = relationship("ProcedureStep",
+                                   back_populates="procedure",
+                                   order_by="asc(ProcedureStep.order)",
+                                   cascade="all, delete",
+                                   passive_deletes=True)
 
-    participants = relationship("Participant", back_populates="procedure")
+    participants = relationship("Participant",
+                                back_populates="procedure",
+                                cascade="all, delete",
+                                passive_deletes=True)
 
     def __repr__(self):
         return "<Procedure(id='%d' study_id='%d' variant='%d')>" % (self.id, self.study_id, self.variant)

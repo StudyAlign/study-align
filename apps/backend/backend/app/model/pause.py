@@ -15,7 +15,7 @@ class Pause(Base):
     type = Column(Enum("time_based", "controlled", name="pause_type_enum", create_type=False))
     config = Column(JSON)
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     study = relationship("Study")
 
     def __repr__(self):

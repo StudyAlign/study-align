@@ -13,9 +13,9 @@ class ProcedureProgress(Base):
 
     time = Column(DateTime(timezone=False))
 
-    participant_id = Column(Integer, ForeignKey('participants.id'))
+    participant_id = Column(Integer, ForeignKey('participants.id', ondelete="CASCADE"))
 
-    procedure_step_id = Column(Integer, ForeignKey('procedure_steps.id'))
+    procedure_step_id = Column(Integer, ForeignKey('procedure_steps.id', ondelete="CASCADE"))
     procedure_step = relationship("ProcedureStep")
 
 

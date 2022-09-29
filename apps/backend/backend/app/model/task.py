@@ -10,7 +10,7 @@ class Task(Base):
     name = Column(String)
     description = Column(String)
 
-    condition = relationship("Condition", uselist=False, back_populates="task")
+    condition = relationship("Condition", uselist=False, back_populates="task", cascade="all, delete", passive_deletes=True)
 
     def __repr__(self):
         return "<Task(id='%d', name='%s', description='%s')>" % (self.id, self.name, self.description)

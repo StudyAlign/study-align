@@ -117,6 +117,8 @@ class LimeSurvey(object):
             error = self.error_builder(method, "Response content is empty", response.status_code, response.content)
             raise HTTPException(status_code=400, detail=error)
 
+
+        print(response)
         response_data = response.json()
         if response_data.get("error") is not None:
             error = self.error_builder(method, "Response error", response.status_code, response.content)

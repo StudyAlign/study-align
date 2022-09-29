@@ -67,3 +67,14 @@ async def update_user(user_id: int, user: schema.user.UserUpdate, db: Session = 
     user_update = methods.patch(db, model.User, user, user_id)
     if_not_zero(user_update, ENTITY)
     return user_update
+
+
+@router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def delete_user(user_id: int, db: Session = Depends(get_db)):
+    if user_id == 1:
+        raise HTTPException(status_code=403, detail="User with id 1 cannot be deleted.")
+    user = methods.read(db, model.User, user_id)
+    if_exists(user, ENTITY)
+    db.delete(user)
+    db.commit()
+    return

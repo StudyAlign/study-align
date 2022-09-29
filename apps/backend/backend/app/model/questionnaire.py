@@ -19,10 +19,10 @@ class Questionnaire(Base):
     ext_id = Column(String)
     participants_populated = Column(Boolean, default=False, nullable=False)
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     study = relationship("Study")
 
-    questionnaire_results = relationship("QuestionnaireResult", back_populates="questionnaire")
+    questionnaire_results = relationship("QuestionnaireResult", back_populates="questionnaire", cascade="all, delete", passive_deletes=True)
 
     @hybrid_property
     def api_credentials(self):

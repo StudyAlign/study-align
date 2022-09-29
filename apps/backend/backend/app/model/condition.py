@@ -14,17 +14,17 @@ class Condition(Base):
     url = Column(String, nullable=False)
     config = Column(JSON)
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     study = relationship("Study", back_populates="conditions")
 
-    task_id = Column(Integer, ForeignKey('tasks.id'))
+    task_id = Column(Integer, ForeignKey('tasks.id', ondelete="SET NULL"))
     task = relationship("Task", back_populates="condition")
 
-    ml_model = relationship("MLModel", uselist=False, back_populates="condition")
+    ml_model = relationship("MLModel", uselist=False, back_populates="condition", cascade="all, delete", passive_deletes=True)
 
     # logs
     # interactions = relationship("Interaction", back_populates="condition")
-    predictions = relationship("Prediction", back_populates="condition")
+    predictions = relationship("Prediction", back_populates="condition", cascade="all, delete", passive_deletes=True)
 
     def __repr__(self):
         return "<Condition(id='%d', name='%s', config='%s')>" % (self.id, self.name, self.config)

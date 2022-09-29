@@ -66,3 +66,12 @@ async def update_questionnaire(questionnaire_id: int, questionnaire: schema.ques
     if_not_zero(questionnaire_update, ENTITY)
     return questionnaire_update
 
+
+@router.delete("/questionnaires/{questionnaire_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def delete_questionnaire(questionnaire_id: int, db: Session = Depends(get_db)):
+    questionnaire = methods.read(db, model.Questionnaire, questionnaire_id)
+    if_exists(questionnaire, ENTITY)
+    methods.check_if_study_active(db, questionnaire.study_id)
+    db.delete(questionnaire)
+    db.commit()
+    return

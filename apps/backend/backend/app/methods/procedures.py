@@ -74,6 +74,9 @@ def _latin_square(condition_ids: List[int]):
     result = []
     conditions = deque(condition_ids)
 
+    if not condition_ids:
+        condition_ids = [1]
+
     for x in range(len(condition_ids)):
         result.append(list(conditions))
         conditions.rotate(1)

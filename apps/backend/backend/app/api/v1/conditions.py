@@ -57,6 +57,16 @@ async def update_condition(condition_id: int, condition: schema.condition.Condit
     return condition_update
 
 
+@router.delete("/conditions/{condition_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def delete_condition(condition_id: int, db: Session = Depends(get_db)):
+    condition = methods.read(db, model.Condition, condition_id)
+    if_exists(condition, ENTITY)
+    methods.check_if_study_active(db, condition.study_id)
+    db.delete(condition)
+    db.commit()
+    return
+
+
 @router.get("/conditions/{condition_id}/config", response_model=schema.condition.ConditionConfig, dependencies=[Depends(methods.participantLoggerKeyValidator)])
 async def read_condition_config(condition_id: int, db: Session = Depends(get_db)):
     condition = methods.read(db, model.Condition, condition_id)

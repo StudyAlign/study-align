@@ -8,19 +8,19 @@ class ProcedureStep(Base):
 
     id = Column(Integer, primary_key=True)
 
-    procedure_id = Column(Integer, ForeignKey('procedures.id'))
+    procedure_id = Column(Integer, ForeignKey('procedures.id', ondelete="CASCADE"))
     procedure = relationship("Procedure", back_populates="procedure_steps")
 
-    condition_id = Column(Integer, ForeignKey('conditions.id'))
+    condition_id = Column(Integer, ForeignKey('conditions.id', ondelete="CASCADE"))
     condition = relationship("Condition")
 
-    text_id = Column(Integer, ForeignKey('texts.id'))
+    text_id = Column(Integer, ForeignKey('texts.id', ondelete="CASCADE"))
     text = relationship("Text")
 
-    questionnaire_id = Column(Integer, ForeignKey('questionnaires.id'))
+    questionnaire_id = Column(Integer, ForeignKey('questionnaires.id', ondelete="CASCADE"))
     questionnaire = relationship("Questionnaire")
 
-    pause_id = Column(Integer, ForeignKey('pauses.id'))
+    pause_id = Column(Integer, ForeignKey('pauses.id', ondelete="CASCADE"))
     pause = relationship("Pause")
 
     order = Column(Integer)

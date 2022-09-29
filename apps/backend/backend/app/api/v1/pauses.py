@@ -51,3 +51,13 @@ async def update_pause(pause_id: int, pause: schema.pause.PausePatch, db: Sessio
     pause_update = methods.patch(db, model.Pause, pause, pause_id)
     if_not_zero(pause_update, ENTITY)
     return pause_update
+
+
+@router.delete("/pauses/{pause_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def delete_pause(pause_id: int, db: Session = Depends(get_db)):
+    pause = methods.read(db, model.Pause, pause_id)
+    if_exists(pause, ENTITY)
+    methods.check_if_study_active(db, pause.study_id)
+    db.delete(pause)
+    db.commit()
+    return

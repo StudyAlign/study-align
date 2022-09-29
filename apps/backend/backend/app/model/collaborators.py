@@ -8,10 +8,10 @@ class Collaborator(Base):
 
     id = Column(Integer, primary_key=True)
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     study = relationship("Study", back_populates="collaborators")
 
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"))
     user = relationship("User")
 
     __table_args__ = (UniqueConstraint('study_id', 'user_id', name='_unique_collaborator_ix'),)

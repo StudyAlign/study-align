@@ -18,19 +18,19 @@ class Participant(Base):
 
     logger_key = Column(UUID(as_uuid=True), unique=True, nullable=False, default=uuid.uuid4)
 
-    study_id = Column(Integer, ForeignKey('studies.id'))
+    study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     study = relationship("Study", back_populates="participants")
 
-    procedure_id = Column(Integer, ForeignKey('procedures.id'))
+    procedure_id = Column(Integer, ForeignKey('procedures.id', ondelete="SET NULL"))
     procedure = relationship("Procedure", back_populates="participants")
 
     # to track progress, e.g. step x of y
-    current_procedure_step = Column(Integer, ForeignKey('procedure_steps.id'))
+    current_procedure_step = Column(Integer, ForeignKey('procedure_steps.id', ondelete="SET NULL"))
     procedure_step = relationship("ProcedureStep")
 
     current_procedure_step_config = Column(JSON)
 
-    questionnaire_results = relationship("QuestionnaireResult", back_populates="participant")
+    questionnaire_results = relationship("QuestionnaireResult", back_populates="participant", cascade="all, delete", passive_deletes=True)
 
     # log data
 

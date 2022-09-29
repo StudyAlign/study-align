@@ -23,3 +23,10 @@ class ProcedureStep(ProcedureStepBase):
 
     class Config:
         orm_mode = True
+
+
+class ProcedureStepPlanned(BaseModel):
+    condition_id: Optional[int]
+    text_id: Optional[int]
+    questionnaire_id: Optional[int]
+    pause_id: Optional[int]

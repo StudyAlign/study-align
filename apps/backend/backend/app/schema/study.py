@@ -1,8 +1,10 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from enum import Enum
 from pydantic import BaseModel
+
+from schema.procedure_step import ProcedureStep, ProcedureStepPlanned
 
 
 class CurrentSetupStepEnum(str, Enum):
@@ -26,6 +28,7 @@ class StudyCreate(StudyBase):
     description: str
     consent: str
     planned_number_participants: Optional[int]
+    planned_procedure: Optional[Union[dict, list, set, float, int, str, bytes, bool]]
     current_setup_step: Optional[CurrentSetupStepEnum]
 
     class Config:
@@ -42,6 +45,7 @@ class StudyUpdate(BaseModel):
     owner_id: Optional[int]
     invite_only: Optional[bool]
     planned_number_participants: Optional[int]
+    planned_procedure: Optional[List[ProcedureStepPlanned]]
     current_setup_step: Optional[CurrentSetupStepEnum]
 
     class Config:
@@ -67,6 +71,7 @@ class StudyDetails(StudyBase):
 class StudySetupInfo(StudyBase):
     id: int
     planned_number_participants: int
+    planned_procedure: Optional[List[ProcedureStepPlanned]]
     current_setup_step: CurrentSetupStepEnum
 
     class Config:

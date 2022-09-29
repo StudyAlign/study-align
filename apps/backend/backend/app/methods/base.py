@@ -58,7 +58,6 @@ def patch(db: Session, model: Base, data: Union[BaseModel, Dict], id: int, synch
     db.commit()
     return db_data
 
-
 def create_for_relation(db: Session, model: Base, data: Base, fk_name: str, id: int, exclude_unset: bool = False):
     clean_data = data.dict(exclude_unset=exclude_unset)
     db_data = model(**clean_data, **{fk_name: id})
