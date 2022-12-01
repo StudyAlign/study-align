@@ -10,11 +10,11 @@ from model.base import Base
 
 
 def read_interactions(db: Session, study_id: int, limit: int = 100):
-    generic_interactions = db.query(model.GenericInteraction).filter(model.GenericInteraction.study_id == study_id).limit(limit).all()
-    mouse_interactions = db.query(model.MouseInteraction).filter(model.MouseInteraction.study_id == study_id).limit(limit).all()
-    keyboard_interactions = db.query(model.KeyboardInteraction).filter(model.KeyboardInteraction.study_id == study_id).limit(limit).all()
-    drag_interactions = db.query(model.DragInteraction).filter(model.DragInteraction.study_id == study_id).limit(limit).all()
-    touch_interactions = db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).limit(limit).all()
+    generic_interactions = db.query(model.GenericInteraction).filter(model.GenericInteraction.study_id == study_id).order_by(model.GenericInteraction.id.desc()).limit(limit).all()
+    mouse_interactions = db.query(model.MouseInteraction).filter(model.MouseInteraction.study_id == study_id).order_by(model.MouseInteraction.id.desc()).limit(limit).all()
+    keyboard_interactions = db.query(model.KeyboardInteraction).filter(model.KeyboardInteraction.study_id == study_id).order_by(model.KeyboardInteraction.id.desc()).limit(limit).all()
+    drag_interactions = db.query(model.DragInteraction).filter(model.DragInteraction.study_id == study_id).order_by(model.DragInteraction.id.desc()).limit(limit).all()
+    touch_interactions = db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).order_by(model.TouchInteraction.id.desc()).limit(limit).all()
 
     result = [] + generic_interactions + mouse_interactions + keyboard_interactions + drag_interactions + touch_interactions
 
