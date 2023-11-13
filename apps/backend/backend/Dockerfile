@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
 
 #RUN useradd --create-home stdyctrl
 #WORKDIR /home/stdyctrl
@@ -6,7 +6,7 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
 COPY ./app/requirements.txt /app
 RUN pip install --upgrade pip
-RUN pip install -r /app/requirements.txt
+RUN pip install  --no-cache-dir --upgrade -r /app/requirements.txt
 
 COPY ./app /app
 

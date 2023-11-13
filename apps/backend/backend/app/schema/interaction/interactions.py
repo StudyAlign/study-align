@@ -57,7 +57,7 @@ class MouseInteraction(MouseInteractionBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class DragEventEnum(str, Enum):
@@ -91,7 +91,7 @@ class DragInteraction(DragInteractionBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TouchEnum(str, Enum):
@@ -111,7 +111,7 @@ class TouchBase(BaseModel):
     azimuthAngle: Optional[float]
     clientX: float
     clientY: float
-    force = float
+    force: float
     identifier: int
     screenX: float
     screenY: float
@@ -132,7 +132,7 @@ class Touch(TouchBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TouchInteractionEnum(str, Enum):
@@ -167,7 +167,7 @@ class TouchInteraction(TouchInteractionBase):
     touches: List[Touch]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TouchInteractionCreateSingle(InteractionCreateBase):
@@ -215,7 +215,7 @@ class KeyboardInteraction(KeyboardInteractionBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class GenericInteractionBase(BaseModel):
@@ -241,4 +241,4 @@ class GenericInteraction(GenericInteractionBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

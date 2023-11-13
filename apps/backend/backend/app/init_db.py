@@ -11,6 +11,8 @@ from model.procedure import Procedure
 from model.participant import Participant
 from model.procedure_progress import ProcedureProgress
 from model.procedure_step import ProcedureStep
+from model.procedure_config import ProcedureConfig
+from model.procedure_config_step import ProcedureConfigStep
 from model.questionnaire import Questionnaire
 from model.questionnaire_result import QuestionnaireResult
 from model.role import Role
@@ -31,6 +33,8 @@ Participant.__table__
 Pause.__table__
 ProcedureStep.__table__
 ProcedureProgress.__table__
+ProcedureConfig.__table__
+ProcedureConfigStep.__table__
 Questionnaire.__table__
 QuestionnaireResult.__table__
 Role.__table__

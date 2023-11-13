@@ -28,4 +28,4 @@ class ProcedureStep(Base):
     __table_args__ = (UniqueConstraint('condition_id', 'text_id', 'questionnaire_id', 'pause_id', name='_unique_step_ix'),)
 
     def __repr__(self):
-        return "<ProcedureStep (id='%d', order='%d')>" % (self.id, self.order)
+        return "<ProcedureStep (id='%d', order='%d')>" % (self.id if self.id else 0, self.order)

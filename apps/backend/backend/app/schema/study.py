@@ -56,7 +56,7 @@ class Study(StudyBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class StudyDetails(StudyBase):
@@ -65,7 +65,7 @@ class StudyDetails(StudyBase):
     consent: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class StudySetupInfo(StudyBase):
@@ -75,4 +75,4 @@ class StudySetupInfo(StudyBase):
     current_setup_step: CurrentSetupStepEnum
 
     class Config:
-        orm_mode = True
+        from_attributes = True

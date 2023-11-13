@@ -32,4 +32,4 @@ class Participant(ParticipantBase):
     logger_key: uuid.UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True

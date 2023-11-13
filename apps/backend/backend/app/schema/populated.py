@@ -20,7 +20,7 @@ class ConditionPopulated(Condition):
     study: Study
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProcedureStepPopulated(ProcedureStep):
@@ -30,7 +30,7 @@ class ProcedureStepPopulated(ProcedureStep):
     pause: Optional[PauseStep] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProcedurePopulated(Procedure):
@@ -38,14 +38,14 @@ class ProcedurePopulated(Procedure):
     procedure_steps: List[ProcedureStepPopulated]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProcedureProgressPopulated(ProcedureProgress):
     procedure_step: ProcedureStep
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ParticipantPopulated(Participant):
@@ -54,14 +54,14 @@ class ParticipantPopulated(Participant):
     study: Study
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class QuestionnairePopulated(Questionnaire):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PredictionPopulated(Prediction):
@@ -70,14 +70,14 @@ class PredictionPopulated(Prediction):
     condition: Condition
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class MLModelPopulated(MLModel):
     condition: Condition
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class MLModelCloudPopulated(MLModelPopulated):
@@ -93,32 +93,32 @@ class TaskPopulated(Task):
     condition: Optional[Condition]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TextPopulated(Text):
     study: Optional[Study]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class QuestionnairePopulated(Questionnaire):
     study: Optional[Study]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PausePopulated(Pause):
     study: Optional[Study]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserPopulated(User):
     role: Optional[Role]
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -4,6 +4,8 @@ from .procedure import Procedure
 from .participant import Participant
 from .procedure_progress import ProcedureProgress
 from .procedure_step import ProcedureStep
+from .procedure_config import ProcedureConfig
+from .procedure_config_step import ProcedureConfigStep
 from .questionnaire import Questionnaire
 from .questionnaire_result import QuestionnaireResult
 from .study import Study

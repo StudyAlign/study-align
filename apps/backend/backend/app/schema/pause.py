@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, Literal
 from enum import Enum
 
 from pydantic import BaseModel, Field
@@ -38,10 +38,10 @@ class Pause(PauseBase):
     study_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PauseStep(Pause):
-    procedure_step_type: str = Field("pause", const=True)
+    procedure_step_type: str = Literal["pause"]
     is_last_step: Optional[bool]
     is_second_last_step: Optional[bool]

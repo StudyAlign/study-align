@@ -2,6 +2,7 @@ from methods.base import *
 from methods.api import *
 
 from methods.conditions import *
+from methods.procedure_configs import *
 from methods.procedures import *
 from methods.procedure_steps import *
 from methods.participants import *

@@ -22,7 +22,7 @@ class ProcedureStep(ProcedureStepBase):
     pause_id: Optional[int]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProcedureStepPlanned(BaseModel):

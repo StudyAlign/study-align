@@ -19,4 +19,4 @@ class QuestionnaireResult(QuestionnaireResultBase):
     questionnaire_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

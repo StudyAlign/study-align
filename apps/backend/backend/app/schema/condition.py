@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Literal
 
 from pydantic import BaseModel
 from pydantic.fields import Field
@@ -37,11 +37,11 @@ class Condition(ConditionBase):
     #predictions: List[Prediction] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ConditionStep(Condition):
-    procedure_step_type: str = Field("condition", const=True)
+    procedure_step_type: str = Literal["condition"]
     is_last_step: Optional[bool]
     is_second_last_step: Optional[bool]
 
@@ -51,4 +51,4 @@ class ConditionConfig(BaseModel):
     config: Union[dict, list, set, float, int, str, bytes, bool]
 
     class Config:
-        orm_mode = True
+        from_attributes = True

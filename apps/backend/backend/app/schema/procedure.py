@@ -19,7 +19,7 @@ class Procedure(ProcedureBase):
     procedure_steps: List[ProcedureStep]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # Dummy models are needed to generate procedures

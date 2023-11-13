@@ -4,7 +4,7 @@ from decouple import config
 import logging
 
 from api.v1 import studies, conditions, procedures, tasks, texts, questionnaires, participants, procedure_steps, \
-    users, interaction, machine_learning, pauses
+    users, interaction, machine_learning, pauses, procedure_configs
 
 logging.config.fileConfig("logging.conf", disable_existing_loggers=False)
 logger = logging.getLogger('studyalign')
@@ -41,6 +41,12 @@ app.include_router(
     conditions.router,
     prefix=API_PREFIX,
     tags=["Conditions"]
+)
+
+app.include_router(
+    procedure_configs.router,
+    prefix=API_PREFIX,
+    tags=["ProcedureConfigs"]
 )
 
 app.include_router(

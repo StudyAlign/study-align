@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Literal
 
 from pydantic import BaseModel, Json, Field
 
@@ -53,10 +53,10 @@ class Questionnaire(QuestionnaireBase):
     study_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class QuestionnaireStep(Questionnaire):
-    procedure_step_type: str = Field("questionnaire", const=True)
+    procedure_step_type: str = Literal["questionnaire"]
     is_last_step: Optional[bool]
     is_second_last_step: Optional[bool]

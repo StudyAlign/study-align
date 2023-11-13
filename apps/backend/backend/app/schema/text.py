@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Literal
 
 from pydantic import BaseModel, Field
 
@@ -23,14 +23,13 @@ class TextPatch(BaseModel):
 
 class Text(TextBase):
     id: int
-
     study_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TextStep(Text):
-    procedure_step_type: str = Field("text", const=True)
+    procedure_step_type: str = Literal["text"]
     is_last_step: Optional[bool]
     is_second_last_step: Optional[bool]

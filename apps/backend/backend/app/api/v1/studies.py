@@ -30,7 +30,10 @@ async def read_studies(db: Session = Depends(get_db)):
 
 @router.post("/studies", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def create_study(study: schema.study.StudyCreate, db: Session = Depends(get_db)):
-    return methods.create(db, model.Study, study)
+    created_study = methods.create(db, model.Study, study)
+    # Create a ProcedureConfig right away
+    methods.create(db, model.ProcedureConfig, {"study_id": created_study.id, "main": True})
+    return created_study
 
 
 @router.get("/studies/{study_id}", response_model=schema.study.StudyDetails)
@@ -64,16 +67,11 @@ async def read_study_setup_info(study_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/studies/{study_id}/procedures", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def generate_procedures_with_steps(study_id: int,
-                                         steps: List[Union[schema.procedure.ProcedureCondition,
-                                                           schema.procedure.ProcedureText,
-                                                           schema.procedure.ProcedureQuestionnaire,
-                                                           schema.procedure.ProcedurePause]],
-                                         db: Session = Depends(get_db)):
+async def generate_procedures_with_steps(study_id: int, db: Session = Depends(get_db)):
     procedures = methods.read_list_by(db, model.Procedure, "study_id", study_id)
     if procedures:
         raise HTTPException(status_code=409, detail="Procedures have already been generated")
-    return methods.create_procedures_with_steps(db, study_id, steps)
+    return methods.create_procedures_with_steps(db, study_id)
 
 
 @router.post("/studies/{study_id}/participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])

@@ -22,6 +22,8 @@ class Study(Base):
     planned_number_participants = Column(Integer, nullable=False)
     planned_procedure = Column(JSONB, nullable=True)
 
+    procedure_config = relationship("ProcedureConfig", back_populates="study", cascade="all, delete", passive_deletes=True)
+
     procedures = relationship("Procedure", back_populates="study", cascade="all, delete", passive_deletes=True)
     conditions = relationship("Condition", back_populates="study", cascade="all, delete", passive_deletes=True)
     participants = relationship("Participant", back_populates="study", cascade="all, delete", passive_deletes=True)

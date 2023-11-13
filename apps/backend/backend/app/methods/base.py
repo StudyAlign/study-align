@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Union, List, Dict
 
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import update
 
 from model.base import Base
 
@@ -20,6 +21,12 @@ def read_by(db: Session, model: Base, field: str, value: Union[str, int]):
         one_or_none()
 
 
+def read_by_dict(db: Session, model: Base, filter_dict: dict):
+    return db.query(model).\
+        filter_by(**filter_dict).\
+        one_or_none()
+
+
 def read_with_join(db: Session, model: Base, id: int, join: str):
     return db.query(model). \
         options(joinedload(join)). \
@@ -30,6 +37,12 @@ def read_with_join(db: Session, model: Base, id: int, join: str):
 def read_list_by(db: Session, model: Base, field: str, value: Union[str, int]):
     return db.query(model).\
         filter_by(**{field: value}).\
+        all()
+
+
+def read_list_by_dict(db: Session, model: Base, filter_dict: dict):
+    return db.query(model).\
+        filter_by(**filter_dict).\
         all()
 
 
@@ -57,6 +70,18 @@ def patch(db: Session, model: Base, data: Union[BaseModel, Dict], id: int, synch
         update(data, synchronize_session=synchronize_session)
     db.commit()
     return db_data
+
+
+def patch_all(db: Session, model: Base, data: List[Union[BaseModel, Dict]], synchronize_session: str = "evaluate"):
+    db.execute(
+        update(model),
+        data
+    )
+    db.commit()
+
+    # synch session afterwards?!
+    return
+
 
 def create_for_relation(db: Session, model: Base, data: Base, fk_name: str, id: int, exclude_unset: bool = False):
     clean_data = data.dict(exclude_unset=exclude_unset)
