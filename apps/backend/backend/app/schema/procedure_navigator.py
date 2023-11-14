@@ -23,8 +23,8 @@ class ProcedureNavigatorConnection(BaseModel):
 
 class ProcedureNavigatorConnectionUpdate(BaseModel):
     source: ProcedureNavigatorSourceEnum
-    ext_id: Optional[str]
+    ext_id: Optional[str] = None
     participant_token: UUID
-    procedure_step_id: Optional[int]
+    procedure_step_id: Optional[int] = None
     state: ProcedureNavigatorStateEnum
 
