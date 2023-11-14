@@ -42,6 +42,6 @@ class Pause(PauseBase):
 
 
 class PauseStep(Pause):
-    procedure_step_type: str = Literal["pause"]
-    is_last_step: Optional[bool] = False
-    is_second_last_step: Optional[bool] = False
+    procedure_step_type: Literal["pause"]
+    is_last_step: Optional[bool] = None
+    is_second_last_step: Optional[bool] = None
