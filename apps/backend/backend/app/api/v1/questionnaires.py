@@ -45,7 +45,7 @@ async def create_questionnaire(questionnaire: schema.questionnaire.Questionnaire
         api_credentials["password"] = questionnaire.api_password
         del questionnaire.api_password
 
-    q = questionnaire.dict()
+    q = questionnaire.model_dump()
     q["_api_credentials"] = api_credentials
 
     return methods.create(db, model.Questionnaire, q)

@@ -68,8 +68,8 @@ async def procedure_start(participant: schema.populated.ParticipantPopulated = D
             participant_id=participant.id,
             procedure_step_id=first_step.id
         )
-        db.add(model.ProcedureProgress(**progress_start_experiment.dict()))
-        db.add(model.ProcedureProgress(**progress_start_step.dict()))
+        db.add(model.ProcedureProgress(**progress_start_experiment.model_dump()))
+        db.add(model.ProcedureProgress(**progress_start_step.model_dump()))
         db.commit()
         db.refresh(first_step)
     except exc.SQLAlchemyError as e:
@@ -156,8 +156,8 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
                 participant_id=participant.id,
                 procedure_step_id=None
             )
-            db.add(model.ProcedureProgress(**progress_end_step.dict()))
-            db.add(model.ProcedureProgress(**progress_end_experiment.dict()))
+            db.add(model.ProcedureProgress(**progress_end_step.model_dump()))
+            db.add(model.ProcedureProgress(**progress_end_experiment.model_dump()))
             db.commit()
             navigator.unsubscribe(participant.id)
             raise HTTPException(status_code=405,
@@ -173,8 +173,8 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
             participant_id=participant.id,
             procedure_step_id=next_step.id
         )
-        db.add(model.ProcedureProgress(**progress_end_step.dict()))
-        db.add(model.ProcedureProgress(**progress_start_step.dict()))
+        db.add(model.ProcedureProgress(**progress_end_step.model_dump()))
+        db.add(model.ProcedureProgress(**progress_start_step.model_dump()))
         db.commit()
 
         # subscribe to SSE if next step is a limesurvey questionnaire
@@ -281,8 +281,8 @@ async def procedure_end(participant: schema.participant.Participant = Depends(me
                 participant_id=participant.id,
                 procedure_step_id=None
             )
-            db.add(model.ProcedureProgress(**progress_end_step.dict()))
-            db.add(model.ProcedureProgress(**progress_end_experiment.dict()))
+            db.add(model.ProcedureProgress(**progress_end_step.model_dump()))
+            db.add(model.ProcedureProgress(**progress_end_experiment.model_dump()))
             db.commit()
             navigator.unsubscribe(participant.id)
             return

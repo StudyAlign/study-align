@@ -124,7 +124,7 @@ async def log_touch_interaction_single(data: schema.interaction.interactions.Tou
         del touch_interaction_data['targetTouches']
 
         touches = data.interaction.touches
-        db_touches_data = [model.Touch(**touch.dict()) for touch in touches]
+        db_touches_data = [model.Touch(**touch.model_dump()) for touch in touches]
 
         db_touch_interaction = model.TouchInteraction(**touch_interaction_data)
         db.add(db_touch_interaction)
@@ -162,7 +162,7 @@ async def log_touch_interaction_bulk(data: schema.interaction.interactions.Touch
         interactions_bulk = []
         touches_bulk = []
         for touch_interaction in data.interactions:
-            touch_interaction_data = touch_interaction.dict()
+            touch_interaction_data = touch_interaction.model_dump()
             touch_interaction_data['study_id'] = participant.study_id
             touch_interaction_data['participant_id'] = participant.id
             touch_interaction_data['condition_id'] = data.condition_id
@@ -172,7 +172,7 @@ async def log_touch_interaction_bulk(data: schema.interaction.interactions.Touch
             interactions_bulk.append(touch_interaction_data)
 
             for touch in touch_interaction.touches:
-                t = touch.dict()
+                t = touch.model_dump()
                 touches_bulk.append(t)
 
         db.execute(

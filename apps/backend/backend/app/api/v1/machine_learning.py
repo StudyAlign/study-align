@@ -83,7 +83,7 @@ async def create_machine_learning_cloud(machine_learning: schema.machine_learnin
     if ml_key:
         detail = "Model key %s already in use" % str(ml_key.key)
         raise HTTPException(status_code=409, detail=detail)
-    data = machine_learning.dict()
+    data = machine_learning.model_dump()
     data['time'] = datetime.utcnow()
     data['distribute'] = False
     return methods.create(db, model.MLModel, data)
@@ -110,7 +110,7 @@ async def create_machine_learning_distribute(ml_model: UploadFile = File(...),
             "distribute": True
         }
         machine_learning = schema.machine_learning.ml_model.MLModelCreateDistribute(**machine_learning_data)
-        machine_learning_db = model.MLModel(**machine_learning.dict())
+        machine_learning_db = model.MLModel(**machine_learning.model_dump())
         machine_learning_db.time = datetime.utcnow()
         methods.create_machine_learning_model_with_upload(db, machine_learning_db, ml_model)
     except exc.SQLAlchemyError:
@@ -250,7 +250,7 @@ async def update_machine_learning_cloud_new(machine_learning_id: int,
     old_model_id = machine_learning.id
 
     machine_learning_current = machine_learning.__dict__
-    machine_learning_update = machine_learning_update.dict(exclude_unset=True)
+    machine_learning_update = machine_learning_update.model_dump(exclude_unset=True)
 
     # replace new data
     machine_learning_new_data = {**machine_learning_current, **machine_learning_update}
@@ -276,7 +276,7 @@ async def update_machine_learning_cloud_replace(machine_learning_id: int,
         condition = methods.read(db, model.Condition, machine_learning_update.condition_id)
         if_exists(condition, "Condition")
 
-    data = machine_learning_update.dict(exclude_unset=True)
+    data = machine_learning_update.model_dump(exclude_unset=True)
     data['time'] = datetime.utcnow()
     data['path'] = data.get('path') or machine_learning.path
     methods.patch(db, model.MLModel, data, machine_learning_id)
@@ -322,7 +322,7 @@ async def make_prediction_cloud(machine_learning_id: int,
             "condition_id": machine_learning.condition_id
         }
         prediction_create = schema.machine_learning.prediction.PredictionCreate(**prediction_data)
-        prediction_db = model.Prediction(**prediction_create.dict())
+        prediction_db = model.Prediction(**prediction_create.model_dump())
         return methods.create(db, model.Prediction, prediction_db)
 
     detail = "Model response (%s) was empty" % str(api_url)
