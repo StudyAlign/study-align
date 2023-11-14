@@ -26,23 +26,23 @@ class QuestionnaireCreate(QuestionnaireBase):
 
 class QuestionnaireRemoteControl(QuestionnaireBase):
     study_id: int
-    api_url: Optional[str]
-    api_username: Optional[str]
-    api_password: Optional[str]
+    api_url: Optional[str] = None
+    api_username: Optional[str] = None
+    api_password: Optional[str] = None
 
-    credentials: Optional[Json[dict]]
+    credentials: Optional[Json[dict]] = None
 
 
 class QuestionnairePatch(BaseModel):
-    url: Optional[str]
-    system: Optional[QuestionnaireSystemEnum]
+    url: Optional[str] = None
+    system: Optional[QuestionnaireSystemEnum] = None
 
-    ext_id: Optional[str]
+    ext_id: Optional[str] = None
 
-    api_url: Optional[str]
-    api_username: Optional[str]
-    api_password: Optional[str]
-    api_credentials: Optional[str]
+    api_url: Optional[str] = None
+    api_username: Optional[str] = None
+    api_password: Optional[str] = None
+    api_credentials: Optional[str] = None
 
     class Config:
         extra = 'forbid'

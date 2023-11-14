@@ -16,13 +16,13 @@ class UserCreate(UserBase):
     password: str
 
 class UserUpdate(UserBase):
-    name: Optional[str]
-    firstname: Optional[str]
-    lastname: Optional[str]
-    email: Optional[str]
-    password: Optional[str]
-    role_id: Optional[int]
-    is_active: Optional[bool]
+    name: Optional[str] = None
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+    role_id: Optional[int] = None
+    is_active: Optional[bool] = None
 
     class Config:
         extra = 'forbid'

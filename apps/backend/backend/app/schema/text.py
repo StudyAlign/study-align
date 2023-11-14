@@ -14,8 +14,8 @@ class TextCreate(TextBase):
 
 
 class TextPatch(BaseModel):
-    title: Optional[str]
-    body: Optional[str]
+    title: Optional[str] = None
+    body: Optional[str]= None
 
     class Config:
         extra = 'forbid'

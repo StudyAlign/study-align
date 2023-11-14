@@ -14,7 +14,7 @@ class PauseBase(BaseModel):
     body: str
     proceed_body: str
     type: PauseTypeEnum
-    config: Optional[Union[dict, list, set, float, int, str, bytes, bool]]
+    config: Optional[Union[dict, list, set, float, int, str, bytes, bool]] = None
 
 
 class PauseCreate(PauseBase):
@@ -23,11 +23,11 @@ class PauseCreate(PauseBase):
 
 
 class PausePatch(BaseModel):
-    title: Optional[str]
-    body: Optional[str]
-    proceed_body: Optional[str]
-    type: Optional[PauseTypeEnum]
-    config: Optional[Union[dict, list, set, float, int, str, bytes, bool]]
+    title: Optional[str] = None
+    body: Optional[str] = None
+    proceed_body: Optional[str] = None
+    type: Optional[PauseTypeEnum] = None
+    config: Optional[Union[dict, list, set, float, int, str, bytes, bool]] = None
 
     class Config:
         extra = 'forbid'

@@ -21,20 +21,20 @@ class MLModelCreateDistribute(MLModelBase):
 
 
 class MLModelUpdateBase(BaseModel):
-    name: Optional[str]
-    description: Optional[str]
-    active: Optional[bool]
-    condition_id: Optional[int]
-    changelog: Optional[str]
-    path: Optional[str]
+    name: Optional[str] = None
+    description: Optional[str] = None
+    active: Optional[bool] = None
+    condition_id: Optional[int] = None
+    changelog: Optional[str] = None
+    path: Optional[str] = None
 
 
 class MLModelUpdateDistribute(MLModelUpdateBase):
-    description: Optional[str]
+    description: Optional[str] = None
     active: bool
-    condition_id: Optional[int]
-    path: Optional[str]
-    changelog: Optional[str]
+    condition_id: Optional[int] = None
+    path: Optional[str] = None
+    changelog: Optional[str] = None
 
 
 class MLModelUpdateCloud(MLModelUpdateBase):

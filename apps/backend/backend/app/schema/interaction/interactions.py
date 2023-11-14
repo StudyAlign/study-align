@@ -107,8 +107,8 @@ class TouchTypeEnum(str, Enum):
 
 class TouchBase(BaseModel):
     uuid: uuid.UUID
-    altitudeAngle: Optional[float]
-    azimuthAngle: Optional[float]
+    altitudeAngle: Optional[float] = None
+    azimuthAngle: Optional[float] = None
     clientX: float
     clientY: float
     force: float
@@ -121,7 +121,7 @@ class TouchBase(BaseModel):
     radiusY: float
     rotationAngle: float
     target: Union[dict, list, set, float, int, str, bytes, bool]
-    touchType: Optional[TouchTypeEnum]
+    touchType: Optional[TouchTypeEnum] = None
 
 
 class TouchCreate(TouchBase):

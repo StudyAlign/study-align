@@ -30,7 +30,7 @@ ProcedureConfigSteps = List[Union[ProcedureConfigStepCondition, ProcedureConfigS
 
 
 class ProcedureConfigCreateSingleBase(ProcedureConfigStepBase):
-    order: Optional[int]
+    order: Optional[int] = 0
 
 
 class ProcedureConfigStepCreateSingleCondition(ProcedureConfigCreateSingleBase):

@@ -27,26 +27,26 @@ class StudyBase(BaseModel):
 class StudyCreate(StudyBase):
     description: str
     consent: str
-    planned_number_participants: Optional[int]
-    planned_procedure: Optional[Union[dict, list, set, float, int, str, bytes, bool]]
-    current_setup_step: Optional[CurrentSetupStepEnum]
+    planned_number_participants: Optional[int] = None
+    planned_procedure: Optional[Union[dict, list, set, float, int, str, bytes, bool]] = None
+    current_setup_step: Optional[CurrentSetupStepEnum] = None
 
     class Config:
         extra = 'forbid'
 
 
 class StudyUpdate(BaseModel):
-    name: Optional[str]
-    startDate: Optional[datetime]
-    description: Optional[str]
-    consent: Optional[str]
-    endDate: Optional[datetime]
-    is_active: Optional[bool]
-    owner_id: Optional[int]
-    invite_only: Optional[bool]
-    planned_number_participants: Optional[int]
-    planned_procedure: Optional[List[ProcedureStepPlanned]]
-    current_setup_step: Optional[CurrentSetupStepEnum]
+    name: Optional[str] = None
+    startDate: Optional[datetime] = None
+    description: Optional[str] = None
+    consent: Optional[str] = None
+    endDate: Optional[datetime] = None
+    is_active: Optional[bool] = None
+    owner_id: Optional[int] = None
+    invite_only: Optional[bool] = None
+    planned_number_participants: Optional[int] = None
+    planned_procedure: Optional[List[ProcedureStepPlanned]] = None
+    current_setup_step: Optional[CurrentSetupStepEnum] = None
 
     class Config:
         extra = 'forbid'

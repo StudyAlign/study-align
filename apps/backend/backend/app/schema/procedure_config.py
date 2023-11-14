@@ -29,12 +29,12 @@ class ProcedureConfigStep(BaseModel):
     counterbalance: bool
 
     procedure_config_id: int
-    condition_id: Optional[int]
-    text_id: Optional[int]
-    questionnaire_id: Optional[int]
-    pause_id: Optional[int]
-    block_id: Optional[int]
-    block: Optional[ProcedureConfig]
+    condition_id: Optional[int] = None
+    text_id: Optional[int] = None
+    questionnaire_id: Optional[int] = None
+    pause_id: Optional[int] = None
+    block_id: Optional[int] = None
+    block: Optional[ProcedureConfig] = None
 
     class Config:
         from_attributes = True

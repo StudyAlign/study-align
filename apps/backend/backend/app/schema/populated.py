@@ -90,35 +90,35 @@ class MLModelDistributePopulated(MLModelPopulated):
 
 
 class TaskPopulated(Task):
-    condition: Optional[Condition]
+    condition: Optional[Condition] = None
 
     class Config:
         from_attributes = True
 
 
 class TextPopulated(Text):
-    study: Optional[Study]
+    study: Optional[Study] = None
 
     class Config:
         from_attributes = True
 
 
 class QuestionnairePopulated(Questionnaire):
-    study: Optional[Study]
+    study: Optional[Study] = None
 
     class Config:
         from_attributes = True
 
 
 class PausePopulated(Pause):
-    study: Optional[Study]
+    study: Optional[Study] = None
 
     class Config:
         from_attributes = True
 
 
 class UserPopulated(User):
-    role: Optional[Role]
+    role: Optional[Role] = None
 
     class Config:
         from_attributes = True

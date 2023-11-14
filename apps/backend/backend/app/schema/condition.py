@@ -16,10 +16,10 @@ class ConditionCreate(ConditionBase):
 
 
 class ConditionPatch(BaseModel):
-    name: Optional[str]
-    config: Optional[Union[dict, list, set, float, int, str, bytes, bool]]
-    url: Optional[str]
-    task_id: Optional[int]
+    name: Optional[str] = None
+    config: Optional[Union[dict, list, set, float, int, str, bytes, bool]] = None
+    url: Optional[str] = None
+    task_id: Optional[int] = None
 
     class Config:
         extra = 'forbid'
@@ -29,7 +29,7 @@ class Condition(ConditionBase):
     id: int
     uuid: uuid.UUID
 
-    task_id: Optional[int]
+    task_id: Optional[int] = None
     study_id: int
 
     #ml_model: Optional[MLModel]

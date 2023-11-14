@@ -41,7 +41,7 @@ async def delete_procedure_config_block(block_id: int, db: Session = Depends(get
 
 
 # Create steps from any element (condition, text, questionnnaire, pause or block)
-@router.post("/procedure-configs/{procedure_config_id}/create-step", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+@router.post("/procedure-configs/{procedure_config_id}/create-step", response_model=schema.procedure_config.ProcedureConfigStep, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def create_procedure_config_step(procedure_config_id: int, procedure_config_step: schema.procedure_config_step.ProcedureConfigCreateSingleStep,
                       db: Session = Depends(get_db)):
     return methods.create_procedure_config_step(db, procedure_config_id, procedure_config_step)

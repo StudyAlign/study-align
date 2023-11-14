@@ -16,17 +16,17 @@ class ProcedureStep(ProcedureStepBase):
     id: int
 
     procedure_id: int
-    condition_id: Optional[int]
-    text_id: Optional[int]
-    questionnaire_id: Optional[int]
-    pause_id: Optional[int]
+    condition_id: Optional[int] = None
+    text_id: Optional[int] = None
+    questionnaire_id: Optional[int] = None
+    pause_id: Optional[int] = None
 
     class Config:
         from_attributes = True
 
 
 class ProcedureStepPlanned(BaseModel):
-    condition_id: Optional[int]
-    text_id: Optional[int]
-    questionnaire_id: Optional[int]
-    pause_id: Optional[int]
+    condition_id: Optional[int] = None
+    text_id: Optional[int] = None
+    questionnaire_id: Optional[int] = None
+    pause_id: Optional[int] = None

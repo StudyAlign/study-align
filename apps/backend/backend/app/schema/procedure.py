@@ -25,7 +25,7 @@ class Procedure(ProcedureBase):
 # Dummy models are needed to generate procedures
 class ProcedureCondition(BaseModel):
     dummy: bool
-    condition_id: Optional[int]
+    condition_id: Optional[int] = None
 
 
 class ProcedureText(BaseModel):

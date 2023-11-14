@@ -20,9 +20,9 @@ class RefreshToken(BaseModel):
 
 
 class TokenData(BaseModel):
-    participant_token: Optional[str]
-    api_admin_key: Optional[str]
-    user_name: Optional[str]
+    participant_token: Optional[str] = None
+    api_admin_key: Optional[str] = None
+    user_name: Optional[str] = None
 
 
 class Admin(BaseModel):

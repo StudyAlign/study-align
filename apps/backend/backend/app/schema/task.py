@@ -15,8 +15,8 @@ class TaskCreate(TaskBase):
 
 
 class TaskPatch(BaseModel):
-    name: Optional[str]
-    description: Optional[str]
+    name: Optional[str] = None
+    description: Optional[str] = None
 
     class Config:
         extra = 'forbid'
