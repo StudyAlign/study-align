@@ -40,6 +40,7 @@ def _create_participants_bulk(db: Session, study_id: int, amount: int, procedure
     procedure_cycle = cycle(procedure_ids)
     for i in range(amount):
         procedure_id = next(procedure_cycle)
+        procedure_id = procedure_id[0]
         participant = model.Participant(study_id=study_id, procedure_id=procedure_id, state="free")
         bulk_insert.append(participant)
     db.add_all(bulk_insert)
