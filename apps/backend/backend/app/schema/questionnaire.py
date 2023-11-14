@@ -51,7 +51,6 @@ class QuestionnairePatch(BaseModel):
 class Questionnaire(QuestionnaireBase):
     id: int
     study_id: int
-    study_id: int
 
     class Config:
         from_attributes = True
