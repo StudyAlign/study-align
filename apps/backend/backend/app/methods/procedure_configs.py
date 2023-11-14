@@ -11,6 +11,7 @@ import model
 
 import methods.conditions
 from api import if_exists
+from api.utils import if_belongs_to_study
 
 from schema.procedure import ProcedureCondition, ProcedureText, ProcedureQuestionnaire, ProcedurePause
 from schema.procedure_progress import ProcedureProgressStateEnum, ProcedureProgressCreate
@@ -44,6 +45,7 @@ def read_procedure_config_step_ids_by_config_main_id(db: Session, procedure_conf
 def check_if_config_step_exists(db, model, id, entity):
     config_step = methods.read(db, model, id)
     if_exists(config_step, entity)
+    return config_step
 
 # Initial creation of a single config step.
 
@@ -72,21 +74,28 @@ ProcedureConfigStepText,
 ProcedureConfigStepQuestionnaire,
 ProcedureConfigStepPause,
 ProcedureConfigStepBlock]):
+    procedure_config = methods.read(db, model.ProcedureConfig, procedure_config_id)
+    if_exists(procedure_config, "ProcedureConfig")
     procedure_config_step = model.ProcedureConfigStep(procedure_config_id=procedure_config_id, order=order, counterbalance=step.counterbalance)
     if isinstance(step, ProcedureConfigStepCondition):
-        check_if_config_step_exists(db, model.Condition, step.condition_id, "Condition")
+        condition = check_if_config_step_exists(db, model.Condition, step.condition_id, "Condition")
+        if_belongs_to_study(condition, procedure_config.study_id)
         procedure_config_step.condition_id = step.condition_id
     if isinstance(step, ProcedureConfigStepText):
-        check_if_config_step_exists(db, model.Text, step.text_id, "Text")
+        text = check_if_config_step_exists(db, model.Text, step.text_id, "Text")
+        if_belongs_to_study(text, procedure_config.study_id)
         procedure_config_step.text_id = step.text_id
     if isinstance(step, ProcedureConfigStepQuestionnaire):
-        check_if_config_step_exists(db, model.Questionnaire, step.questionnaire_id, "Questionnaire")
+        questionnaire = check_if_config_step_exists(db, model.Questionnaire, step.questionnaire_id, "Questionnaire")
+        if_belongs_to_study(questionnaire, procedure_config.study_id)
         procedure_config_step.questionnaire_id = step.questionnaire_id
     if isinstance(step, ProcedureConfigStepPause):
-        check_if_config_step_exists(db, model.Pause, step.pause_id, "Pause")
+        pause = check_if_config_step_exists(db, model.Pause, step.pause_id, "Pause")
+        if_belongs_to_study(pause, procedure_config.study_id)
         procedure_config_step.pause_id = step.pause_id
     if isinstance(step, ProcedureConfigStepBlock):
-        check_if_config_step_exists(db, model.ProcedureConfig, step.block_id, "ProcedureConfig")
+        block = check_if_config_step_exists(db, model.ProcedureConfig, step.block_id, "ProcedureConfig")
+        if_belongs_to_study(block, procedure_config.study_id)
         procedure_config_step.block_id = step.block_id
         bulk_insert = _iterate_procedure_config_steps(db, bulk_insert, step.block_id, step.block)
     bulk_insert.append(procedure_config_step)
@@ -97,18 +106,25 @@ ProcedureConfigStepBlock]):
 # Only create a single procedure config step. This needs to be done, to insert steps after the config has been initialized.
 # After that, config step order needs to be updated.
 def _create_procedure_config_step(db: Session, procedure_config_id: int, step: ProcedureConfigCreateSingleStep):
+    procedure_config = methods.read(db, model.ProcedureConfig, procedure_config_id)
+    if_exists(procedure_config, "ProcedureConfig")
     step = step.model_dump()
     step["procedure_config_id"] = procedure_config_id
     if isinstance(step, ProcedureConfigStepCondition):
-        check_if_config_step_exists(db, model.Condition, step.condition_id, "Condition")
+        condition = check_if_config_step_exists(db, model.Condition, step.condition_id, "Condition")
+        if_belongs_to_study(condition, procedure_config.study_id)
     if isinstance(step, ProcedureConfigStepText):
-        check_if_config_step_exists(db, model.Text, step.text_id, "Text")
+        text = check_if_config_step_exists(db, model.Text, step.text_id, "Text")
+        if_belongs_to_study(text, procedure_config.study_id)
     if isinstance(step, ProcedureConfigStepQuestionnaire):
-        check_if_config_step_exists(db, model.Questionnaire, step.questionnaire_id, "Questionnaire")
+        questionnaire = check_if_config_step_exists(db, model.Questionnaire, step.questionnaire_id, "Questionnaire")
+        if_belongs_to_study(questionnaire, procedure_config.study_id)
     if isinstance(step, ProcedureConfigStepPause):
-        check_if_config_step_exists(db, model.Pause, step.pause_id, "Pause")
+        pause = check_if_config_step_exists(db, model.Pause, step.pause_id, "Pause")
+        if_belongs_to_study(pause, procedure_config.study_id)
     if isinstance(step, ProcedureConfigStepBlockSingle):
-        check_if_config_step_exists(db, model.ProcedureConfig, step.block_id, "ProcedureConfig")
+        block = check_if_config_step_exists(db, model.ProcedureConfig, step.block_id, "ProcedureConfig")
+        if_belongs_to_study(block, procedure_config.study_id)
     return step
 
 

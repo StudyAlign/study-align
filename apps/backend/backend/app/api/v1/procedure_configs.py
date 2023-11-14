@@ -1,9 +1,7 @@
 from fastapi import Depends, APIRouter
-from typing import List
 
 from starlette import status
 
-from methods.dependencies.security import ParticipantValidator, UserValidator
 from model.base import Session
 from api import get_db, if_exists, if_not_zero
 
@@ -30,6 +28,16 @@ async def read_procedure_config(procedure_config_id: int, db: Session = Depends(
 async def create_procedure_config_block(procedure_config_block: schema.procedure_config.ProcedureConfigBlockCreate,
                       db: Session = Depends(get_db)):
     return methods.create(db, model.ProcedureConfig, procedure_config_block)
+
+
+@router.delete("/procedure-configs/block/{block-id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def delete_procedure_config_block(block_id: int, db: Session = Depends(get_db)):
+    block = methods.read(db, model.ProcedureConfig, block_id)
+    if_exists(block, ENTITY)
+    methods.check_if_study_active(db, block.study_id)
+    db.delete(block)
+    db.commit()
+    return
 
 
 # Create steps from any element (condition, text, questionnnaire, pause or block)

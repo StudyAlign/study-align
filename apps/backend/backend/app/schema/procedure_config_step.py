@@ -53,7 +53,8 @@ class ProcedureConfigStepBlockSingle(ProcedureConfigCreateSingleBase):
     block_id: int
 
 
-class ProcedureConfigStepBlock(ProcedureConfigStepBlockSingle):
+class ProcedureConfigStepBlock(ProcedureConfigStepBase):
+    block_id: int
     block: ProcedureConfigSteps
 
 

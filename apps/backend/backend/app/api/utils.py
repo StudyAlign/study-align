@@ -23,6 +23,11 @@ def if_not_zero(data: Any, entity: str):
         raise HTTPException(status_code=404, detail=not_found(entity))
 
 
+def if_belongs_to_study(data: Any, study_id: int):
+    if data.study_id != study_id:
+        raise HTTPException(status_code=409, detail="%s does not belong to study with id %d" % (str(data), study_id))
+
+
 def not_found(entity: str):
     return "%s not found" % entity
 
