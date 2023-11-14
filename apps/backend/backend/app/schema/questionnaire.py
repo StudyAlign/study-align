@@ -51,6 +51,7 @@ class QuestionnairePatch(BaseModel):
 class Questionnaire(QuestionnaireBase):
     id: int
     study_id: int
+    study_id: int
 
     class Config:
         from_attributes = True
@@ -58,5 +59,5 @@ class Questionnaire(QuestionnaireBase):
 
 class QuestionnaireStep(Questionnaire):
     procedure_step_type: str = Literal["questionnaire"]
-    is_last_step: Optional[bool]
-    is_second_last_step: Optional[bool]
+    is_last_step: Optional[bool] = None
+    is_second_last_step: Optional[bool] = None

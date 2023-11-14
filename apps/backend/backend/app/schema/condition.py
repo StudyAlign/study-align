@@ -42,8 +42,8 @@ class Condition(ConditionBase):
 
 class ConditionStep(Condition):
     procedure_step_type: str = Literal["condition"]
-    is_last_step: Optional[bool]
-    is_second_last_step: Optional[bool]
+    is_last_step: Optional[bool] = None
+    is_second_last_step: Optional[bool] = None
 
 
 class ConditionConfig(BaseModel):
