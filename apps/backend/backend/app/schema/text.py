@@ -30,6 +30,6 @@ class Text(TextBase):
 
 
 class TextStep(Text):
-    procedure_step_type: Literal["text"]
+    procedure_step_type: Literal["text"] = "text"
     is_last_step: Optional[bool] = None
     is_second_last_step: Optional[bool] = None

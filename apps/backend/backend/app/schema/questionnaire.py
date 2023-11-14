@@ -57,6 +57,6 @@ class Questionnaire(QuestionnaireBase):
 
 
 class QuestionnaireStep(Questionnaire):
-    procedure_step_type: Literal["questionnaire"]
+    procedure_step_type: Literal["questionnaire"] = "questionnaire"
     is_last_step: Optional[bool] = None
     is_second_last_step: Optional[bool] = None
