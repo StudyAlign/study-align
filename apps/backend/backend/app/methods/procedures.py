@@ -65,8 +65,8 @@ def _create_procedure_steps_bulk(db: Session,
                                  latin_squared_ids: List[List[int]],
                                  counter_balanced_steps: Dict[int, ProcedureConfigStep]):
     bulk_insert_all = []
-    # iterate on all possible latin squares (counter balanced procedures)
-    for i in range(len(latin_squared_ids)):
+    # if no counter balanced steps, just add the procedure
+    if not latin_squared_ids:
         # create procedure
         procedure = model.Procedure(study_id=study_id)
         db.add(procedure)
@@ -74,10 +74,25 @@ def _create_procedure_steps_bulk(db: Session,
 
         # generate steps for procedure
         bulk_insert = []
-        bulk_insert = _add_procedure_step(bulk_insert, procedure.id, config_steps, latin_squared_ids[i], counter_balanced_steps)
+        bulk_insert = _add_procedure_step(bulk_insert, procedure.id, config_steps, [],
+                                          counter_balanced_steps)
 
         # append procedure steps to list of all steps
         bulk_insert_all.extend(bulk_insert)
+    else:
+        # iterate on all possible latin squares (counter balanced procedures)
+        for i in range(len(latin_squared_ids)):
+            # create procedure
+            procedure = model.Procedure(study_id=study_id)
+            db.add(procedure)
+            db.flush()
+
+            # generate steps for procedure
+            bulk_insert = []
+            bulk_insert = _add_procedure_step(bulk_insert, procedure.id, config_steps, latin_squared_ids[i], counter_balanced_steps)
+
+            # append procedure steps to list of all steps
+            bulk_insert_all.extend(bulk_insert)
 
     db.add_all(bulk_insert_all)
     return db.commit()
