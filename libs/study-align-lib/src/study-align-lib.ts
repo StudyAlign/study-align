@@ -246,6 +246,10 @@ class StudyAlignLib {
         return this.basicCreate("studies/" + studyId + "/procedures", procedureScheme);
     }
 
+    getProcedureConfigMain(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/procedure-config");
+    }
+
     getParticipants(studyId: number) {
         return this.basicRead("studies/" + studyId + "/participants");
     }
