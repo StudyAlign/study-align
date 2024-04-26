@@ -66,6 +66,12 @@ async def read_study_setup_info(study_id: int, db: Session = Depends(get_db)):
     return study
 
 
+@router.get("/studies/{study_id}/procedure-config", response_model=schema.procedure_config.ProcedureConfig, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_procedure_config_main(study_id: int, db: Session = Depends(get_db)):
+    procedure_config_main = methods.read_by_dict(db, model.ProcedureConfig, {"study_id": study_id, "main": True})
+    return procedure_config_main
+
+
 @router.post("/studies/{study_id}/procedures", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def generate_procedures_with_steps(study_id: int, db: Session = Depends(get_db)):
     procedures = methods.read_list_by(db, model.Procedure, "study_id", study_id)
