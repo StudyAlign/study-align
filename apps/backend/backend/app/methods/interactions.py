@@ -26,7 +26,8 @@ def prepare_interaction_data(data: BaseModel, participant: schema.participant.Pa
     interaction_data = interaction.dict()
     interaction_data['study_id'] = participant.study_id
     interaction_data['participant_id'] = participant.id
-    interaction_data['condition_id'] = data.condition_id
+    if 'condition_id' in interaction_data:
+        interaction_data['condition_id'] = data.condition_id
     return interaction_data
 
 

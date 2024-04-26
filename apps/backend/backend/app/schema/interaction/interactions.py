@@ -6,6 +6,7 @@ from typing import Union
 import uuid
 
 
+# generic interactions do not extend CreateBase model to allow for optional condition_id
 class InteractionCreateBase(BaseModel):
     condition_id: int
 
@@ -242,3 +243,7 @@ class GenericInteraction(GenericInteractionBase):
 
     class Config:
         from_attributes = True
+
+
+class MetaInteractionCreate(BaseModel):
+    interaction: GenericInteractionCreate

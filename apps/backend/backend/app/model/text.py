@@ -9,6 +9,7 @@ class Text(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String)
     body = Column(String)
+    video = Column(String)
 
     study_id = Column(Integer, ForeignKey('studies.id', ondelete="CASCADE"))
     study = relationship("Study")

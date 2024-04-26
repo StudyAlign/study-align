@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 class TextBase(BaseModel):
     title: str
     body: str
+    video: str
 
 
 class TextCreate(TextBase):
@@ -16,6 +17,7 @@ class TextCreate(TextBase):
 class TextPatch(BaseModel):
     title: Optional[str] = None
     body: Optional[str]= None
+    video: Optional[str] = None
 
     class Config:
         extra = 'forbid'

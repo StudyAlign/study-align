@@ -34,6 +34,15 @@ async def read_interactions(study_id: int, db: Session = Depends(get_db)):
 
     return interactions
 
+
+@router.post("/interaction/meta", response_model=schema.interaction.interactions.GenericInteraction)
+async def log_meta_interaction(data: schema.interaction.interactions.MetaInteractionCreate,
+                                         participant: schema.participant.Participant = Depends(
+                                             methods.get_active_logger_participant),
+                                         db: Session = Depends(get_db)):
+    return methods.create_single_interaction(db, 'Generic Interaction', model.GenericInteraction, data, participant)
+
+
 @router.post("/interaction/generic", response_model=schema.interaction.interactions.GenericInteraction)
 async def log_generic_interaction_single(data: schema.interaction.interactions.GenericInteractionCreateSingle,
                                          participant: schema.participant.Participant = Depends(
