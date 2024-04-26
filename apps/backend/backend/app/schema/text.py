@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 class TextBase(BaseModel):
     title: str
     body: str
-    video: str
+    video: Optional[str] = None
 
 
 class TextCreate(TextBase):
