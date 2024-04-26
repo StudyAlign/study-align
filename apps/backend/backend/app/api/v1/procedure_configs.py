@@ -16,7 +16,7 @@ router = APIRouter()
 ENTITY = "ProcedureConfig"
 
 
-@router.get("/procedure-config/{procedure_config_id}", response_model=schema.procedure_config.ProcedureConfig, dependencies=[Depends(methods.userAccessTokenValidator)])
+@router.get("/procedure-configs/{procedure_config_id}", response_model=schema.procedure_config.ProcedureConfig, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_procedure_config(procedure_config_id: int, db: Session = Depends(get_db)):
     procedure_config = methods.read(db, model.ProcedureConfig, procedure_config_id)
     if_exists(procedure_config, ENTITY)
