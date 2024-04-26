@@ -243,7 +243,7 @@ class StudyAlignLib {
     }
 
     generateProcedureWithSteps(studyId: number, procedureScheme: object) {
-        this.basicCreate("studies/" + studyId + "/procedures", procedureScheme);
+        return this.basicCreate("studies/" + studyId + "/procedures", procedureScheme);
     }
 
     getParticipants(studyId: number) {
@@ -264,6 +264,48 @@ class StudyAlignLib {
 
     populateSurveyParticipants(studyId: number) {
         return this.basicRead("studies/" + studyId + "/survey-participants");
+    }
+
+    // Procedure Configs
+
+    getProcedureConfig(procedureConfigId: number) {
+        return this.basicRead("procedure-configs/" + procedureConfigId);
+    }
+
+    createProcedureConfigBlock(block: object) {
+        return this.basicCreate("procedure-configs/block", block);
+    }
+
+    deleteProcedureConfigBlock(blockId: number) {
+        return this.basicDelete("procedure-configs/block/" + blockId);
+    }
+
+    createSingleProcedureConfigStep(procedureConfigId: number, procedureConfigStep: object) {
+        const options: Options = {
+            method: "POST",
+            path: "procedure-configs/" + procedureConfigId + "/step",
+            headers: {},
+            body: procedureConfigStep,
+            formData: true,
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    createProcedureConfigSteps(procedureConfigId: number, procedureConfigSteps: object) {
+        const options: Options = {
+            method: "POST",
+            path: "procedure-configs/" + procedureConfigId + "/create-steps",
+            headers: {},
+            body: procedureConfigSteps,
+            formData: true,
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    updateProcedureConfig(procedureConfigId: number, procedureConfigSteps: object) {
+        return this.basicUpdate("procedure-configs/" + procedureConfigId, procedureConfigSteps);
     }
 
     // Conditions
@@ -492,7 +534,7 @@ class StudyAlignLib {
         }
         return null;
     }
-
+    
     deleteTokens() {
         localStorage.removeItem("tokens");
     }
@@ -565,7 +607,7 @@ class StudyAlignLib {
         return this.request(options);
     }
 
-    private logInteractionRequest(path: string, conditionId: number, interaction: object) {
+    private logInteractionRequest(path: string, conditionId: number | null, interaction: object) {
         const options: Options = {
             method: "POST",
             path: path,
@@ -672,6 +714,14 @@ class StudyAlignLib {
         const interactionType = "genericInteractionList"
         const path = "interaction/generic/bulk";
         return this.logInteractionBulk(path, conditionId, interactionType, bulkSize, this.logInteractionBulkRequest.bind(this));
+    }
+
+    // Meta Interaction (Same as Generic Interaction but without condition_id
+    logMetaInteraction(eventType: string, genericEvent: object, timestamp: number,
+                          metaData: {} = {}) {
+        const interaction = new GenericInteraction(eventType, timestamp, genericEvent, metaData);
+        const path = "interaction/meta";
+        return this.logInteractionRequest(path, null, interaction);
     }
 
     // Procedure related methods
