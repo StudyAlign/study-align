@@ -30,7 +30,7 @@ async def create_procedure_config_block(procedure_config_block: schema.procedure
     return methods.create(db, model.ProcedureConfig, procedure_config_block)
 
 
-@router.delete("/procedure-configs/block/{block-id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+@router.delete("/procedure-configs/block/{block_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def delete_procedure_config_block(block_id: int, db: Session = Depends(get_db)):
     block = methods.read(db, model.ProcedureConfig, block_id)
     if_exists(block, ENTITY)
