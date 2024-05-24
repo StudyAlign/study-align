@@ -148,6 +148,8 @@ def _update_procedure_config_steps_bulk(db: Session, bulk_update: List, procedur
     config_step_update["order"] = order
     if step.counterbalance is not None:
         config_step_update["counterbalance"] = step.counterbalance
+    else:
+        del config_step_update["counterbalance"]
     if step.block_id is not None and step.block is not None:
         bulk_update = _iterate_procedure_config_update(db, bulk_update, step.block_id, step.block)
     bulk_update.append(config_step_update)
