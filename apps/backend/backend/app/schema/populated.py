@@ -2,6 +2,7 @@ import uuid
 from typing import Optional, List
 
 from schema.machine_learning import MLModel, Prediction
+from schema.procedure_config import ProcedureConfigStep, ProcedureConfig
 from schema.procedure_progress import ProcedureProgress
 from schema.procedure_step import ProcedureStep
 from schema.condition import Condition, ConditionStep
@@ -21,6 +22,34 @@ class ConditionPopulated(Condition):
 
     class Config:
         from_attributes = True
+
+
+class ProcedureConfigStepPopulated(ProcedureConfigStep):
+
+    condition: Optional[Condition] = None
+    text: Optional[Text] = None
+    questionnaire: Optional[Questionnaire] = None
+    pause: Optional[Pause] = None
+    block: Optional["ProcedureConfigBlockPopulated"] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ProcedureConfigPopulated(ProcedureConfig):
+    study: Study
+    procedure_config_steps: List["ProcedureConfigStepPopulated"]
+
+    class Config:
+        from_attributes = True
+
+
+class ProcedureConfigBlockPopulated(ProcedureConfig):
+    procedure_config_steps: List["ProcedureConfigStepPopulated"]
+
+    class Config:
+        from_attributes = True
+
 
 
 class ProcedureStepPopulated(ProcedureStep):

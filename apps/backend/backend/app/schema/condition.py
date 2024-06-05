@@ -29,7 +29,7 @@ class Condition(ConditionBase):
     id: int
     uuid: uuid.UUID
 
-    task_id: Optional[int] = None
+    #task_id: Optional[int] = None
     study_id: int
 
     #ml_model: Optional[MLModel]

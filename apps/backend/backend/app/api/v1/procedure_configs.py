@@ -23,6 +23,13 @@ async def read_procedure_config(procedure_config_id: int, db: Session = Depends(
     return procedure_config
 
 
+@router.get("/procedure-configs/{procedure_config_id}/overview", response_model=schema.populated.ProcedureConfigPopulated, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_procedure_config(procedure_config_id: int, db: Session = Depends(get_db)):
+    procedure_config = methods.read(db, model.ProcedureConfig, procedure_config_id)
+    if_exists(procedure_config, ENTITY)
+    return procedure_config
+
+
 # Create a block element
 @router.post("/procedure-configs/block", response_model=schema.procedure_config.ProcedureConfigBlock, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def create_procedure_config_block(procedure_config_block: schema.procedure_config.ProcedureConfigBlockCreate,

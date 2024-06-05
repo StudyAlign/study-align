@@ -13,9 +13,7 @@ import methods.conditions
 from api import if_exists
 from api.utils import if_belongs_to_study
 
-from schema.procedure import ProcedureCondition, ProcedureText, ProcedureQuestionnaire, ProcedurePause
-from schema.procedure_progress import ProcedureProgressStateEnum, ProcedureProgressCreate
-from schema.populated import ProcedureStepPopulated
+
 from schema.procedure_config_step import ProcedureConfigCreateAllSteps, ProcedureConfigStepCondition, \
     ProcedureConfigStepText, ProcedureConfigStepQuestionnaire, ProcedureConfigStepPause, ProcedureConfigStepBlock, \
     ProcedureConfigSteps, ProcedureConfigUpdateAllSteps, ProcedureConfigStepPatch, \
