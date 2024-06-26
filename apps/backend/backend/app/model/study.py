@@ -18,7 +18,7 @@ class Study(Base):
     invite_only = Column(Boolean, nullable=False, default=False)
 
     # SETUP RELATED INFO
-    current_setup_step = Column(Enum("study", "procedure", "integrations", "check", "done", name="current_setup_step_enum", create_type=False), nullable=True)
+    current_setup_step = Column(Enum("information", "study", "procedure", "integrations", "check", "done", name="current_setup_step_enum", create_type=False), nullable=True)
     planned_number_participants = Column(Integer, nullable=False)
     planned_procedure = Column(JSONB, nullable=True)
 

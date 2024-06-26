@@ -8,6 +8,7 @@ from schema.procedure_step import ProcedureStep, ProcedureStepPlanned
 
 
 class CurrentSetupStepEnum(str, Enum):
+    information = "information"
     study = "study"
     procedure = "procedure"
     integrations = "integrations"
