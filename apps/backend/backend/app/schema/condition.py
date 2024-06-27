@@ -10,6 +10,8 @@ class ConditionBase(BaseModel):
     config: Union[dict, list, set, float, int, str, bytes, bool]
     url: str
 
+    class Config:
+        from_attributes = True
 
 class ConditionCreate(ConditionBase):
     study_id: int

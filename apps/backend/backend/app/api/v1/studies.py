@@ -4,6 +4,7 @@ from uuid import UUID
 
 from fastapi import Depends, APIRouter, status, HTTPException
 from typing import List, Union
+
 from model.base import Session
 from api import get_db, if_exists, if_not_zero
 
@@ -11,7 +12,7 @@ import model
 
 import methods
 
-from methods import AuthMethod, UserRole
+from methods import AuthMethod, UserRole, UserValidator
 
 import schema.study
 import schema.procedure
@@ -232,3 +233,27 @@ async def participate(study_id: int, participant_token: UUID, db: Session = Depe
         db.commit()
 
     return methods.api.issue_tokens(str(participant.token), study.endDate, auth_method=methods.AuthMethod.PARTICIPANT_KEY)
+
+
+@router.get("/studies/{study_id}/export", response_model=schema.populated.StudyExport, response_model_exclude_none=True, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def export_study(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+    main_procedure_config = study.procedure_config[0]
+    return {"study": study, "procedure_config": main_procedure_config}
+
+
+@router.post("/studies/import", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def import_study(study_import: schema.study.StudyImport, user: schema.user.User = Depends(UserValidator(strict_auth_method=True)), db: Session = Depends(get_db)):
+    imported_study = methods.import_study(db, study_import, user.id)
+    return imported_study
+
+
+@router.get("/studies/{study_id}/duplicate", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def duplicate_study(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+    main_procedure_config = schema.procedure_config.ProcedureConfigImport.model_validate(study.procedure_config[0])
+    study = schema.study.StudyDuplicateDetails.model_validate(study)
+    duplicated_study = methods.duplicate_study(db, {"study": study, "procedure_config": main_procedure_config})
+    return duplicated_study

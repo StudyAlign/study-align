@@ -16,6 +16,9 @@ class PauseBase(BaseModel):
     type: PauseTypeEnum
     config: Optional[Union[dict, list, set, float, int, str, bytes, bool]] = None
 
+    class Config:
+        from_attributes = True
+
 
 class PauseCreate(PauseBase):
     study_id: int

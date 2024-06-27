@@ -2,6 +2,11 @@ from typing import List, Any, Optional, Union
 
 from pydantic import BaseModel
 
+from schema.condition import ConditionBase
+from schema.pause import PauseBase
+from schema.questionnaire import QuestionnaireBase
+from schema.text import TextBase
+
 
 class ProcedureConfigBase(BaseModel):
     pass
@@ -50,6 +55,34 @@ class ProcedureConfigBlock(ProcedureConfigBase):
     id: int
     study_id: int
     procedure_config_steps: List[ProcedureConfigStep]
+
+    class Config:
+        from_attributes = True
+
+
+
+class ProcedureConfigCreate(ProcedureConfigBase):
+    study_id: int
+    main: bool
+    pass
+
+
+class ProcedureConfigImport(ProcedureConfigBase):
+    procedure_config_steps: List["ProcedureConfigStepImport"]
+
+    class Config:
+        from_attributes = True
+
+
+class ProcedureConfigStepImport(BaseModel):
+    order: Optional[int] = None
+    counterbalance: bool
+
+    condition: Optional[ConditionBase] = None
+    text: Optional[TextBase] = None
+    questionnaire: Optional[QuestionnaireBase] = None
+    pause: Optional[PauseBase] = None
+    block: Optional["ProcedureConfigImport"] = None
 
     class Config:
         from_attributes = True

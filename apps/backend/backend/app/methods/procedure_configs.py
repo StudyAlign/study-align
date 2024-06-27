@@ -12,7 +12,10 @@ import model
 import methods.conditions
 from api import if_exists
 from api.utils import if_belongs_to_study
-
+from model import Study, ProcedureConfig
+from schema.condition import ConditionBase
+from schema.pause import PauseBase
+from schema.procedure_config import ProcedureConfigImport
 
 from schema.procedure_config_step import ProcedureConfigCreateAllSteps, ProcedureConfigStepCondition, \
     ProcedureConfigStepText, ProcedureConfigStepQuestionnaire, ProcedureConfigStepPause, ProcedureConfigStepBlock, \
@@ -20,6 +23,9 @@ from schema.procedure_config_step import ProcedureConfigCreateAllSteps, Procedur
     ProcedureConfigCreateSingleStep, ProcedureConfigStepBlockSingle
 
 from datetime import datetime
+
+from schema.questionnaire import QuestionnaireBase
+from schema.text import TextBase
 
 
 def read_procedure_configs_ids_by_study(db: Session, study_id: int):
@@ -100,7 +106,6 @@ ProcedureConfigStepBlock]):
     return bulk_insert
 
 
-
 # Only create a single procedure config step. This needs to be done, to insert steps after the config has been initialized.
 # After that, config step order needs to be updated.
 def _create_procedure_config_step(db: Session, procedure_config_id: int, step: ProcedureConfigCreateSingleStep):
@@ -124,6 +129,47 @@ def _create_procedure_config_step(db: Session, procedure_config_id: int, step: P
         block = check_if_config_step_exists(db, model.ProcedureConfig, step.block_id, "ProcedureConfig")
         if_belongs_to_study(block, procedure_config.study_id)
     return step
+
+
+def _iterate_procedure_config_steps_import(db: Session, bulk_insert: List, study: Study, procedure_config: ProcedureConfig, steps: ProcedureConfigSteps):
+    for i in range(len(steps)):
+        bulk_insert = _import_procedure_config_steps(db, bulk_insert, study, procedure_config, i, steps[i])
+    return bulk_insert
+
+
+def _import_procedure_config_steps(db: Session, bulk_insert: Optional[List], study: Study, procedure_config: ProcedureConfig, order: int, step: Union[ConditionBase,
+TextBase,
+QuestionnaireBase,
+PauseBase,
+ProcedureConfigImport]):
+    procedure_config_step = model.ProcedureConfigStep(procedure_config=procedure_config, order=order, counterbalance=step.counterbalance)
+    if isinstance(step.condition, ConditionBase):
+        condition = model.Condition(**step.condition.model_dump())
+        condition.study = study
+        bulk_insert.append(condition)
+        procedure_config_step.condition = condition
+    if isinstance(step.text, TextBase):
+        text = model.Text(**step.text.model_dump())
+        text.study = study
+        bulk_insert.append(text)
+        procedure_config_step.text = text
+    if isinstance(step.questionnaire, QuestionnaireBase):
+        questionnaire = model.Questionnaire(**step.questionnaire.model_dump())
+        questionnaire.study = study
+        bulk_insert.append(questionnaire)
+        procedure_config_step.questionnaire = questionnaire
+    if isinstance(step.pause, PauseBase):
+        pause = model.Pause(**step.pause.model_dump())
+        pause.study = study
+        bulk_insert.append(pause)
+        procedure_config_step.pause = pause
+    if isinstance(step.block, ProcedureConfigImport):
+        block = model.ProcedureConfig(study=study, main=False)
+        bulk_insert.append(block)
+        procedure_config_step.block = block
+        bulk_insert = _iterate_procedure_config_steps_import(db, bulk_insert, study, block, step.block.procedure_config_steps)
+    bulk_insert.append(procedure_config_step)
+    return bulk_insert
 
 
 # Update the list of procedure config steps. Change the order and counterbalancing.

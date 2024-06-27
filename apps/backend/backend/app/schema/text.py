@@ -8,6 +8,9 @@ class TextBase(BaseModel):
     body: str
     video: Optional[str] = None
 
+    class Config:
+        from_attributes = True
+
 
 class TextCreate(TextBase):
     study_id: int

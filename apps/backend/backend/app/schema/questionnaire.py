@@ -14,6 +14,8 @@ class QuestionnaireBase(BaseModel):
     url: str
     system: QuestionnaireSystemEnum
 
+    class Config:
+        from_attributes = True
 
 class QuestionnaireCreate(QuestionnaireBase):
     study_id: int

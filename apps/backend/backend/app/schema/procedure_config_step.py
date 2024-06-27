@@ -3,6 +3,7 @@ from typing import Optional, List, Union, Any
 
 from pydantic import BaseModel
 
+from schema.populated import ProcedureConfigStepPopulated
 
 
 # Models defining the distinct step types
@@ -27,6 +28,9 @@ class ProcedureConfigStepPause(ProcedureConfigStepBase):
 
 
 ProcedureConfigSteps = List[Union[ProcedureConfigStepCondition, ProcedureConfigStepText, ProcedureConfigStepQuestionnaire, ProcedureConfigStepPause, "ProcedureConfigStepBlock"]]
+
+
+ProcedureConfigStepsImport = List[ProcedureConfigStepPopulated]
 
 
 class ProcedureConfigCreateSingleBase(ProcedureConfigStepBase):

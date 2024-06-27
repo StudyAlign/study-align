@@ -1,20 +1,22 @@
 import uuid
 from typing import Optional, List
 
+from pydantic import BaseModel
+
 from schema.machine_learning import MLModel, Prediction
 from schema.procedure_config import ProcedureConfigStep, ProcedureConfig
 from schema.procedure_progress import ProcedureProgress
 from schema.procedure_step import ProcedureStep
-from schema.condition import Condition, ConditionStep
+from schema.condition import Condition, ConditionStep, ConditionBase
 from schema.procedure import Procedure
 from schema.participant import Participant
-from schema.questionnaire import Questionnaire, QuestionnaireStep
-from schema.study import Study
+from schema.questionnaire import Questionnaire, QuestionnaireStep, QuestionnaireBase
+from schema.study import Study, StudyExportDetails
 from schema.task import Task
-from schema.text import Text, TextStep
+from schema.text import Text, TextStep, TextBase
 from schema.user import User
 from schema.role import Role
-from schema.pause import Pause, PauseStep
+from schema.pause import Pause, PauseStep, PauseBase
 
 
 class ConditionPopulated(Condition):
@@ -25,7 +27,6 @@ class ConditionPopulated(Condition):
 
 
 class ProcedureConfigStepPopulated(ProcedureConfigStep):
-
     condition: Optional[Condition] = None
     text: Optional[Text] = None
     questionnaire: Optional[Questionnaire] = None
@@ -37,6 +38,45 @@ class ProcedureConfigStepPopulated(ProcedureConfigStep):
 
 
 class ProcedureConfigPopulated(ProcedureConfig):
+    procedure_config_steps: List["ProcedureConfigStepPopulated"]
+
+    class Config:
+        from_attributes = True
+
+# Schemas for study export:
+
+class ProcedureConfigStepExportPopulated(BaseModel):
+    order: int
+    counterbalance: bool
+
+    condition: Optional[ConditionBase]
+    text: Optional[TextBase]
+    questionnaire: Optional[QuestionnaireBase]
+    pause: Optional[PauseBase]
+    block: Optional["ProcedureConfigExport"]
+
+    class Config:
+        from_attributes = True
+
+
+class ProcedureConfigExport(BaseModel):
+    procedure_config_steps: List["ProcedureConfigStepExportPopulated"]
+
+    class Config:
+        from_attributes = True
+
+
+class StudyExport(BaseModel):
+    study: StudyExportDetails
+    procedure_config: ProcedureConfigExport
+
+    class Config:
+        from_attributes = True
+
+# Schemas for Study Export end
+
+
+class ProcedureConfigOverview(ProcedureConfig):
     study: Study
     procedure_config_steps: List["ProcedureConfigStepPopulated"]
 

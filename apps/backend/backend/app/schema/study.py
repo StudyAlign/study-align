@@ -4,7 +4,8 @@ from typing import List, Optional, Union
 from enum import Enum
 from pydantic import BaseModel
 
-from schema.procedure_step import ProcedureStep, ProcedureStepPlanned
+from schema.procedure_config import ProcedureConfigImport
+from schema.procedure_step import ProcedureStepPlanned
 
 
 class CurrentSetupStepEnum(str, Enum):
@@ -74,6 +75,39 @@ class StudySetupInfo(StudyBase):
     planned_number_participants: int
     planned_procedure: Optional[List[ProcedureStepPlanned]]
     current_setup_step: CurrentSetupStepEnum
+
+    class Config:
+        from_attributes = True
+
+
+class StudyExportDetails(BaseModel):
+    name: str
+    startDate: datetime
+    endDate: datetime
+    invite_only: bool
+    description: str
+    consent: str
+    planned_number_participants: int
+
+    class Config:
+        from_attributes = True
+
+
+class StudyImport(BaseModel):
+    study: StudyExportDetails
+    procedure_config: ProcedureConfigImport
+
+
+class StudyDuplicateDetails(StudyExportDetails):
+    owner_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class StudyDuplicate(BaseModel):
+    study: StudyDuplicateDetails
+    procedure_config: ProcedureConfigImport
 
     class Config:
         from_attributes = True
