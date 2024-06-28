@@ -11,7 +11,7 @@ import model
 
 import methods.conditions
 from api import if_exists
-from model import ProcedureStep
+from model import ProcedureStep, Procedure
 
 from schema.procedure import ProcedureCondition, ProcedureText, ProcedureQuestionnaire, ProcedurePause
 from schema.procedure_config import ProcedureConfigStep
@@ -22,9 +22,11 @@ from datetime import datetime
 
 
 def read_procedure_ids_by_study(db: Session, study_id: int):
-    procedure_ids = db.query(model.Procedure.id.label('id')). \
+    procedure_ids = db.query(Procedure). \
+        with_entities(Procedure.id). \
         filter(model.Procedure.study_id == study_id).\
         all()
+    procedure_ids = [procedure_id[0] for procedure_id in procedure_ids]
     return procedure_ids
 
 

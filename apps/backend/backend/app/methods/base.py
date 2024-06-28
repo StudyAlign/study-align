@@ -96,3 +96,9 @@ def count_by(db: Session, model: Base, field: str, value: Union[str, int]):
     return db.query(model.id).\
         filter_by(**{field: value}).\
         count()
+
+
+def count_by_dict(db: Session, model: Base, filter_dict: dict):
+    return db.query(model).\
+        filter_by(**filter_dict).\
+        count()

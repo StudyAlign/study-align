@@ -91,6 +91,16 @@ async def generate_participants(study_id: int, amount: int, db: Session = Depend
     return methods.create_participants(db, study_id, amount)
 
 
+@router.post("/studies/{study_id}/add-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def add_participants(study_id: int, amount: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+    participant_count = methods.count_by(db, model.Participant, "study_id", study_id)
+    if participant_count == 0:
+        raise HTTPException(status_code=409, detail="Generate participants first")
+    return methods.add_participants(db, study_id, amount)
+
+
 @router.get("/studies/{study_id}/participants", response_model=List[schema.populated.ParticipantPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_participants(study_id: int, participant_state: Union[ParticipantEnum, None] = None,
                             paused: Union[bool, None] = None, proceed: Union[bool, None] = None, db: Session = Depends(get_db)):
@@ -213,7 +223,14 @@ async def participate(study_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=403, detail="Study has ended")
     participant = methods.draw_participant(db, study_id)
     if not participant:
-        raise HTTPException(status_code=409, detail="No Participants found")
+        raise HTTPException(status_code=409, detail="No free Participants found")
+
+    # public studies will generate another batch of tokens (planned_number_participants) if only 20% of planned number of participant are free
+    if not study.invite_only:
+        free_participant_count = methods.count_by_dict(db, model.Participant, {"study_id": study_id, "state": "free"})
+        if (free_participant_count / study.planned_number_participants) <= 0.8:
+            methods.add_participants(db, study_id, study.planned_number_participants)
+
     return methods.api.issue_tokens(str(participant.token), study.endDate, auth_method=methods.AuthMethod.PARTICIPANT_KEY)
 
 

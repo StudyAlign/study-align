@@ -35,12 +35,28 @@ def create_participants(db: Session, study_id: int, amount: int):
     return _create_participants_bulk(db, study_id, amount, procedure_ids)
 
 
+def add_participants(db: Session, study_id: int, amount: int):
+    last_participant = db.query(model.Participant). \
+        filter(model.Participant.study_id == study_id). \
+        order_by(model.Participant.id.desc()). \
+        first()
+
+    procedure_ids = methods.read_procedure_ids_by_study(db, study_id)
+    if_not_zero(procedure_ids, "Procedure")
+
+    procedure_len = len(procedure_ids)
+    procedure_index = procedure_ids.index(last_participant.procedure.id)
+    rotate_by = procedure_len - (procedure_index + 1)
+    rotated_procedure_ids = procedure_ids[rotate_by:] + procedure_ids[:rotate_by]
+
+    return _create_participants_bulk(db, study_id, amount, rotated_procedure_ids)
+
+
 def _create_participants_bulk(db: Session, study_id: int, amount: int, procedure_ids: List[int]):
     bulk_insert = []
     procedure_cycle = cycle(procedure_ids)
     for i in range(amount):
         procedure_id = next(procedure_cycle)
-        procedure_id = procedure_id[0]
         participant = model.Participant(study_id=study_id, procedure_id=procedure_id, state="free")
         bulk_insert.append(participant)
     db.add_all(bulk_insert)

@@ -24,4 +24,4 @@ class Procedure(Base):
                                 passive_deletes=True)
 
     def __repr__(self):
-        return "<Procedure(id='%d' study_id='%d' variant='%d')>" % (self.id, self.study_id, self.variant)
+        return "<Procedure(id='%d' study_id='%d')>" % (self.id, self.study_id)
