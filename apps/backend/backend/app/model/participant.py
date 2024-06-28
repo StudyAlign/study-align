@@ -30,7 +30,7 @@ class Participant(Base):
 
     current_procedure_step_config = Column(JSON)
 
-    questionnaire_results = relationship("QuestionnaireResult", back_populates="participant", cascade="all, delete", passive_deletes=True)
+    # questionnaire_results = relationship("QuestionnaireResult", back_populates="participant", cascade="all, delete", passive_deletes=True)
 
     # log data
 

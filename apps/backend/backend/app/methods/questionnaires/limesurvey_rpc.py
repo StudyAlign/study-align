@@ -8,7 +8,7 @@ import requests
 
 from fastapi import HTTPException
 
-
+# DEPRECATED! Only here for legacy documentation
 class LimeSurvey(object):
     """
     Adaption of https://github.com/lindsay-stevens/limesurveyrc2api

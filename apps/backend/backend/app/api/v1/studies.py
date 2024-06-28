@@ -168,8 +168,9 @@ async def read_pauses(study_id: int, db: Session = Depends(get_db)):
 
     return pauses
 
-
-@router.get("/studies/{study_id}/survey-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+# DEPRECATED! Only here for legacy documentation
+@router.get("/studies/{study_id}/survey-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)],
+            deprecated=True)
 async def populate_survey_participants(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, ENTITY)

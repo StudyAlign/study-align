@@ -7,7 +7,7 @@ from .procedure_step import ProcedureStep
 from .procedure_config import ProcedureConfig
 from .procedure_config_step import ProcedureConfigStep
 from .questionnaire import Questionnaire
-from .questionnaire_result import QuestionnaireResult
+# from .questionnaire_result import QuestionnaireResult
 from .study import Study
 from .task import Task
 from .text import Text

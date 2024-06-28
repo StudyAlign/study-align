@@ -36,32 +36,11 @@ async def read_questionnaires(db: Session = Depends(get_db)):
 async def create_questionnaire(questionnaire: schema.questionnaire.QuestionnaireCreate, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, questionnaire.study_id)
     if_exists(study, ENTITY)
-
-    api_credentials = {}
-    if questionnaire.api_username:
-        api_credentials["username"] = questionnaire.api_username
-        del questionnaire.api_username
-    if questionnaire.api_password:
-        api_credentials["password"] = questionnaire.api_password
-        del questionnaire.api_password
-
-    q = questionnaire.model_dump()
-    q["_api_credentials"] = api_credentials
-
-    return methods.create(db, model.Questionnaire, q)
+    return methods.create(db, model.Questionnaire, questionnaire)
 
 
 @router.patch("/questionnaires/{questionnaire_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def update_questionnaire(questionnaire_id: int, questionnaire: schema.questionnaire.QuestionnairePatch, db: Session = Depends(get_db)):
-    api_credentials = {}
-    if questionnaire.api_username:
-        api_credentials["username"] = questionnaire.api_username
-        del questionnaire.api_username
-    if questionnaire.api_password:
-        api_credentials["password"] = questionnaire.api_password
-        del questionnaire.api_password
-    if api_credentials:
-        questionnaire.api_credentials = model.Questionnaire._api_credentials.concat(json.dumps(api_credentials))
     questionnaire_update = methods.patch(db, model.Questionnaire, questionnaire, questionnaire_id, 'fetch')
     if_not_zero(questionnaire_update, ENTITY)
     return questionnaire_update

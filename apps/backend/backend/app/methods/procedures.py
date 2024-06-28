@@ -211,7 +211,7 @@ def create_procedure_progress(db: Session, state: ProcedureProgressStateEnum, ti
     )
     db.add(model.ProcedureProgress(**procedure_progress.dict()))
 
-
+# DEPRECATED! Only here for legacy documentation
 def retrieve_survey_responses(db: Session, participant: schema.participant.Participant,
                               previous_step: schema.populated.ProcedureStepPopulated, time: datetime):
     # retrieve responses from external survey tools, such as limesurvey or monkeysurvey and move it into our DB
