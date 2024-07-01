@@ -44,6 +44,7 @@ def duplicate_study(db: Session, duplicate_study: StudyDuplicate):
 
     study = model.Study(**duplicate_study["study"].model_dump())
     study.is_active = False
+    study.current_setup_step = "study"
     study.name = study.name + " DUPLICATED"
 
     procedure_config_main = model.ProcedureConfig(study=study, main=True)
