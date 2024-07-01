@@ -26,6 +26,7 @@ def import_study(db: Session, import_study: StudyImport, owner_id: int):
     study = model.Study(**import_study.study.model_dump())
     study.owner_id = owner_id
     study.is_active = False
+    study.current_setup_step = "study"
     study.name = study.name + " IMPORTED"
     bulk_insert.append(study)
     procedure_config_main = model.ProcedureConfig(study=study, main=True)

@@ -13,7 +13,6 @@ class QuestionnaireSystemEnum(str, Enum):
     limesurvey = "limesurvey"
 
 
-
 class QuestionnaireBase(BaseModel):
     url: str
     system: Optional[QuestionnaireSystemEnum]
