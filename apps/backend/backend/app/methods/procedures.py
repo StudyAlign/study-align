@@ -30,7 +30,7 @@ def read_procedure_ids_by_study(db: Session, study_id: int):
     return procedure_ids
 
 
-def create_procedures_with_steps(db: Session, study_id: int):
+def create_procedures(db: Session, study_id: int):
     # get the main procedure config
     procedure_config_main = methods.read_by_dict(db, model.ProcedureConfig, {"study_id": study_id, "main": True})
     if_exists(procedure_config_main, "ProcedureConfig")

@@ -74,11 +74,11 @@ async def read_procedure_config_main(study_id: int, db: Session = Depends(get_db
 
 
 @router.post("/studies/{study_id}/procedures", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def generate_procedures_with_steps(study_id: int, db: Session = Depends(get_db)):
+async def generate_procedures(study_id: int, db: Session = Depends(get_db)):
     procedures = methods.read_list_by(db, model.Procedure, "study_id", study_id)
     if procedures:
         raise HTTPException(status_code=409, detail="Procedures have already been generated")
-    return methods.create_procedures_with_steps(db, study_id)
+    return methods.create_procedures(db, study_id)
 
 
 @router.post("/studies/{study_id}/participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
