@@ -61,7 +61,7 @@ async def update_condition(condition_id: int, condition: schema.condition.Condit
 async def delete_condition(condition_id: int, db: Session = Depends(get_db)):
     condition = methods.read(db, model.Condition, condition_id)
     if_exists(condition, ENTITY)
-    methods.check_if_study_active(db, condition.study_id)
+    methods.check_if_study_running(db, condition.study_id)
     db.delete(condition)
     db.commit()
     return

@@ -10,10 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-from sqlalchemy import update
 from sqlalchemy.dialects import postgresql
-
-from model import Study
 
 
 # revision identifiers, used by Alembic.

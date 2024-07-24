@@ -41,7 +41,7 @@ async def create_procedure_config_block(procedure_config_block: schema.procedure
 async def delete_procedure_config_block(block_id: int, db: Session = Depends(get_db)):
     block = methods.read(db, model.ProcedureConfig, block_id)
     if_exists(block, ENTITY)
-    methods.check_if_study_active(db, block.study_id)
+    methods.check_if_study_running(db, block.study_id)
     db.delete(block)
     db.commit()
     return

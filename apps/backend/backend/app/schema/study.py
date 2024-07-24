@@ -35,7 +35,6 @@ class StudyCreate(StudyBase):
     description: str
     consent: str
     planned_number_participants: Optional[int] = None
-    planned_procedure: Optional[Union[dict, list, set, float, int, str, bytes, bool]] = None
     current_setup_step: Optional[CurrentSetupStepEnum] = None
     state: Optional[StudyStateEnum] = None
 
@@ -53,7 +52,6 @@ class StudyUpdate(BaseModel):
     owner_id: Optional[int] = None
     invite_only: Optional[bool] = None
     planned_number_participants: Optional[int] = None
-    planned_procedure: Optional[List[ProcedureStepPlanned]] = None
     current_setup_step: Optional[CurrentSetupStepEnum] = None
 
     class Config:
@@ -79,7 +77,6 @@ class StudyDetails(StudyBase):
 class StudySetupInfo(StudyBase):
     id: int
     planned_number_participants: int
-    planned_procedure: Optional[List[ProcedureStepPlanned]]
     current_setup_step: CurrentSetupStepEnum
 
     class Config:

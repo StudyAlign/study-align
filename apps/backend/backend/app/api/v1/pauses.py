@@ -57,7 +57,7 @@ async def update_pause(pause_id: int, pause: schema.pause.PausePatch, db: Sessio
 async def delete_pause(pause_id: int, db: Session = Depends(get_db)):
     pause = methods.read(db, model.Pause, pause_id)
     if_exists(pause, ENTITY)
-    methods.check_if_study_active(db, pause.study_id)
+    methods.check_if_study_running(db, pause.study_id)
     db.delete(pause)
     db.commit()
     return

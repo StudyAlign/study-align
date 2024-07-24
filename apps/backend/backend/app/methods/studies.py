@@ -14,10 +14,10 @@ def check_if_study_exists(db: Session, study_id: int):
     if_exists(study, "Study")
 
 
-def check_if_study_active(db: Session, study_id: int):
+def check_if_study_running(db: Session, study_id: int):
     study = methods.read(db, model.Study, study_id)
-    if study.is_active:
-        raise HTTPException(status_code=403, detail="Study is active")
+    if study.state == "running":
+        raise HTTPException(status_code=403, detail="Study is running")
 
 
 def import_study(db: Session, import_study: StudyImport, owner_id: int):
@@ -25,7 +25,7 @@ def import_study(db: Session, import_study: StudyImport, owner_id: int):
 
     study = model.Study(**import_study.study.model_dump())
     study.owner_id = owner_id
-    study.is_active = False
+    study.state = "setup"
     study.current_setup_step = "study"
     study.name = study.name + " IMPORTED"
     bulk_insert.append(study)
@@ -43,7 +43,7 @@ def duplicate_study(db: Session, duplicate_study: StudyDuplicate):
     bulk_insert = []
 
     study = model.Study(**duplicate_study["study"].model_dump())
-    study.is_active = False
+    study.state = "setup"
     study.current_setup_step = "study"
     study.name = study.name + " DUPLICATED"
 
