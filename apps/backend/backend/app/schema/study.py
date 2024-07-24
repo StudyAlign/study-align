@@ -16,12 +16,17 @@ class CurrentSetupStepEnum(str, Enum):
     check = "check"
     done = "done"
 
+class StudyStateEnum(str, Enum):
+    setup = "setup"
+    running = "running"
+    finished = "finished"
+
 
 class StudyBase(BaseModel):
     name: str
     startDate: datetime
     endDate: datetime
-    is_active: bool
+    state: StudyStateEnum
     owner_id: int
     invite_only: bool
 
@@ -32,6 +37,7 @@ class StudyCreate(StudyBase):
     planned_number_participants: Optional[int] = None
     planned_procedure: Optional[Union[dict, list, set, float, int, str, bytes, bool]] = None
     current_setup_step: Optional[CurrentSetupStepEnum] = None
+    state: Optional[StudyStateEnum] = None
 
     class Config:
         extra = 'forbid'
@@ -43,7 +49,7 @@ class StudyUpdate(BaseModel):
     description: Optional[str] = None
     consent: Optional[str] = None
     endDate: Optional[datetime] = None
-    is_active: Optional[bool] = None
+    state: Optional[StudyStateEnum] = None
     owner_id: Optional[int] = None
     invite_only: Optional[bool] = None
     planned_number_participants: Optional[int] = None

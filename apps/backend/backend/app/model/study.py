@@ -14,7 +14,7 @@ class Study(Base):
     consent = Column(String)
     startDate = Column(DateTime(timezone=False))
     endDate = Column(DateTime(timezone=False))
-    is_active = Column(Boolean, nullable=False)
+    state = Column(Enum("setup", "running", "finished", name="study_state_enum", create_type=False), nullable=False)
     invite_only = Column(Boolean, nullable=False, default=False)
 
     # SETUP RELATED INFO

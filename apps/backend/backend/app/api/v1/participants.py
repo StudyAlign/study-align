@@ -33,7 +33,7 @@ async def refresh_participant_token(
         db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, participant.study_id)
     if_exists(study, "Study")
-    if not study.is_active and datetime.utcnow() >= study.endDate:
+    if not study.state == "running" and datetime.utcnow() >= study.endDate:
         raise HTTPException(status_code=403, detail="Study is too old, or inactive")
     return methods.api.issue_access_token(str(participant.token), auth_method=methods.AuthMethod.PARTICIPANT_KEY)
 

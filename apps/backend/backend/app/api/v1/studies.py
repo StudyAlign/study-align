@@ -217,7 +217,7 @@ async def populate_survey_participants(study_id: int, db: Session = Depends(get_
 async def participate(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, "Study")
-    if not study.is_active:
+    if not study.state == "running":
         raise HTTPException(status_code=403, detail="Study is inactive")
     if datetime.utcnow() >= study.endDate:
         raise HTTPException(status_code=403, detail="Study has ended")
@@ -238,7 +238,7 @@ async def participate(study_id: int, db: Session = Depends(get_db)):
 async def participate(study_id: int, participant_token: UUID, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, "Study")
-    if not study.is_active and datetime.datetime.utcnow() >= study.endDate:
+    if not study.state == "running" and datetime.datetime.utcnow() >= study.endDate:
         raise HTTPException(status_code=403, detail="Study is too old, or inactive")
 
     participant = methods.read_participant_by_token(study_id, participant_token, db)
