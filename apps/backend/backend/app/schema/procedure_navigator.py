@@ -12,8 +12,7 @@ class ProcedureNavigatorStateEnum(str, Enum):
 
 class ProcedureNavigatorSourceEnum(str, Enum):
     condition = "condition"
-    limesurvey = "limesurvey"
-    surveymonkey = "surveymonkey"
+    questionnaire = "questionnaire"
 
 
 class ProcedureNavigatorConnection(BaseModel):

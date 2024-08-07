@@ -264,22 +264,22 @@ async def reconnect_procedure_navigator(participant: schema.populated.Participan
         return
 
     questionnaire = participant.procedure_step.questionnaire
-    if questionnaire and questionnaire.system == schema.questionnaire.QuestionnaireSystemEnum.limesurvey:
+    if questionnaire:
         connection = navigator.get_connection(participant.id)
         if not connection:
             current_step = participant.procedure_step
             api_url = current_step.questionnaire.api_url
             # LimeSurvey RPC class throws http errors
-            limesurvey = methods.LimeSurvey(api_url, current_step.questionnaire.api_username)
-            limesurvey.get_session_key(current_step.questionnaire.api_password)
+            #limesurvey = methods.LimeSurvey(api_url, current_step.questionnaire.api_username)
+            #limesurvey.get_session_key(current_step.questionnaire.api_password)
             # participant token in limesurvey is the uuid without hyphens?
-            participant_token = limesurvey.format_participant_token(participant.token)
-            participant_data = limesurvey.get_participant_properties(current_step.questionnaire.ext_id,
-                                                                     participant_token)
-            limesurvey.release_session_key()
+            #participant_token = limesurvey.format_participant_token(participant.token)
+            #participant_data = limesurvey.get_participant_properties(current_step.questionnaire.ext_id,
+            #                                                         participant_token)
+            #limesurvey.release_session_key()
             state = schema.procedure_navigator.ProcedureNavigatorStateEnum.in_progress
-            if not participant_data or participant_data.get("completed") != "N":
-                state = schema.procedure_navigator.ProcedureNavigatorStateEnum.done
+            #if not participant_data or participant_data.get("completed") != "N":
+            #    state = schema.procedure_navigator.ProcedureNavigatorStateEnum.done
 
             navigator.subscribe(participant_id=participant.id,
                                 procedure_step_id=participant.current_procedure_step,
@@ -309,14 +309,13 @@ async def update_procedure_navigator(connection_update: schema.procedure_navigat
 
     questionnaire = participant.procedure_step.questionnaire
     print(questionnaire)
-    # check if the current step is a limesurvey questionnaire
-    if questionnaire and questionnaire.system == schema.questionnaire.QuestionnaireSystemEnum.limesurvey:
+    if questionnaire:
         # check if the state update aims for the current limesurvey questionnaire
-        if questionnaire.system == connection_update.source and questionnaire.ext_id == connection_update.ext_id:
-            navigator.update_connection(participant_id=participant.id,
-                                        procedure_step_id=participant.current_procedure_step,
-                                        state=connection_update.state)
-            return
+        #if questionnaire.system == connection_update.source and questionnaire.ext_id == connection_update.ext_id:
+        navigator.update_connection(participant_id=participant.id,
+                                    procedure_step_id=participant.current_procedure_step,
+                                    state=connection_update.state)
+        return
     raise HTTPException(status_code=409, detail="Navigator state change failed.")
 
 
