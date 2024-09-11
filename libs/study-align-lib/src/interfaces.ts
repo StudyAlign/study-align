@@ -1,6 +1,6 @@
 type InteractionTypes = "mouseInteractionList" | "dragInteractionList" | "keyboardInteractionList" | "touchInteractionList" | "genericInteractionList"
 
-type NavigatorSource = "condition" | "limesurvey" | "surveymonkey"
+type NavigatorSource = "condition" | "questionnaire"
 type NavigatorState = "in_progress" | "done"
 
 interface Options {

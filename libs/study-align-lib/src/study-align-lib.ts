@@ -236,6 +236,10 @@ class StudyAlignLib {
         return this.basicDelete("users/" + userId);
     }
 
+    getRoles() {
+        return this.basicRead("users/roles");
+    }
+
     // ---- MAINLY FOR USE IN ADMIN FRONTEND ---- //
 
     // Studies
@@ -518,6 +522,32 @@ class StudyAlignLib {
 
     deletePause(pauseId: number) {
         return this.basicDelete("pauses/" + pauseId);
+    }
+
+    //Interactions
+
+    getFirst100Interactions(studyId: number) {
+        const options: Options = {
+            method: "GET",
+            path: "interactions",
+            headers: {},
+            params: { study_id: studyId, type: "all" },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    getInteractions(studyId: number, type: string, offset: number = 0, limit: number = 100) {
+        const options: Options = {
+            method: "GET",
+            path: "interactions",
+            headers: {},
+            params: { study_id: studyId, type: type, offset: offset, limit: limit },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
     }
 
     // ---- MAINLY FOR USE IN STUDY FRONTEND ---- //
