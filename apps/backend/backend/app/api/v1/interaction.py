@@ -24,11 +24,11 @@ router = APIRouter()
                                                        schema.interaction.interactions.KeyboardInteraction,
                                                        schema.interaction.interactions.TouchInteraction]],
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_interactions(study_id: int, db: Session = Depends(get_db)):
+async def read_interactions(study_id: int, type: schema.interaction.interactions.InteractionEnum, offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, "Study")
 
-    interactions = methods.read_interactions(db, study_id)
+    interactions = methods.read_interactions(db, study_id, type, offset, limit)
     if not interactions:
         raise HTTPException(status_code=409, detail="Study has no interactions")
 

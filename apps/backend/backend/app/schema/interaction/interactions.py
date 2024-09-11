@@ -247,3 +247,12 @@ class GenericInteraction(GenericInteractionBase):
 
 class MetaInteractionCreate(BaseModel):
     interaction: GenericInteractionCreate
+
+
+class InteractionEnum(str, Enum):
+    all = "all"
+    generic = "generic"
+    mouse = "mouse"
+    drag = "drag"
+    keyboard = "keyboard"
+    touch = "touch"

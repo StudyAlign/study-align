@@ -64,6 +64,8 @@ async def delete_study(study_id: int, db: Session = Depends(get_db)):
 async def read_study_setup_info(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, ENTITY)
+    remaining_participants_count = methods.count_by_dict(db, model.Participant, {"study_id": study_id, "state": "free"})
+    study.remaining_participants = remaining_participants_count
     return study
 
 

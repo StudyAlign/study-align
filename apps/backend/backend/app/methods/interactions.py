@@ -7,17 +7,33 @@ import model
 import schema.populated
 import schema
 from model.base import Base
+from schema.interaction.interactions import InteractionEnum
 
 
-def read_interactions(db: Session, study_id: int, limit: int = 100):
-    generic_interactions = db.query(model.GenericInteraction).filter(model.GenericInteraction.study_id == study_id).order_by(model.GenericInteraction.id.desc()).limit(limit).all()
-    mouse_interactions = db.query(model.MouseInteraction).filter(model.MouseInteraction.study_id == study_id).order_by(model.MouseInteraction.id.desc()).limit(limit).all()
-    keyboard_interactions = db.query(model.KeyboardInteraction).filter(model.KeyboardInteraction.study_id == study_id).order_by(model.KeyboardInteraction.id.desc()).limit(limit).all()
-    drag_interactions = db.query(model.DragInteraction).filter(model.DragInteraction.study_id == study_id).order_by(model.DragInteraction.id.desc()).limit(limit).all()
-    touch_interactions = db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).order_by(model.TouchInteraction.id.desc()).limit(limit).all()
-
-    result = [] + generic_interactions + mouse_interactions + keyboard_interactions + drag_interactions + touch_interactions
-
+def read_interactions(db: Session, study_id: int,  type: InteractionEnum, offset = 0, limit: int = 100):
+    result = []
+    if type == InteractionEnum.all:
+        generic_interactions = db.query(model.GenericInteraction).filter(model.GenericInteraction.study_id == study_id).order_by(model.GenericInteraction.id.desc()).limit(limit).all()
+        mouse_interactions = db.query(model.MouseInteraction).filter(model.MouseInteraction.study_id == study_id).order_by(model.MouseInteraction.id.desc()).limit(limit).all()
+        keyboard_interactions = db.query(model.KeyboardInteraction).filter(model.KeyboardInteraction.study_id == study_id).order_by(model.KeyboardInteraction.id.desc()).limit(limit).all()
+        drag_interactions = db.query(model.DragInteraction).filter(model.DragInteraction.study_id == study_id).order_by(model.DragInteraction.id.desc()).limit(limit).all()
+        touch_interactions = db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).order_by(model.TouchInteraction.id.desc()).limit(limit).all()
+        result = result + generic_interactions + mouse_interactions + keyboard_interactions + drag_interactions + touch_interactions
+    elif type == InteractionEnum.generic:
+        generic_interactions = db.query(model.GenericInteraction).filter(model.GenericInteraction.study_id == study_id).order_by(model.GenericInteraction.id.desc()).offset(offset).limit(limit).all()
+        result = result + generic_interactions
+    elif type == InteractionEnum.mouse:
+        mouse_interactions = db.query(model.MouseInteraction).filter(model.MouseInteraction.study_id == study_id).order_by(model.MouseInteraction.id.desc()).offset(offset).limit(limit).all()
+        result = result + mouse_interactions
+    elif type == InteractionEnum.keyboard:
+        keyboard_interactions = db.query(model.KeyboardInteraction).filter(model.KeyboardInteraction.study_id == study_id).order_by(model.KeyboardInteraction.id.desc()).offset(offset).limit(limit).all()
+        result = result + keyboard_interactions
+    elif type ==InteractionEnum.drag:
+        drag_interactions = db.query(model.DragInteraction).filter(model.DragInteraction.study_id == study_id).order_by(model.DragInteraction.id.desc()).offset(offset).limit(limit).all()
+        result = result + drag_interactions
+    elif type ==InteractionEnum.touch:
+        touch_interactions = db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).order_by(model.TouchInteraction.id.desc()).offset(offset).limit(limit).all()
+        result = result + touch_interactions
     return sorted(result, key=lambda x: x.time, reverse=True)
 
 

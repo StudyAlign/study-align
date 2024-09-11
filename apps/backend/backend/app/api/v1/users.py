@@ -46,6 +46,11 @@ async def read_users(db: Session = Depends(get_db)):
     return methods.read_list(db, model.User)
 
 
+@router.get("/users/roles", response_model=List[schema.role.Role], dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_roles(db: Session = Depends(get_db)):
+    return methods.read_list(db, model.Role)
+
+
 @router.post("/users", response_model=schema.user.User, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def create_user(user: schema.user.UserCreate, db: Session = Depends(get_db)):
     if user.password:

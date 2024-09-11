@@ -3,3 +3,4 @@ from schema.interaction.interactions import KeyboardInteraction
 from schema.interaction.interactions import MouseInteraction
 from schema.interaction.interactions import TouchInteraction
 from schema.interaction.interactions import Touch
+from schema.interaction.interactions import InteractionEnum
