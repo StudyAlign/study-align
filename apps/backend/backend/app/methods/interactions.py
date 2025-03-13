@@ -1,3 +1,6 @@
+import csv
+import io
+
 from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlalchemy import exc
@@ -35,6 +38,46 @@ def read_interactions(db: Session, study_id: int,  type: InteractionEnum, offset
         touch_interactions = db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).order_by(model.TouchInteraction.id.desc()).offset(offset).limit(limit).all()
         result = result + touch_interactions
     return sorted(result, key=lambda x: x.time, reverse=True)
+
+
+def export_interaction(db: Session, study_id: int, type: InteractionEnum):
+    if type == InteractionEnum.generic:
+        return db.query(model.GenericInteraction).filter(model.GenericInteraction.study_id == study_id).order_by(model.GenericInteraction.id.asc()).all()
+    elif type == InteractionEnum.mouse:
+        return db.query(model.MouseInteraction).filter(model.MouseInteraction.study_id == study_id).order_by(model.MouseInteraction.id.asc()).all()
+    elif type == InteractionEnum.keyboard:
+        return db.query(model.KeyboardInteraction).filter(model.KeyboardInteraction.study_id == study_id).order_by(model.KeyboardInteraction.id.asc()).all()
+    elif type ==InteractionEnum.drag:
+        return db.query(model.DragInteraction).filter(model.DragInteraction.study_id == study_id).order_by(model.DragInteraction.id.asc()).all()
+    elif type ==InteractionEnum.touch:
+        return db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).order_by(model.TouchInteraction.id.asc()).all()
+
+
+def get_keys(type: InteractionEnum):
+    if type == InteractionEnum.generic:
+        return [column.key for column in model.GenericInteraction.__table__.columns]
+    elif type == InteractionEnum.mouse:
+        return [column.key for column in model.MouseInteraction.__table__.columns]
+    elif type == InteractionEnum.keyboard:
+        return [column.key for column in model.KeyboardInteraction.__table__.columns]
+    elif type ==InteractionEnum.drag:
+        return [column.key for column in model.DragInteraction.__table__.columns]
+    elif type ==InteractionEnum.touch:
+        return [column.key for column in model.TouchInteraction.__table__.columns]
+
+def create_csv(keys, rows):
+    s = io.StringIO()
+    try:
+        writer = csv.writer(s, delimiter='\t')
+        writer.writerow(keys)
+        for row in rows:
+            writer.writerow(row.to_csv_row())
+        s.seek(0)
+        return s.getvalue().encode('utf-16')
+    except:
+        raise HTTPException(detail='There was an error processing the data', status_code=400)
+    finally:
+        s.close()
 
 
 def prepare_interaction_data(data: BaseModel, participant: schema.participant.Participant):

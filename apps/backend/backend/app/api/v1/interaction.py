@@ -1,15 +1,21 @@
-from fastapi import Depends, APIRouter, status, HTTPException
+import io
+import zipfile
+from datetime import datetime
+
+from fastapi import Depends, APIRouter, status, HTTPException, Response
 
 from sqlalchemy import exc
 from typing import List, Union
 
 import methods
 from api import get_db, if_exists
+from methods import create_csv
 
 from model.base import Session
 import model
 
 import schema.interaction.interactions
+from schema.interaction import InteractionEnum
 import schema.populated
 import schema.participant
 import schema.condition
@@ -33,6 +39,37 @@ async def read_interactions(study_id: int, type: schema.interaction.interactions
         raise HTTPException(status_code=409, detail="Study has no interactions")
 
     return interactions
+
+@router.get("/interactions/export", response_class=Response, dependencies=[Depends(methods.userAccessTokenValidator)])
+def export_interaction_data(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, "Study")
+
+    interaction_types = [
+        InteractionEnum.generic,
+        InteractionEnum.mouse,
+        InteractionEnum.drag,
+        InteractionEnum.keyboard,
+        InteractionEnum.touch
+    ]
+
+    zip_buffer = io.BytesIO()
+    try:
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for interaction_type in interaction_types:
+                #TODO: consider timezone offset?
+                zip_info = zipfile.ZipInfo(f'{interaction_type}.csv', datetime.now().timetuple()[:6])
+                keys = methods.get_keys(interaction_type)
+                rows = methods.export_interaction(db, study_id, interaction_type)
+                csv_data = create_csv(keys, rows)
+                zip_file.writestr(zip_info, csv_data)
+        zip_buffer.seek(0)
+        headers = {"Content-Disposition": f"attachment; filename=data_export-{study.name.replace(' ', '_')}.zip"}
+        return Response(zip_buffer.getvalue(), headers=headers, media_type="application/zip")
+    except:
+        raise HTTPException(status_code=400, detail='Error processing the export data')
+    finally:
+        zip_buffer.close()
 
 
 @router.post("/interaction/meta", response_model=schema.interaction.interactions.GenericInteraction)
@@ -238,3 +275,4 @@ async def log_touch_interaction_bulk(data: schema.interaction.interactions.Touch
     except exc.SQLAlchemyError:
         raise HTTPException(status_code=409, detail="Failed to log bulk of touch interactions.")
     return
+

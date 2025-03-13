@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 from uuid import UUID
 
@@ -230,7 +229,7 @@ async def participate(study_id: int, db: Session = Depends(get_db)):
     # public studies will generate another batch of tokens (planned_number_participants) if only 20% of planned number of participant are free
     if not study.invite_only:
         free_participant_count = methods.count_by_dict(db, model.Participant, {"study_id": study_id, "state": "free"})
-        if (free_participant_count / study.planned_number_participants) <= 0.8:
+        if (free_participant_count / study.planned_number_participants) <= 0.2:
             methods.add_participants(db, study_id, study.planned_number_participants)
 
     return methods.api.issue_tokens(str(participant.token), study.endDate, auth_method=methods.AuthMethod.PARTICIPANT_KEY)
