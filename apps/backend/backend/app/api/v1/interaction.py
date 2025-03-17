@@ -63,6 +63,22 @@ def export_interaction_data(study_id: int, db: Session = Depends(get_db)):
                 rows = methods.export_interaction(db, study_id, interaction_type)
                 csv_data = create_csv(keys, rows)
                 zip_file.writestr(zip_info, csv_data)
+
+            participant_keys = [column.key for column in model.Participant.__table__.columns]
+            participant_rows = db.query(model.Participant).filter(
+                model.Participant.study_id == study_id).order_by(model.Participant.id.asc()).all()
+            csv_data = create_csv(participant_keys, participant_rows)
+            zip_info = zipfile.ZipInfo(f'participants.csv', datetime.now().timetuple()[:6])
+            zip_file.writestr(zip_info, csv_data)
+
+            participant_ids = [p.id for p in participant_rows]
+            procedure_progress_keys = [column.key for column in model.ProcedureProgress.__table__.columns]
+            procedure_progress_rows = db.query(model.ProcedureProgress).filter(
+                model.ProcedureProgress.participant_id.in_(participant_ids)).order_by(model.ProcedureProgress.id.asc()).all()
+            csv_data = create_csv(procedure_progress_keys, procedure_progress_rows)
+            zip_info = zipfile.ZipInfo(f'procedure_progress.csv', datetime.now().timetuple()[:6])
+            zip_file.writestr(zip_info, csv_data)
+
         zip_buffer.seek(0)
         headers = {"Content-Disposition": f"attachment; filename=data_export-{study.name.replace(' ', '_')}.zip"}
         return Response(zip_buffer.getvalue(), headers=headers, media_type="application/zip")
