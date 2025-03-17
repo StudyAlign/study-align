@@ -10,6 +10,7 @@ class ProcedureProgressStateEnum(str, Enum):
     end_experiment = "end_experiment"
     start_step = "start_step"
     end_step = "end_step"
+    pushed_step = "pushed_step"
 
 
 class ProcedureProgressBase(BaseModel):
