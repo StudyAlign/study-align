@@ -33,3 +33,9 @@ class Participant(ParticipantBase):
 
     class Config:
         from_attributes = True
+
+
+class ParticipantOrderByFields(str, Enum): # basically the GenericInteractionFields + metaData field
+    id = "id"
+    state = "state"
+    current_procedure_step = "current_procedure_step"

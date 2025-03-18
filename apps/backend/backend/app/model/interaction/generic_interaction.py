@@ -4,8 +4,10 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
+from model.interaction import InteractionBase
 
-class GenericInteraction(Base):
+
+class GenericInteraction(InteractionBase):
     __tablename__ = 'generic_interactions'
 
     id = Column(Integer, primary_key=True)

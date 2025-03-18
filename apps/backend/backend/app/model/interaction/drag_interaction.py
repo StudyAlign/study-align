@@ -4,11 +4,14 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
+from model.interaction import InteractionBase
+
+
 # see: https://developer.mozilla.org/en-US/docs/Web/API/DragEvent
 # The Drag Event inherits the properties from Mouse Event
 
 
-class DragInteraction(Base):
+class DragInteraction(InteractionBase):
     __tablename__ = 'drag_interactions'
 
     id = Column(Integer, primary_key=True)

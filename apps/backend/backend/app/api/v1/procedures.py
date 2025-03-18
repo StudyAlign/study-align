@@ -1,6 +1,7 @@
 import asyncio
 import json
 from base64 import b64decode
+import uuid
 from datetime import datetime
 from typing import List, Union
 
@@ -88,7 +89,7 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
     if participant.current_procedure_step is None:
         raise HTTPException(status_code=409, detail="Procedure not started yet.")
 
-    # check if participant current step config allows to proceed, if not raise excception
+    # check if participant current step config allows to proceed, if not raise exception
     if not methods.allows_config_to_proceed(participant, db):
         raise HTTPException(status_code=409, detail="Step config disallows to proceed.")
 
@@ -166,6 +167,100 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
     procedure_step = methods.get_procedure_step(next_step)
     procedure_step = methods.set_is_last_step(procedure_step, is_last_step)
     procedure_step = methods.set_is_second_last_step(procedure_step, is_second_last_step)
+    return procedure_step
+
+@router.post("/procedures/push",
+             response_model=Union[schema.condition.ConditionStep,
+             schema.questionnaire.QuestionnaireStep,
+             schema.pause.PauseStep,
+             schema.text.TextStep],
+             dependencies=[Depends(methods.userAccessTokenValidator)])
+async def procedure_push_to_next_step(participant_token: uuid.UUID, db: Session = Depends(get_db)):
+    participant = methods.read_by(db, model.Participant, "token", participant_token)
+    if_exists(participant, "Participant")
+
+    # we do not check if the participant's procedure config step allows to proceed. pushing a participant to the next
+    # step happens on purpose by the experimenter.
+
+    try:
+        next_time = datetime.utcnow()
+        previous_step_id = participant.current_procedure_step
+        progress_end_step = schema.procedure_progress.ProcedureProgressCreate(
+            state=ProcedureProgressStateEnum.end_step,
+            time=next_time,
+            participant_id=participant.id,
+            procedure_step_id=previous_step_id
+        )
+        progress_pushed_step = schema.procedure_progress.ProcedureProgressCreate(
+            state=ProcedureProgressStateEnum.pushed_step,
+            time=next_time,
+            participant_id=participant.id,
+            procedure_step_id=previous_step_id
+        )
+        previous_step = None
+        for step in participant.procedure.procedure_steps:
+            if step.id == previous_step_id:
+                previous_step = step
+                break
+        previous_step_index = participant.procedure.procedure_steps.index(previous_step)
+
+        # previous step is last step
+        if previous_step_index == len(participant.procedure.procedure_steps) - 1:
+            participant.current_procedure_step = None
+            participant.current_procedure_step_config = None
+            participant.state = ParticipantEnum.finished
+            progress_end_experiment = schema.procedure_progress.ProcedureProgressCreate(
+                state=ProcedureProgressStateEnum.end_experiment,
+                time=next_time,
+                participant_id=participant.id,
+                procedure_step_id=None
+            )
+            db.add(model.ProcedureProgress(**progress_end_step.model_dump()))
+            db.add(model.ProcedureProgress(**progress_pushed_step.model_dump()))
+            db.add(model.ProcedureProgress(**progress_end_experiment.model_dump()))
+            db.commit()
+            navigator.unsubscribe(participant.id)
+            raise HTTPException(status_code=405,
+                                detail="study finished")
+
+        next_step = participant.procedure.procedure_steps[previous_step_index + 1]
+        participant.current_procedure_step = next_step.id
+        participant = methods.set_current_procedure_step_config(next_step, participant)
+        progress_start_step = schema.procedure_progress.ProcedureProgressCreate(
+            state=ProcedureProgressStateEnum.start_step,
+            time=next_time,
+            participant_id=participant.id,
+            procedure_step_id=next_step.id
+        )
+        progress_pushed_step = schema.procedure_progress.ProcedureProgressCreate(
+            state=ProcedureProgressStateEnum.pushed_step,
+            time=next_time,
+            participant_id=participant.id,
+            procedure_step_id=next_step.id
+        )
+        db.add(model.ProcedureProgress(**progress_end_step.model_dump()))
+        db.add(model.ProcedureProgress(**progress_pushed_step.model_dump()))
+        db.add(model.ProcedureProgress(**progress_start_step.model_dump()))
+        db.commit()
+
+        # is next_step second last step?
+        next_step_index = participant.procedure.procedure_steps.index(next_step)
+
+        is_last_step = False
+        if next_step_index == len(participant.procedure.procedure_steps) - 1:
+            is_last_step = True
+
+        is_second_last_step = False
+        if next_step_index == len(participant.procedure.procedure_steps) - 2:
+            is_second_last_step = True
+
+    except exc.SQLAlchemyError:
+        raise HTTPException(status_code=409, detail="Failed to proceed experiment step.")
+
+    procedure_step = methods.get_procedure_step(next_step)
+    procedure_step = methods.set_is_last_step(procedure_step, is_last_step)
+    procedure_step = methods.set_is_second_last_step(procedure_step, is_second_last_step)
+
     return procedure_step
 
 

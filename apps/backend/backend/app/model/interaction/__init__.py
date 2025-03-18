@@ -1,3 +1,4 @@
+from .interaction_base import InteractionBase
 from .generic_interaction import GenericInteraction
 from .keyboard_interaction import KeyboardInteraction
 from .mouse_interaction import MouseInteraction

@@ -5,6 +5,13 @@ from pydantic import BaseModel
 from typing import Union
 import uuid
 
+class InteractionCounts(BaseModel):
+    generic: int
+    mouse: int
+    keyboard: int
+    drag: int
+    touch: int
+
 
 # meta interactions do not extend CreateBase model to allow for optional condition_id
 class InteractionCreateBase(BaseModel):
@@ -34,7 +41,6 @@ class MouseInteractionBase(BaseModel):
     shiftKey: bool
     altKey: bool
     metaKey: bool
-    button: int
     button: int
     relatedTarget: Union[dict, list, set, float, int, str, bytes, bool]
     x: float  # alias for clientX
@@ -256,3 +262,80 @@ class InteractionEnum(str, Enum):
     drag = "drag"
     keyboard = "keyboard"
     touch = "touch"
+
+
+class InteractionBaseEnum(str, Enum):
+    generic = "generic"
+    mouse = "mouse"
+    drag = "drag"
+    keyboard = "keyboard"
+    touch = "touch"
+
+
+# These enums are used for typing the order by requests of interaction get requests
+# An union of these enums is the allowed set of strings allowed for the orderby part of the DB queries
+class BaseInteractionFields(str, Enum): # basically the GenericInteractionFields + metaData field
+    id = "id"
+    uuid = "uuid"
+    event = "event"
+    time = "time"
+    data = "data"
+    metaData = "metaData"
+class KeyboardInteractionFields(str, Enum):
+    altKey = "altKey"
+    code = "code"
+    isComposing = "isComposing"
+    key = "key"
+    location = "location"
+    metaKey = "metaKey"
+    repeat = "repeat"
+    shiftKey = "shiftKey"
+class MouseInteractionFields(str, Enum):
+    screenX = "screenX"
+    screenY = "screenY"
+    clientX = "clientX"
+    clientY = "clientY"
+    ctrlKey = "ctrlKey"
+    shiftKey = "shiftKey"
+    altKey = "altKey"
+    metaKey = "metaKey"
+    button = "button"
+    relatedTarget = "relatedTarget"
+    x = "x"
+    y = "y"
+class DragInteractionFields(str, Enum):
+    altKey = "altKey"
+    button = "button"
+    buttons = "buttons"
+    clientX = "clientX"
+    clientY = "clientY"
+    ctrlKey = "ctrlKey"
+    metaKey = "metaKey"
+    movementX = "movementX"
+    movementY = "movementY"
+    offsetX = "offsetX"
+    offsetY = "offsetY"
+    pageX = "pageX"
+    pageY = "pageY"
+    region = "region"
+    relatedTarget = "relatedTarget"
+    screenX = "screenX"
+    screenY = "screenY"
+    shiftKey = "shiftKey"
+    which = "which"
+class TouchInteractionFields(str, Enum):
+    altKey = "altKey"
+    ctrlKey = "ctrlKey"
+    metaKey = "metaKey"
+    shiftKey = "shiftKey"
+    changedTouches = "changedTouches"
+    targetTouches = "targetTouches"
+    touches = "touches"
+
+InteractionOrderByFields = Union[
+    BaseInteractionFields,
+    KeyboardInteractionFields,
+    MouseInteractionFields,
+    DragInteractionFields,
+    TouchInteractionFields
+]

@@ -79,7 +79,7 @@ def patch_all(db: Session, model: Base, data: List[Union[BaseModel, Dict]], sync
     )
     db.commit()
 
-    # synch session afterwards?!
+    # sync session afterwards?!
     return
 
 

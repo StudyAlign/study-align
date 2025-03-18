@@ -73,4 +73,3 @@ async def end_participants_step_pause(participant_token: uuid.UUID, db: Session 
             participant.current_procedure_step_config = {"proceed": True}
             db.commit()
     return
-

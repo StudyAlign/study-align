@@ -21,3 +21,9 @@ class ProcedureProgress(Base):
 
     def __repr__(self):
         return "<ProcedureProgress(id='%d' state='%s' variant='%s')>" % (self.id, self.state, self.time)
+
+    def to_dict(self):
+        return {field.name: getattr(self, field.name) for field in self.__table__.c}
+
+    def to_csv_row(self):
+        return [getattr(self, field.name) for field in self.__table__.c]

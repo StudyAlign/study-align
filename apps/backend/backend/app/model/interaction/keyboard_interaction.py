@@ -4,11 +4,13 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.dialects.postgresql import JSONB
 import uuid
 
+from model.interaction import InteractionBase
+
 
 # see: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
 
 
-class KeyboardInteraction(Base):
+class KeyboardInteraction(InteractionBase):
     __tablename__ = 'keyboard_interactions'
 
     id = Column(Integer, primary_key=True)

@@ -1,15 +1,22 @@
-from fastapi import Depends, APIRouter, status, HTTPException
+import io
+import zipfile
+from datetime import datetime
+
+from fastapi import Depends, APIRouter, status, HTTPException, Response
 
 from sqlalchemy import exc
-from typing import List, Union
+from typing import List, Union, Literal
 
 import methods
 from api import get_db, if_exists
+from methods import create_csv
 
 from model.base import Session
 import model
 
 import schema.interaction.interactions
+from schema.interaction import InteractionEnum
+from schema.interaction import InteractionOrderByFields
 import schema.populated
 import schema.participant
 import schema.condition
@@ -24,15 +31,81 @@ router = APIRouter()
                                                        schema.interaction.interactions.KeyboardInteraction,
                                                        schema.interaction.interactions.TouchInteraction]],
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_interactions(study_id: int, type: schema.interaction.interactions.InteractionEnum, offset: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+async def read_interactions(study_id: int, type: schema.interaction.interactions.InteractionEnum, offset: int = 0,
+                            limit: int = 100, order_by: InteractionOrderByFields = "id", direction: Literal["asc", "desc"] = "asc",
+                            db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, "Study")
 
-    interactions = methods.read_interactions(db, study_id, type, offset, limit)
+    interactions = methods.read_interactions(db, study_id, type, offset, limit, order_by, direction)
     if not interactions:
         raise HTTPException(status_code=409, detail="Study has no interactions")
 
     return interactions
+
+
+@router.get("/interactions/count", response_model=int, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_interaction_count(study_id: int, type: schema.interaction.interactions.InteractionBaseEnum, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, "Study")
+    interaction_count = methods.interaction_count(db, study_id, type)
+    return interaction_count
+
+
+@router.get("/interactions/counts", response_model=schema.interaction.interactions.InteractionCounts, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_interaction_counts(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, "Study")
+    interaction_count = methods.interaction_counts(db, study_id)
+    return interaction_count
+
+
+@router.get("/interactions/export", response_class=Response, dependencies=[Depends(methods.userAccessTokenValidator)])
+def export_interaction_data(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, "Study")
+
+    interaction_types = [
+        InteractionEnum.generic,
+        InteractionEnum.mouse,
+        InteractionEnum.drag,
+        InteractionEnum.keyboard,
+        InteractionEnum.touch
+    ]
+
+    zip_buffer = io.BytesIO()
+    try:
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for interaction_type in interaction_types:
+                #TODO: consider timezone offset?
+                zip_info = zipfile.ZipInfo(f'{interaction_type}.csv', datetime.now().timetuple()[:6])
+                keys = methods.get_keys(interaction_type)
+                rows = methods.export_interaction(db, study_id, interaction_type)
+                csv_data = create_csv(keys, rows)
+                zip_file.writestr(zip_info, csv_data)
+
+            participant_keys = [column.key for column in model.Participant.__table__.columns]
+            participant_rows = db.query(model.Participant).filter(
+                model.Participant.study_id == study_id).order_by(model.Participant.id.asc()).all()
+            csv_data = create_csv(participant_keys, participant_rows)
+            zip_info = zipfile.ZipInfo(f'participants.csv', datetime.now().timetuple()[:6])
+            zip_file.writestr(zip_info, csv_data)
+
+            participant_ids = [p.id for p in participant_rows]
+            procedure_progress_keys = [column.key for column in model.ProcedureProgress.__table__.columns]
+            procedure_progress_rows = db.query(model.ProcedureProgress).filter(
+                model.ProcedureProgress.participant_id.in_(participant_ids)).order_by(model.ProcedureProgress.id.asc()).all()
+            csv_data = create_csv(procedure_progress_keys, procedure_progress_rows)
+            zip_info = zipfile.ZipInfo(f'procedure_progress.csv', datetime.now().timetuple()[:6])
+            zip_file.writestr(zip_info, csv_data)
+
+        zip_buffer.seek(0)
+        headers = {"Content-Disposition": f"attachment; filename=data_export-{study.name.replace(' ', '_')}.zip"}
+        return Response(zip_buffer.getvalue(), headers=headers, media_type="application/zip")
+    except:
+        raise HTTPException(status_code=400, detail='Error processing the export data')
+    finally:
+        zip_buffer.close()
 
 
 @router.post("/interaction/meta", response_model=schema.interaction.interactions.GenericInteraction)
@@ -238,3 +311,4 @@ async def log_touch_interaction_bulk(data: schema.interaction.interactions.Touch
     except exc.SQLAlchemyError:
         raise HTTPException(status_code=409, detail="Failed to log bulk of touch interactions.")
     return
+

@@ -39,3 +39,9 @@ class Participant(Base):
 
     def __repr__(self):
         return "<Participant(id='%d', token='%s', state='%s')>" % (self.id, self.token, self.state)
+
+    def to_dict(self):
+        return {field.name: getattr(self, field.name) for field in self.__table__.c}
+
+    def to_csv_row(self):
+        return [getattr(self, field.name) for field in self.__table__.c]

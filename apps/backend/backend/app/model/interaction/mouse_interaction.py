@@ -5,10 +5,13 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
+from model.interaction import InteractionBase
+
+
 # see: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/MouseEvent
 
 
-class MouseInteraction(Base):
+class MouseInteraction(InteractionBase):
     __tablename__ = 'mouse_interactions'
 
     id = Column(Integer, primary_key=True)

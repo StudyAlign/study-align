@@ -5,11 +5,12 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.dialects.postgresql import JSONB
 import uuid
 
+from model.interaction import InteractionBase
 # see: https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent
 from model.interaction.touch_type import TouchType
 
 
-class TouchInteraction(Base):
+class TouchInteraction(InteractionBase):
     __tablename__ = 'touch_interactions'
 
     id = Column(Integer, primary_key=True)
