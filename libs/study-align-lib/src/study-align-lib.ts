@@ -281,11 +281,15 @@ class StudyAlignLib {
             method: "GET",
             path: "studies/" + studyId + "/participants",
             headers: {},
-            params: { study_id: studyId, offset: offset, limit: limit, order_by: orderBy, direction: direction },
+            params: { offset: offset, limit: limit, order_by: orderBy, direction: direction },
             asQuery: true
         };
         this.setHeaders(options);
         return this.request(options);
+    }
+
+    getParticipantCount(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/participants/count");
     }
 
     generateParticipants(studyId: number, amount: number) {
@@ -539,7 +543,7 @@ class StudyAlignLib {
             method: "GET",
             path: "interactions",
             headers: {},
-            params: { study_id: studyId, type: type, offset: offset, limit: limit, order_by: orderBy, direction: direction },
+            params: { type: type, offset: offset, limit: limit, order_by: orderBy, direction: direction },
             asQuery: true
         };
         this.setHeaders(options);
@@ -562,6 +566,18 @@ class StudyAlignLib {
         const options: Options = {
             method: "GET",
             path: "interactions/counts",
+            headers: {},
+            params: { study_id: studyId },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    getInteractionExport(studyId: number) {
+        const options: Options = {
+            method: "GET",
+            path: "interactions/export",
             headers: {},
             params: { study_id: studyId },
             asQuery: true
