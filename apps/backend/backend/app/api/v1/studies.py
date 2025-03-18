@@ -2,7 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 from fastapi import Depends, APIRouter, status, HTTPException
-from typing import List, Union
+from typing import List, Union, Literal
 
 from model.base import Session
 from api import get_db, if_exists, if_not_zero
@@ -16,7 +16,7 @@ from methods import AuthMethod, UserRole, UserValidator
 import schema.study
 import schema.procedure
 import schema.api
-from schema.participant import ParticipantEnum
+from schema.participant import ParticipantEnum, ParticipantOrderByFields
 from schema.questionnaire import QuestionnaireSystemEnum
 
 router = APIRouter()
@@ -104,11 +104,13 @@ async def add_participants(study_id: int, amount: int, db: Session = Depends(get
 
 @router.get("/studies/{study_id}/participants", response_model=List[schema.populated.ParticipantPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_participants(study_id: int, participant_state: Union[ParticipantEnum, None] = None,
-                            paused: Union[bool, None] = None, proceed: Union[bool, None] = None, db: Session = Depends(get_db)):
+                            paused: Union[bool, None] = None, proceed: Union[bool, None] = None, offset: int = 0,
+                            limit: int = 100, order_by: ParticipantOrderByFields = "id", direction: Literal["asc", "desc"] = "asc",
+                            db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, ENTITY)
 
-    participants = methods.read_participants_with_filters(db, study_id, participant_state, paused, proceed)
+    participants = methods.read_participants_with_filters(db, study_id, participant_state, paused, proceed, offset, limit, order_by, direction)
     if not participants:
         raise HTTPException(status_code=409, detail="Study has no participants")
     
