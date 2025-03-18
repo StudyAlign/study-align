@@ -276,8 +276,16 @@ class StudyAlignLib {
         return this.basicRead("studies/" + studyId + "/procedure-config");
     }
 
-    getParticipants(studyId: number) {
-        return this.basicRead("studies/" + studyId + "/participants");
+    getParticipants(studyId: number, offset: number = 0, limit: number = 100, orderBy: string = "id", direction: string = "asc") {
+        const options: Options = {
+            method: "GET",
+            path: "studies/" + studyId + "/participants",
+            headers: {},
+            params: { study_id: studyId, offset: offset, limit: limit, order_by: orderBy, direction: direction },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
     }
 
     generateParticipants(studyId: number, amount: number) {
@@ -308,8 +316,8 @@ class StudyAlignLib {
         return this.basicRead("studies/" + studyId + "/export");
     }
 
-    importStudySchema(studyId: number, studySchema: object) {
-        return this.basicCreate("studies/" + studyId + "/import", studySchema);
+    importStudySchema(studySchema: object) {
+        return this.basicCreate("studies/import", studySchema);
     }
 
     duplicateStudy(studyId: number) {
@@ -526,24 +534,36 @@ class StudyAlignLib {
 
     //Interactions
 
-    getFirst100Interactions(studyId: number) {
+    getInteractions(studyId: number, type: string, offset: number = 0, limit: number = 100, orderBy: string = "id", direction: string = "asc") {
         const options: Options = {
             method: "GET",
             path: "interactions",
             headers: {},
-            params: { study_id: studyId, type: "all" },
+            params: { study_id: studyId, type: type, offset: offset, limit: limit, order_by: orderBy, direction: direction },
             asQuery: true
         };
         this.setHeaders(options);
         return this.request(options);
     }
 
-    getInteractions(studyId: number, type: string, offset: number = 0, limit: number = 100) {
+    getInteractionCount(studyId: number, type: string) {
         const options: Options = {
             method: "GET",
-            path: "interactions",
+            path: "interactions/count",
             headers: {},
-            params: { study_id: studyId, type: type, offset: offset, limit: limit },
+            params: { study_id: studyId, type: type },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    getInteractionCounts(studyId: number) {
+        const options: Options = {
+            method: "GET",
+            path: "interactions/counts",
+            headers: {},
+            params: { study_id: studyId },
             asQuery: true
         };
         this.setHeaders(options);
