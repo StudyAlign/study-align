@@ -117,6 +117,16 @@ async def read_participants(study_id: int, participant_state: Union[ParticipantE
     return participants
 
 
+@router.get("/studies/{study_id}/participants/count", response_model=int,
+            dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_participants_count(study_id: int, participant_state: Union[ParticipantEnum, None] = None,
+                            paused: Union[bool, None] = None, proceed: Union[bool, None] = None, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, ENTITY)
+    participant_count = methods.count_participants_with_filters(db, study_id, participant_state, paused, proceed)
+    return participant_count
+
+
 @router.get("/studies/{study_id}/conditions", response_model=List[schema.populated.ConditionPopulated],
             dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_conditions(study_id: int, db: Session = Depends(get_db)):
