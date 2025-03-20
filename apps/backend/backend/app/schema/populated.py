@@ -17,6 +17,7 @@ from schema.text import Text, TextStep, TextBase
 from schema.user import User
 from schema.role import Role
 from schema.pause import Pause, PauseStep, PauseBase
+from schema.collaborator import Collaborator
 
 
 class ConditionPopulated(Condition):
@@ -188,6 +189,13 @@ class PausePopulated(Pause):
 
 class UserPopulated(User):
     role: Optional[Role] = None
+
+    class Config:
+        from_attributes = True
+
+
+class CollaboratorPopulated(Collaborator):
+    user: Optional[User] = None
 
     class Config:
         from_attributes = True
