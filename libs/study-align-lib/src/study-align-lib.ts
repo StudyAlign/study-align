@@ -288,8 +288,16 @@ class StudyAlignLib {
         return this.request(options);
     }
 
-    getParticipantCount(studyId: number) {
-        return this.basicRead("studies/" + studyId + "/participants/count");
+    getParticipantsCount(studyId: number, participant_state: string, paused: string, proceed: string) {
+        const options: Options = {
+            method: "GET",
+            path: "studies/" + studyId + "/participants/count",
+            headers: {},
+            params: { participant_state: participant_state, paused: paused, proceed: proceed },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
     }
 
     generateParticipants(studyId: number, amount: number) {
