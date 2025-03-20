@@ -435,6 +435,19 @@ class StudyAlignLib {
         return this.basicRead("studies/" + studyId + "/pauses");
     }
 
+    // Collaborators
+
+    getCollaborators(studyId: number) {
+        return this.basicRead("collaborators/study/" + studyId);
+    }
+
+    createCollaborator(collaborator: object) {
+        return this.basicCreate("collaborators", collaborator);
+    }
+
+    deleteCollaborator(collaboratorId: number) {
+        return this.basicDelete("collaborators/" + collaboratorId);
+    }
 
     // Procedures
 
