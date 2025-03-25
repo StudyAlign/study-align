@@ -3,6 +3,7 @@ from typing import List, Union
 import model
 from fastapi import Depends, APIRouter, HTTPException
 
+from methods.dependencies.roles import ProcedureIdRoleCheck
 from model.base import Session
 from api import get_db, if_exists
 
@@ -24,8 +25,7 @@ ENTITY = "ProcedureStep"
                                  schema.questionnaire.QuestionnaireStep,
                                  schema.pause.PauseStep,
                                  schema.text.TextStep])
-async def read_current_procedure_step(participant: schema.populated.ParticipantPopulated = Depends(methods.get_active_participant),
-                          db: Session = Depends(get_db)):
+async def read_current_procedure_step(participant: schema.populated.ParticipantPopulated = Depends(methods.get_active_participant)):
     if participant.current_procedure_step is None:
         raise HTTPException(status_code=409, detail="Procedure not started yet.")
 
@@ -45,8 +45,8 @@ async def read_current_procedure_step(participant: schema.populated.ParticipantP
     procedure_step = methods.set_is_second_last_step(procedure_step, is_second_last_step)
     return procedure_step
 
-
+ProcedureIdCheck = Depends(ProcedureIdRoleCheck())
 @router.get("/procedure-steps/{procedure_id}", response_model=List[schema.populated.ProcedureStepPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_procedure_steps_by_procedure_id(procedure_id: int, db: Session = Depends(get_db)):
+async def read_procedure_steps_by_procedure_id(procedure_id: int = ProcedureIdCheck, db: Session = Depends(get_db)):
     procedure_steps = methods.read_ordered_procedure_steps(db, procedure_id)
     return procedure_steps

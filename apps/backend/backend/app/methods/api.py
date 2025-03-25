@@ -30,6 +30,9 @@ class UserRole(str, Enum):
 
 userAccessTokenValidator = UserValidator(strict_auth_method=True, user_role=[UserRole.ADMIN, UserRole.RESEARCHER])
 userRefreshTokenValidator = UserValidator(type=REFRESH, strict_auth_method=True, user_role=[UserRole.ADMIN, UserRole.RESEARCHER])
+adminAccessTokenValidator = UserValidator(strict_auth_method=True, user_role=[UserRole.ADMIN])
+
+user_validator = UserValidator(strict_auth_method=True)
 
 participantLoggerKeyValidator = LoggerKeyValidator()
 

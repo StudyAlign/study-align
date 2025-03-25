@@ -9,6 +9,7 @@ from passlib.context import CryptContext
 from methods.api import REFRESH, AuthMethod
 from starlette import status
 
+from methods.dependencies.roles import UserIdRoleCheck
 from methods.dependencies.security import UserValidator
 from methods.users import authenticate_user, get_password_hash
 from model.base import Session
@@ -46,12 +47,12 @@ async def read_users(db: Session = Depends(get_db)):
     return methods.read_list(db, model.User)
 
 
-@router.get("/users/roles", response_model=List[schema.role.Role], dependencies=[Depends(methods.userAccessTokenValidator)])
+@router.get("/users/roles", response_model=List[schema.role.Role], dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def read_roles(db: Session = Depends(get_db)):
     return methods.read_list(db, model.Role)
 
 
-@router.post("/users", response_model=schema.user.User, dependencies=[Depends(methods.userAccessTokenValidator)])
+@router.post("/users", response_model=schema.user.User, dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def create_user(user: schema.user.UserCreate, db: Session = Depends(get_db)):
     if user.password:
         user.password = get_password_hash(user.password)
@@ -64,9 +65,9 @@ async def read_user(user_id: int, db: Session = Depends(get_db)):
     if_exists(user, ENTITY)
     return user
 
-
+UserIdCheck = Depends(UserIdRoleCheck())
 @router.patch("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def update_user(user_id: int, user: schema.user.UserUpdate, db: Session = Depends(get_db)):
+async def update_user(user_id: int = UserIdCheck, user: schema.user.UserUpdate = None, db: Session = Depends(get_db)):
     if user.password:
         user.password = get_password_hash(user.password)
     user_update = methods.patch(db, model.User, user, user_id)
@@ -74,7 +75,7 @@ async def update_user(user_id: int, user: schema.user.UserUpdate, db: Session = 
     return user_update
 
 
-@router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
+@router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.adminAccessTokenValidator)])
 async def delete_user(user_id: int, db: Session = Depends(get_db)):
     if user_id == 1:
         raise HTTPException(status_code=403, detail="User with id 1 cannot be deleted.")

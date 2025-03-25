@@ -16,6 +16,7 @@ class CurrentSetupStepEnum(str, Enum):
     check = "check"
     done = "done"
 
+
 class StudyStateEnum(str, Enum):
     setup = "setup"
     running = "running"
