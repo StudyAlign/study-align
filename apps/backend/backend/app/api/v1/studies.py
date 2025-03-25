@@ -4,6 +4,9 @@ from uuid import UUID
 from fastapi import Depends, APIRouter, status, HTTPException
 from typing import List, Union, Literal
 
+from sqlalchemy import or_
+
+from methods.dependencies.roles import StudyIdRoleCheck
 from model.base import Session
 from api import get_db, if_exists, if_not_zero
 
@@ -24,7 +27,9 @@ router = APIRouter()
 ENTITY = "Study"
 
 @router.get("/studies", response_model=List[schema.study.StudyDetails], dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_studies(db: Session = Depends(get_db)):
+async def read_studies(user: schema.user.User = Depends(UserValidator(strict_auth_method=True)), db: Session = Depends(get_db)):
+    if user.role.name == UserRole.RESEARCHER:
+        return db.query(model.Study).join(model.Collaborator).filter(or_(model.Study.owner_id == user.id, model.Collaborator.user_id == user.id)).order_by(model.Study.id.desc()).all()
     return methods.read_list(db, model.Study)
 
 
@@ -43,39 +48,38 @@ async def read_study(study_id: int, db: Session = Depends(get_db)):
     return study
 
 
+StudyIdCheck = Depends(StudyIdRoleCheck())
 @router.patch("/studies/{study_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def update_study(study_id: int, study: schema.study.StudyUpdate, db: Session = Depends(get_db)):
+async def update_study(study_id: int = StudyIdCheck, study: schema.study.StudyUpdate = None, db: Session = Depends(get_db)):
     study_update = methods.patch(db, model.Study, study, study_id)
     if_not_zero(study_update, ENTITY)
     return study_update
 
 
 @router.delete("/studies/{study_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def delete_study(study_id: int, db: Session = Depends(get_db)):
+async def delete_study(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
     db.delete(study)
     db.commit()
     return
 
 
 @router.get("/studies/{study_id}/setup-info", response_model=schema.study.StudySetupInfo, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_study_setup_info(study_id: int, db: Session = Depends(get_db)):
+async def read_study_setup_info(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
     remaining_participants_count = methods.count_by_dict(db, model.Participant, {"study_id": study_id, "state": "free"})
     study.remaining_participants = remaining_participants_count
     return study
 
 
 @router.get("/studies/{study_id}/procedure-config", response_model=schema.procedure_config.ProcedureConfig, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_procedure_config_main(study_id: int, db: Session = Depends(get_db)):
+async def read_procedure_config_main(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     procedure_config_main = methods.read_by_dict(db, model.ProcedureConfig, {"study_id": study_id, "main": True})
     return procedure_config_main
 
 
 @router.post("/studies/{study_id}/procedures", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def generate_procedures(study_id: int, db: Session = Depends(get_db)):
+async def generate_procedures(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     procedures = methods.read_list_by(db, model.Procedure, "study_id", study_id)
     if procedures:
         raise HTTPException(status_code=409, detail="Procedures have already been generated")
@@ -83,9 +87,7 @@ async def generate_procedures(study_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/studies/{study_id}/participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def generate_participants(study_id: int, amount: int, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
+async def generate_participants(study_id: int = StudyIdCheck, amount: int = 10, db: Session = Depends(get_db)):
     participant_count = methods.count_by(db, model.Participant, "study_id", study_id)
     if participant_count != 0:
         raise HTTPException(status_code=409, detail="Participants have already been generated")
@@ -93,9 +95,7 @@ async def generate_participants(study_id: int, amount: int, db: Session = Depend
 
 
 @router.post("/studies/{study_id}/add-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def add_participants(study_id: int, amount: int, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
+async def add_participants(study_id: int = StudyIdCheck, amount: int = 10, db: Session = Depends(get_db)):
     participant_count = methods.count_by(db, model.Participant, "study_id", study_id)
     if participant_count == 0:
         raise HTTPException(status_code=409, detail="Generate participants first")
@@ -103,13 +103,10 @@ async def add_participants(study_id: int, amount: int, db: Session = Depends(get
 
 
 @router.get("/studies/{study_id}/participants", response_model=List[schema.populated.ParticipantPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_participants(study_id: int, participant_state: Union[ParticipantEnum, None] = None,
+async def read_participants(study_id: int = StudyIdCheck, participant_state: Union[ParticipantEnum, None] = None,
                             paused: Union[bool, None] = None, proceed: Union[bool, None] = None, offset: int = 0,
                             limit: int = 100, order_by: ParticipantOrderByFields = "id", direction: Literal["asc", "desc"] = "asc",
                             db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
-
     participants = methods.read_participants_with_filters(db, study_id, participant_state, paused, proceed, offset, limit, order_by, direction)
     if not participants:
         raise HTTPException(status_code=409, detail="Study has no participants")
@@ -119,10 +116,7 @@ async def read_participants(study_id: int, participant_state: Union[ParticipantE
 
 @router.get("/studies/{study_id}/conditions", response_model=List[schema.populated.ConditionPopulated],
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_conditions(study_id: int, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
-
+async def read_conditions(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     conditions = methods.read_list_by(db, model.Condition, "study_id", study_id)
     if not conditions:
         raise HTTPException(status_code=409, detail="Study has no conditions")
@@ -132,10 +126,7 @@ async def read_conditions(study_id: int, db: Session = Depends(get_db)):
 
 @router.get("/studies/{study_id}/tasks", response_model=List[schema.populated.TaskPopulated],
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_tasks(study_id: int, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
-
+async def read_tasks(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     tasks = methods.read_list_by(db, model.Task, "study_id", study_id)
     if not tasks:
         raise HTTPException(status_code=409, detail="Study has no tasks")
@@ -145,10 +136,7 @@ async def read_tasks(study_id: int, db: Session = Depends(get_db)):
 
 @router.get("/studies/{study_id}/texts", response_model=List[schema.populated.TextPopulated],
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_texts(study_id: int, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
-
+async def read_texts(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     texts = methods.read_list_by(db, model.Text, "study_id", study_id)
     if not texts:
         raise HTTPException(status_code=409, detail="Study has no texts")
@@ -158,10 +146,7 @@ async def read_texts(study_id: int, db: Session = Depends(get_db)):
 
 @router.get("/studies/{study_id}/questionnaires", response_model=List[schema.populated.QuestionnairePopulated],
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_questionnaires(study_id: int, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
-
+async def read_questionnaires(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     questionnaires = methods.read_list_by(db, model.Questionnaire, "study_id", study_id)
     if not questionnaires:
         raise HTTPException(status_code=409, detail="Study has no questionnaires")
@@ -171,10 +156,7 @@ async def read_questionnaires(study_id: int, db: Session = Depends(get_db)):
 
 @router.get("/studies/{study_id}/pauses", response_model=List[schema.populated.PausePopulated],
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_pauses(study_id: int, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
-
+async def read_pauses(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     pauses = methods.read_list_by(db, model.Pause, "study_id", study_id)
     if not pauses:
         raise HTTPException(status_code=409, detail="Study has no pauses")
@@ -184,10 +166,7 @@ async def read_pauses(study_id: int, db: Session = Depends(get_db)):
 # DEPRECATED! Only here for legacy documentation
 @router.get("/studies/{study_id}/survey-participants", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)],
             deprecated=True)
-async def populate_survey_participants(study_id: int, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
-
+async def populate_survey_participants(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     surveys = methods.read_list_by(db, model.Questionnaire, "study_id", study_id)
     if not surveys:
         raise HTTPException(status_code=409, detail="Study has no surveys")
@@ -257,9 +236,8 @@ async def participate(study_id: int, participant_token: UUID, db: Session = Depe
 
 
 @router.get("/studies/{study_id}/export", response_model=schema.populated.StudyExport, response_model_exclude_none=True, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def export_study(study_id: int, db: Session = Depends(get_db)):
+async def export_study(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
     main_procedure_config = study.procedure_config[0]
     return {"study": study, "procedure_config": main_procedure_config}
 
@@ -271,9 +249,8 @@ async def import_study(study_import: schema.study.StudyImport, user: schema.user
 
 
 @router.get("/studies/{study_id}/duplicate", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def duplicate_study(study_id: int, db: Session = Depends(get_db)):
+async def duplicate_study(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
-    if_exists(study, ENTITY)
     main_procedure_config = schema.procedure_config.ProcedureConfigImport.model_validate(study.procedure_config[0])
     study = schema.study.StudyDuplicateDetails.model_validate(study)
     duplicated_study = methods.duplicate_study(db, {"study": study, "procedure_config": main_procedure_config})

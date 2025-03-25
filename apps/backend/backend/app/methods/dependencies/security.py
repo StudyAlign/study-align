@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import HTTPException, Depends, status, Header, Security
+from fastapi import HTTPException, Depends, status, Header, Security, Path
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, APIKeyHeader
 from jose import JWTError, jwt, ExpiredSignatureError
 from decouple import config
@@ -92,7 +92,6 @@ class UserValidator:
                 check_auth_method(payload, [methods.AuthMethod.USER_LOGIN])
             return None
 
-
         print(payload)
         user_id: str = payload.get("sub")
         if user_id is None:
@@ -182,3 +181,4 @@ class LoggerKeyValidator:
         if participant is None or participant.state != "in_progress":
             raise key_exception
         return participant
+

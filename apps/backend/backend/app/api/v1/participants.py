@@ -6,6 +6,7 @@ from fastapi import Depends, APIRouter, HTTPException
 from starlette import status
 
 from methods import ParticipantValidator
+from methods.dependencies.roles import ParticipantIdRoleCheck, ParticipantTokenRoleCheck, ProcedureIdRoleCheck
 from model.base import Session
 from api import get_db, if_exists
 
@@ -38,34 +39,31 @@ async def refresh_participant_token(
     return methods.api.issue_access_token(str(participant.token), auth_method=methods.AuthMethod.PARTICIPANT_KEY)
 
 
+ParticipantIdCheck = Depends(ParticipantIdRoleCheck())
 @router.get("/participants/{participant_id}", response_model=schema.populated.ParticipantPopulated, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_participant(participant_id: int, db: Session = Depends(get_db)):
+async def read_participant(participant_id: int = ParticipantIdCheck, db: Session = Depends(get_db)):
     participant = methods.read(db, model.Participant, participant_id)
     if_exists(participant, ENTITY)
     return participant
 
 
+ParticipantTokenCheck = Depends(ParticipantTokenRoleCheck())
 @router.get("/participants/token/{participant_token}", response_model=schema.populated.ParticipantPopulated)
-async def read_participant_by_token(participant_token: uuid.UUID, db: Session = Depends(get_db)):
+async def read_participant_by_token(participant_token: uuid.UUID = ParticipantTokenCheck, db: Session = Depends(get_db)):
     participant = methods.read_by(db, model.Participant, "token", participant_token)
-    if not participant:
-        raise HTTPException(status_code=409, detail="No Participant found")
     if schema.participant.ParticipantEnum(participant.state) is schema.participant.ParticipantEnum.finished:
         raise HTTPException(status_code=403, detail="Already participated")
     return participant
 
-
+ProcedureIdCheck = Depends(ProcedureIdRoleCheck())
 @router.get("/participants", response_model=List[schema.populated.ParticipantPopulated], dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_participants_by_procedure(procedure_id: int, db: Session = Depends(get_db)):
-    procedure = methods.read(db, model.Procedure, procedure_id)
-    if_exists(procedure, "Procedure")
+async def read_participants_by_procedure(procedure_id: int = ProcedureIdCheck, db: Session = Depends(get_db)):
     return methods.read_list_by(db, model.Participant, "procedure_id", procedure_id)
 
 
 @router.get("/participants/{participant_token}/end-pause", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def end_participants_step_pause(participant_token: uuid.UUID, db: Session = Depends(get_db)):
-    participant = methods.read_by(db, model.Participant, "token", str(participant_token))
-    if_exists(participant, ENTITY)
+async def end_participants_step_pause(participant_token: uuid.UUID = ParticipantTokenCheck, db: Session = Depends(get_db)):
+    participant = methods.read_by(db, model.Participant, "token", participant_token)
     procedure_step = participant.procedure_step
     if participant.procedure_step.pause is not None:
         pause_type = schema.pause.PauseTypeEnum(procedure_step.pause.type)

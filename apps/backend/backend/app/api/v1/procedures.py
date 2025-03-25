@@ -10,6 +10,7 @@ from sqlalchemy import exc
 from sse_starlette.sse import EventSourceResponse
 from starlette import status
 
+from methods.dependencies.roles import ParticipantTokenRoleCheck
 from methods.dependencies.security import ParticipantValidator, UserValidator
 from methods.procedure_navigator import ProcedureNavigator, navigator_sse
 from model.base import Session
@@ -169,15 +170,15 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
     procedure_step = methods.set_is_second_last_step(procedure_step, is_second_last_step)
     return procedure_step
 
+ParticipantTokenCheck = Depends(ParticipantTokenRoleCheck())
 @router.post("/procedures/push",
              response_model=Union[schema.condition.ConditionStep,
              schema.questionnaire.QuestionnaireStep,
              schema.pause.PauseStep,
              schema.text.TextStep],
              dependencies=[Depends(methods.userAccessTokenValidator)])
-async def procedure_push_to_next_step(participant_token: uuid.UUID, db: Session = Depends(get_db)):
+async def procedure_push_to_next_step(participant_token: uuid.UUID = ParticipantTokenCheck, db: Session = Depends(get_db)):
     participant = methods.read_by(db, model.Participant, "token", participant_token)
-    if_exists(participant, "Participant")
 
     # we do not check if the participant's procedure config step allows to proceed. pushing a participant to the next
     # step happens on purpose by the experimenter.

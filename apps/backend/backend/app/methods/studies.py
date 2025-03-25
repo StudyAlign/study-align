@@ -12,7 +12,7 @@ from schema.study import StudyImport, StudyDuplicate
 def check_if_study_exists(db: Session, study_id: int):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, "Study")
-
+    return study
 
 def check_if_study_running(db: Session, study_id: int):
     study = methods.read(db, model.Study, study_id)
