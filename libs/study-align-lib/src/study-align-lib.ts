@@ -463,6 +463,10 @@ class StudyAlignLib {
         return this.request(options);
     }
 
+    procedureStepPush(participantToken: string) {
+        return this.basicRead("procedures/push/" + participantToken);
+    }
+
     // Participants
 
     getParticipantsByProcedure(procedureId: number) {
