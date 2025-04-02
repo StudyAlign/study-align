@@ -171,7 +171,7 @@ async def procedure_next(participant: schema.populated.ParticipantPopulated = De
     return procedure_step
 
 ParticipantTokenCheck = Depends(ParticipantTokenRoleCheck())
-@router.post("/procedures/push",
+@router.get("/procedures/push/{participant_token}",
              response_model=Union[schema.condition.ConditionStep,
              schema.questionnaire.QuestionnaireStep,
              schema.pause.PauseStep,
