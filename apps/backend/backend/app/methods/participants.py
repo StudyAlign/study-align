@@ -14,6 +14,20 @@ from schema.participant import ParticipantEnum, ParticipantOrderByFields
 from schema.pause import PauseTypeEnum
 
 
+def participants_query(db: Session, study_id: int,
+                       participant_state: ParticipantEnum,
+                       paused: bool,
+                       proceed: bool):
+    participants = db.query(model.Participant).filter(model.Participant.study_id == study_id)
+    if participant_state:
+        participants = participants.filter(model.Participant.state == participant_state)
+    if paused:
+        participants = participants.join(model.ProcedureStep).join(model.Pause)
+        if proceed:
+            participants = participants.filter(model.Participant.current_procedure_step_config['proceed'].astext.cast(Boolean).is_(True))
+    return participants
+
+
 def read_participants_with_filters(db: Session, study_id: int,
                                    participant_state: ParticipantEnum,
                                    paused: bool,
@@ -23,13 +37,7 @@ def read_participants_with_filters(db: Session, study_id: int,
                                    order_by: ParticipantOrderByFields = "id",
                                    direction: Literal["asc", "desc"] = "asc"
                                    ):
-    participants = db.query(model.Participant).filter(model.Participant.study_id == study_id)
-    if participant_state:
-        participants = participants.filter(model.Participant.state == participant_state)
-    if paused:
-        participants = participants.join(model.ProcedureStep).join(model.Pause)
-        if proceed:
-            participants = participants.filter(model.Participant.current_procedure_step_config['proceed'].astext.cast(Boolean).is_(True))
+    participants = participants_query(db, study_id, participant_state, paused, proceed)
     return participants.order_by(order_query(model.Participant, order_by, direction)).offset(offset).limit(limit).all()
 
 
@@ -37,6 +45,14 @@ def order_query(query_model: model.Participant, order: ParticipantOrderByFields,
     if direction == "asc":
         return query_model.__table__.c[order].asc()
     return query_model.__table__.c[order].desc()
+
+
+def count_participants_with_filters(db: Session, study_id: int,
+                                   participant_state: ParticipantEnum,
+                                   paused: bool,
+                                   proceed: bool):
+    participants = participants_query(db, study_id, participant_state, paused, proceed)
+    return participants.count()
 
 
 def create_participants(db: Session, study_id: int, amount: int):
