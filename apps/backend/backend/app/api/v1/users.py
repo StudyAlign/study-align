@@ -1,5 +1,5 @@
 from fastapi import Depends, APIRouter, HTTPException
-from typing import List
+from typing import List, Literal
 
 from datetime import datetime, timedelta
 
@@ -20,6 +20,7 @@ import methods
 import schema.populated
 
 import model
+from schema.user import UserOrderByFields
 
 router = APIRouter()
 
@@ -43,8 +44,14 @@ async def refresh_user_token(user: schema.user.User = Depends(UserValidator(type
 
 
 @router.get("/users", response_model=List[schema.user.User], dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_users(db: Session = Depends(get_db)):
-    return methods.read_list(db, model.User)
+async def read_users(offset: int = 0, limit: int = 100, order_by: UserOrderByFields = "id", direction: Literal["asc", "desc"] = "asc",
+                            db: Session = Depends(get_db)):
+    return methods.read_users(db, offset, limit, order_by, direction)
+
+
+@router.get("/users/count", response_model=int, dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_users_count(db: Session = Depends(get_db)):
+    return methods.users_count(db)
 
 
 @router.get("/users/roles", response_model=List[schema.role.Role], dependencies=[Depends(methods.adminAccessTokenValidator)])
@@ -64,6 +71,7 @@ async def read_user(user_id: int, db: Session = Depends(get_db)):
     user = methods.read(db, model.User, user_id)
     if_exists(user, ENTITY)
     return user
+
 
 UserIdCheck = Depends(UserIdRoleCheck())
 @router.patch("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])

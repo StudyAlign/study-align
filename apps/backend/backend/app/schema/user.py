@@ -32,3 +32,8 @@ class User(UserBase):
 
     class Config:
         from_attributes = True
+
+class UserOrderByFields(str, Enum):
+    id = "id"
+    name = "name"
+    role_id = "role_id"
