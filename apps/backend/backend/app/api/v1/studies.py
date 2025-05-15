@@ -30,7 +30,10 @@ ENTITY = "Study"
 async def read_studies(user: schema.user.User = Depends(UserValidator(strict_auth_method=True)), db: Session = Depends(get_db)):
     if user.role.name == UserRole.RESEARCHER:
         return db.query(model.Study).join(model.Collaborator).filter(or_(model.Study.owner_id == user.id, model.Collaborator.user_id == user.id)).order_by(model.Study.id.desc()).all()
-    return methods.read_list(db, model.Study)
+    studies = methods.read_list(db, model.Study)
+    for s in studies:
+        methods.compute_participant_counts(db, s)
+    return studies
 
 
 @router.post("/studies", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.userAccessTokenValidator)])
@@ -38,6 +41,7 @@ async def create_study(study: schema.study.StudyCreate, db: Session = Depends(ge
     created_study = methods.create(db, model.Study, study)
     # Create a ProcedureConfig right away
     methods.create(db, model.ProcedureConfig, {"study_id": created_study.id, "main": True})
+    methods.compute_participant_counts(db, created_study)
     return created_study
 
 
@@ -45,6 +49,7 @@ async def create_study(study: schema.study.StudyCreate, db: Session = Depends(ge
 async def read_study(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)
     if_exists(study, ENTITY)
+    methods.compute_participant_counts(db, study)
     return study
 
 
@@ -66,10 +71,7 @@ async def delete_study(study_id: int = StudyIdCheck, db: Session = Depends(get_d
 
 @router.get("/studies/{study_id}/setup-info", response_model=schema.study.StudySetupInfo, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_study_setup_info(study_id: int = StudyIdCheck, db: Session = Depends(get_db)):
-    study = methods.read(db, model.Study, study_id)
-    remaining_participants_count = methods.count_by_dict(db, model.Participant, {"study_id": study_id, "state": "free"})
-    study.remaining_participants = remaining_participants_count
-    return study
+    return methods.read(db, model.Study, study_id)
 
 
 @router.get("/studies/{study_id}/procedure-config", response_model=schema.procedure_config.ProcedureConfig, dependencies=[Depends(methods.userAccessTokenValidator)])
@@ -255,6 +257,7 @@ async def export_study(study_id: int = StudyIdCheck, db: Session = Depends(get_d
 @router.post("/studies/import", response_model=schema.study.StudyDetails, dependencies=[Depends(methods.userAccessTokenValidator)])
 async def import_study(study_import: schema.study.StudyImport, user: schema.user.User = Depends(UserValidator(strict_auth_method=True)), db: Session = Depends(get_db)):
     imported_study = methods.import_study(db, study_import, user.id)
+    methods.compute_participant_counts(db, imported_study)
     return imported_study
 
 
@@ -264,4 +267,5 @@ async def duplicate_study(study_id: int = StudyIdCheck, db: Session = Depends(ge
     main_procedure_config = schema.procedure_config.ProcedureConfigImport.model_validate(study.procedure_config[0])
     study = schema.study.StudyDuplicateDetails.model_validate(study)
     duplicated_study = methods.duplicate_study(db, {"study": study, "procedure_config": main_procedure_config})
+    methods.compute_participant_counts(db, duplicated_study)
     return duplicated_study
