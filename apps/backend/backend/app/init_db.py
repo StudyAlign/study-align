@@ -65,7 +65,9 @@ researcher_role = methods.create(db, Role, RoleCreate(name="researcher"))
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 password=config('INITIAL_ADMIN_PW')
 pwd_hash = pwd_context.hash(password)
+email=config('INITIAL_ADMIN_EMAIL')
+
 admin_user = methods.create(db, User, UserCreate(name="admin", password=pwd_hash,
                                                  firstname="Example", lastname="Administrator",
-                                                 email="norply@studyalign.com",
+                                                 email=email,
                                                  role_id=admin_role.id, is_active=True))

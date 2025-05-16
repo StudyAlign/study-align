@@ -3,21 +3,23 @@ version: '3'
 networks:
   outside:
     external:
-      name: studyctrl-network
+      name: studyalign-network
   inside:
     driver: bridge
 
 volumes:
-  limesurvey-data:
+  upload:
+  mysql:
+
 
 services:
   mysql:
     container_name: limesurvey-mysql
-    image:  mariadb:10.5.5
+    image:  mariadb:10.5.8
     ports:
       - 3307:3306
     volumes:
-     - limesurvey-data:/var/lib/mysql
+     - mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: limesurvey
@@ -27,10 +29,11 @@ services:
       - inside
 
   limesurvey:
+    restart: always
     container_name: limesurvey
     image: martialblog/limesurvey:latest
     ports:
-      - 8002:80
+      - 8082:80
     environment:
       DB_HOST: mysql
       DB_NAME: limesurvey
@@ -39,9 +42,7 @@ services:
       ADMIN_USER: admin
       ADMIN_PASSWORD: password
       ADMIN_NAME: Lime Administrator
-      ADMIN_EMAIL: cashaddy@cashaddy.net
-      #PUBLIC_URL: http://localhost:8002/surveys
-     # BASE_URL: /surveys
+      ADMIN_EMAIL: youremail@yourhost
     depends_on:
       - mysql
     networks:
