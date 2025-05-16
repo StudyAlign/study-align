@@ -83,7 +83,6 @@ class StudySetupInfo(StudyBase):
     id: int
     planned_number_participants: int
     current_setup_step: CurrentSetupStepEnum
-    remaining_participants: Optional[int]
 
     class Config:
         from_attributes = True
