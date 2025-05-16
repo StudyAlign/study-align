@@ -11,6 +11,7 @@ interface Options {
     body?: object;
     formData?: boolean;
     asQuery?: boolean;
+    responseType?: XMLHttpRequestResponseType;
     onload?: any;
     onprogress?: any;
     onerror?: any;

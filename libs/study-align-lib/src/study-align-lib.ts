@@ -85,15 +85,25 @@ class StudyAlignLib {
                 url = url + "?" + encodedParams;
             }
             xhr.open(options.method, url);
+            // For Exports
+            if (options.responseType) {
+                xhr.responseType = options.responseType;
+            }
             if (options.onload) {
                 xhr.onload = options.onload;
             }
             else {
                 xhr.onload = () => {
                     if (xhr.status >= 200 && xhr.status < 300) {
+                        let body;
+                        if (options.responseType === "blob") {
+                            body = xhr.response;
+                        } else {
+                            body = xhr.response ? JSON.parse(xhr.response) : "";
+                        }
                         resolve({
                                 status: xhr.status,
-                                body: xhr.response ? JSON.parse(xhr.response) : ""
+                                body: body
                             });
                     } else {
                         reject({
@@ -216,8 +226,20 @@ class StudyAlignLib {
         return this.request(options);
     }
 
-    getUsers() {
-        return this.basicRead("users");
+    getUsersCount() {
+        return this.basicRead("users/count");
+    }
+
+    getUsers(offset: number = 0, limit: number = 100, orderBy: string = "id", direction: string = "asc") {
+        const options: Options = {
+            method: "GET",
+            path: "users",
+            headers: {},
+            params: { offset: offset, limit: limit, order_by: orderBy, direction: direction },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
     }
 
     getUser(userId: number) {
@@ -289,11 +311,18 @@ class StudyAlignLib {
     }
 
     getParticipantsCount(studyId: number, participant_state: string, paused: string, proceed: string) {
+        const params = { participant_state, paused, proceed };
+        // Remove undefined parameters
+        Object.keys(params).forEach(key => {
+            if (params[key] === undefined) {
+                delete params[key];
+            }
+        });
         const options: Options = {
             method: "GET",
             path: "studies/" + studyId + "/participants/count",
             headers: {},
-            params: { participant_state: participant_state, paused: paused, proceed: proceed },
+            params: params,
             asQuery: true
         };
         this.setHeaders(options);
@@ -568,7 +597,7 @@ class StudyAlignLib {
             method: "GET",
             path: "interactions",
             headers: {},
-            params: { type: type, offset: offset, limit: limit, order_by: orderBy, direction: direction },
+            params: { study_id: studyId, type: type, offset: offset, limit: limit, order_by: orderBy, direction: direction },
             asQuery: true
         };
         this.setHeaders(options);
@@ -605,7 +634,8 @@ class StudyAlignLib {
             path: "interactions/export",
             headers: {},
             params: { study_id: studyId },
-            asQuery: true
+            asQuery: true,
+            responseType: "blob"
         };
         this.setHeaders(options);
         return this.request(options);
