@@ -44,9 +44,9 @@ async def refresh_user_token(user: schema.user.User = Depends(UserValidator(type
 
 
 @router.get("/users", response_model=List[schema.user.User], dependencies=[Depends(methods.userAccessTokenValidator)])
-async def read_users(offset: int = 0, limit: int = 100, order_by: UserOrderByFields = "id", direction: Literal["asc", "desc"] = "asc",
+async def read_users(offset: int = 0, limit: int = 100, order_by: UserOrderByFields = "id", direction: Literal["asc", "desc"] = "asc", search: str = None,
                             db: Session = Depends(get_db)):
-    return methods.read_users(db, offset, limit, order_by, direction)
+    return methods.read_users(db, offset, limit, order_by, direction, search)
 
 
 @router.get("/users/count", response_model=int, dependencies=[Depends(methods.userAccessTokenValidator)])
