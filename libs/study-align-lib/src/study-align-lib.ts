@@ -230,12 +230,12 @@ class StudyAlignLib {
         return this.basicRead("users/count");
     }
 
-    getUsers(offset: number = 0, limit: number = 100, orderBy: string = "id", direction: string = "asc") {
+    getUsers(offset: number = 0, limit: number = 100, orderBy: string = "id", direction: string = "asc", search: string = null) {
         const options: Options = {
             method: "GET",
             path: "users",
             headers: {},
-            params: { offset: offset, limit: limit, order_by: orderBy, direction: direction },
+            params: { offset: offset, limit: limit, order_by: orderBy, direction: direction, search: search},
             asQuery: true
         };
         this.setHeaders(options);
