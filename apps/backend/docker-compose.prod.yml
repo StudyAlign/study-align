@@ -2,7 +2,7 @@ version: '3.7'
 networks:
   outside:
     external:
-      name: studyctrl-network
+      name: studyalign-network
   inside:
     driver: bridge
   traefik-net:
@@ -11,29 +11,29 @@ networks:
 volumes:
   database-data:
 services:
-  studyctrl-database:
-    container_name: studyctrl-database
+  studyalign-database:
+    container_name: studyalign-database
     image: postgres:12.3-alpine
     restart: always
     env_file:
-      - ./database/database.env
+      - ./database/database.prod.env
     ports:
       - "5433:5432"
     volumes:
       - database-data:/var/lib/postgresql/data/
     networks:
       - inside
-  studyctrl-backend:
-    container_name: studyctrl-backend
+  studyalign-backend:
+    container_name: studyalign-backend
     build: ./backend
-    image: studyctrl-backend
+    image: studyalign-backend
     restart: always
     env_file:
-      - ./database/database.env
+      - ./database/database.prod.env
     ports:
       - "8111:80"
     depends_on:
-      - studyctrl-database
+      - studyalign-database
     networks:
      - outside
      - inside

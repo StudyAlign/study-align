@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker network create -d bridge studyctrl-network
+docker network create -d bridge studyalign-network
