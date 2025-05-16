@@ -2,6 +2,7 @@ from typing import Literal
 
 from fastapi import HTTPException
 from passlib.context import CryptContext
+from sqlalchemy import or_
 from starlette import status
 from sqlalchemy.orm import Session
 
@@ -37,7 +38,15 @@ def authenticate_user(db, username: str, password: str):
     return user
 
 
-def read_users(db: Session, offset: int = 0, limit: int = 100, order_by: UserOrderByFields = "id", direction: Literal["asc", "desc"] = "asc"):
+def read_users(db: Session, offset: int = 0, limit: int = 100, order_by: UserOrderByFields = "id", direction: Literal["asc", "desc"] = "asc", search: str = None):
+    if search:
+        return db.query(model.User).filter(
+            or_(
+                model.User.firstname.ilike(f'%{search}%'),
+                model.User.lastname.ilike(f'%{search}%'),
+                model.User.email.ilike(f'%{search}%')
+            )
+        ).order_by(order_query(model.User, order_by, direction)).offset(offset).limit(limit).all()
     return db.query(model.User).order_by(order_query(model.User, order_by, direction)).offset(offset).limit(limit).all()
 
 
