@@ -6,7 +6,7 @@ import model
 import methods
 from api.utils import if_exists
 from methods.procedure_configs import _iterate_procedure_config_steps_import
-from schema.study import StudyImport, StudyDuplicate
+from schema.study import StudyImport, StudyDuplicate, StudyDetails
 
 
 def check_if_study_exists(db: Session, study_id: int):
@@ -54,4 +54,17 @@ def duplicate_study(db: Session, duplicate_study: StudyDuplicate):
     db.add_all(bulk_insert)
     db.commit()
     db.refresh(study)
+    return study
+
+
+def compute_participant_counts(db: Session, study: StudyDetails):
+    remaining_participants_count = methods.count_by_dict(db, model.Participant, {"study_id": study.id, "state": "free"})
+    in_progress_participants_count = methods.count_by_dict(db, model.Participant, {"study_id": study.id, "state": "in_progress"})
+    done_participants_count = methods.count_by_dict(db, model.Participant, {"study_id": study.id, "state": "finished"})
+    total_participants_count = db.query(model.Participant).filter(model.Participant.study_id == study.id).count()
+
+    study.remaining_participants = remaining_participants_count
+    study.in_progress_participants = in_progress_participants_count
+    study.done_participants = done_participants_count
+    study.total_participants = total_participants_count
     return study

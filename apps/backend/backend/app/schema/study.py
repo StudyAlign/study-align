@@ -70,6 +70,10 @@ class StudyDetails(StudyBase):
     id: int
     description: str
     consent: str
+    remaining_participants: Optional[int]
+    in_progress_participants: Optional[int]
+    done_participants: Optional[int]
+    total_participants: Optional[int]
 
     class Config:
         from_attributes = True
