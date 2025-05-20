@@ -16,7 +16,7 @@ since these studies have been prototyped with web technologies lately.
 StudyAlign streamlines HCI online studies and has enabled several studies; see "Studies Enabled by StudyAlign".
 
 You can find detailed information about the system in our paper `StudyAlign: A Software System for Conducting Web-Based
-User Studies with Functional Interactive Prototypes` arXiv:  ACM DL: https://doi.org/10.1145/3733053
+User Studies with Functional Interactive Prototypes` arXiv: https://arxiv.org/abs/2505.13046 ACM DL (coming soon): https://doi.org/10.1145/3733053
 
 ## Key Features
 
@@ -85,11 +85,11 @@ The Library is the counterpart to the Backend's API and is used in the prototype
     - implement a useLogger hook to define the events
     - call the useLogger hook in your App.js and make it available to all components through a LoggerContext
     - in child components, get the logger through the LoggerContext and log the events
-    - **see the react-example directory for an example implementation**
+    - **see the [react-example](/react-example) directory for an example implementation**
   - into your vanilla JavaScript projects
     - integrate the bundled library
     - bind events to UI elements
-    - **see the basic-example directory for an example implementation**
+    - **see the [basic-example](/basic-example) directory for an example implementation**
 - Create an online study
 - Integrate questionnaires from external services (e.g. Qualtrics)
 - Share links with participants
