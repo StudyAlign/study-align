@@ -42,7 +42,7 @@ class MouseInteractionBase(BaseModel):
     altKey: bool
     metaKey: bool
     button: int
-    relatedTarget: Union[dict, list, set, float, int, str, bytes, bool]
+    relatedTarget: Optional[Union[dict, list, set, float, int, str, bytes, bool]]
     x: float  # alias for clientX
     y: float  # alias for clientY
     metaData: Union[dict, list, set, float, int, str, bytes, bool]

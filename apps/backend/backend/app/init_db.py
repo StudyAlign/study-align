@@ -14,7 +14,6 @@ from model.procedure_step import ProcedureStep
 from model.procedure_config import ProcedureConfig
 from model.procedure_config_step import ProcedureConfigStep
 from model.questionnaire import Questionnaire
-from model.questionnaire_result import QuestionnaireResult
 from model.role import Role
 from model.study import Study
 from model.task import Task
@@ -36,7 +35,6 @@ ProcedureProgress.__table__
 ProcedureConfig.__table__
 ProcedureConfigStep.__table__
 Questionnaire.__table__
-QuestionnaireResult.__table__
 Role.__table__
 Study.__table__
 Task.__table__
