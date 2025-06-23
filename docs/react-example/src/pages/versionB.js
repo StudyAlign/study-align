@@ -8,7 +8,7 @@ function VersionB() {
 
     useEffect(() => {
         logger(LoggerEvents.CUSTOM_EVENT_EXAMPLE, {
-            pageLoaded: "versionA",
+            pageLoaded: "versionB",
             time: Date.now()
         });
     }, []);

@@ -14,14 +14,20 @@ function VersionA() {
     }, []);
 
     const changeHandler = (e) => {
+        console.log("onChange", e);
+    }
+
+    const onKeyDownHandler = (e) => {
         logger(LoggerEvents.KEY_DOWN, e.nativeEvent, {
             meta: "data",
             anything: "you'd like to save alongside the browser event"
         });
     }
-
     const proceedHandler = () => {
         // tells the backend to proceed (i.e. activating the "next" button)
+        logger(LoggerEvents.MOUSE_CLICK, e.nativeEvent, {
+            "proceed_click": true
+        });
         proceed();
     }
 
@@ -29,7 +35,7 @@ function VersionA() {
         <div>
             Version A of a prototype
             <div>
-                <textarea onChange={changeHandler} placeholder={"Type to log events"} rows={18} cols={60}/>
+                <textarea onChange={changeHandler} onKeyDown={onKeyDownHandler} placeholder={"Type to log events"} rows={18} cols={60}/>
             </div>
             <div>
                 <button onClick={proceedHandler}>Proceed</button>
