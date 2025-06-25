@@ -59,9 +59,9 @@ class ConditionIdRoleCheck:
 
 
 class QuestionnaireIdRoleCheck:
-    async def __call__(self, condition_id: int = Path(), user = Depends(user_validator), db: Session = Depends(get_db)):
-        basic_check(condition_id, "Questionnaire", user, model.Questionnaire, db)
-        return condition_id
+    async def __call__(self, questionnaire_id: int = Path(), user = Depends(user_validator), db: Session = Depends(get_db)):
+        basic_check(questionnaire_id, "Questionnaire", user, model.Questionnaire, db)
+        return questionnaire_id
 
 
 class TextIdRoleCheck:
