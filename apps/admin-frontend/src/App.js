@@ -45,7 +45,7 @@ export default function App() {
 
     return (
         <AuthProvider>
-            <BrowserRouter>
+            <BrowserRouter basename={process.env.PUBLIC_URL}>
                 <Routes>
                     <Route element={<RequireAuth />}>
                         <Route path="/"                         element={<Dashboard/>} />
