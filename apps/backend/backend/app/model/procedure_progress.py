@@ -8,7 +8,7 @@ class ProcedureProgress(Base):
 
     id = Column(Integer, primary_key=True)
 
-    state = Column(Enum("start_experiment", "end_experiment", "start_step", "end_step",
+    state = Column(Enum("start_experiment", "end_experiment", "start_step", "end_step", "pushed_step",
                         name="procedure_progress_enum", create_type=False))
 
     time = Column(DateTime(timezone=False))
