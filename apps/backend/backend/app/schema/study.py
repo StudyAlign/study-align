@@ -38,6 +38,7 @@ class StudyCreate(StudyBase):
     planned_number_participants: Optional[int] = None
     current_setup_step: Optional[CurrentSetupStepEnum] = None
     state: Optional[StudyStateEnum] = None
+    group_id: Optional[int] = None
 
     class Config:
         extra = 'forbid'
@@ -54,6 +55,7 @@ class StudyUpdate(BaseModel):
     invite_only: Optional[bool] = None
     planned_number_participants: Optional[int] = None
     current_setup_step: Optional[CurrentSetupStepEnum] = None
+    group_id: Optional[int] = None
 
     class Config:
         extra = 'forbid'
@@ -74,6 +76,7 @@ class StudyDetails(StudyBase):
     in_progress_participants: Optional[int]
     done_participants: Optional[int]
     total_participants: Optional[int]
+    group_id: Optional[int]
 
     class Config:
         from_attributes = True

@@ -15,6 +15,9 @@ from .user import User
 from .role import Role
 from .collaborators import Collaborator
 from .pause import Pause
+from .group import Group
+from .group_invite import GroupInvite
+from .group_member import GroupMember
 
 from .interaction.generic_interaction import GenericInteraction
 from .interaction.keyboard_interaction import KeyboardInteraction

@@ -6,6 +6,9 @@ from api import get_db
 from model.base import Base, engine
 from model.collaborators import Collaborator
 from model.condition import Condition
+from model.group import Group
+from model.group_invite import GroupInvite
+from model.group_member import GroupMember
 from model.pause import Pause
 from model.procedure import Procedure
 from model.participant import Participant
@@ -41,6 +44,9 @@ Task.__table__
 Text.__table__
 User.__table__
 Collaborator.__table__
+Group.__table__
+GroupInvite.__table__
+GroupMember.__table__
 
 GenericInteraction.__table__
 KeyboardInteraction.__table__

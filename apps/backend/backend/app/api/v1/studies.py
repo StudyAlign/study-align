@@ -29,8 +29,11 @@ ENTITY = "Study"
 @router.get("/studies", response_model=List[schema.study.StudyDetails], dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_studies(user: schema.user.User = Depends(UserValidator(strict_auth_method=True)), db: Session = Depends(get_db)):
     if user.role.name == UserRole.RESEARCHER:
-        return db.query(model.Study).join(model.Collaborator).filter(or_(model.Study.owner_id == user.id, model.Collaborator.user_id == user.id)).order_by(model.Study.id.desc()).all()
-    studies = methods.read_list(db, model.Study)
+        studies = ((db.query(model.Study).join(model.Collaborator, isouter=True).join(model.Group, isouter=True).join(model.GroupMember, isouter=True)
+                   .filter(or_(model.Study.owner_id == user.id, model.Collaborator.user_id == user.id, model.GroupMember.user_id == user.id)))
+                   .order_by(model.Study.id.desc()).all())
+    else:
+        studies = methods.read_list(db, model.Study)
     for s in studies:
         methods.compute_participant_counts(db, s)
     return studies

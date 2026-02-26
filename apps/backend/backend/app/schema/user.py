@@ -33,6 +33,15 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
+class UserView(BaseModel):
+    id: int
+    name: str
+    firstname: str
+    lastname: str
+
+    class Config:
+        orm_mode = True
+
 class UserOrderByFields(str, Enum):
     id = "id"
     name = "name"

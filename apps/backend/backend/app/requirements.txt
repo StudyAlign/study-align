@@ -1,6 +1,7 @@
 uvicorn[standard]==0.24.0
 gunicorn==21.2.0
-fastapi[all]==0.104.1
+pydantic==2.12.5
+fastapi[all]==0.129.0
 
 #db
 psycopg2==2.9.9
@@ -9,8 +10,7 @@ alembic==1.12.1
 
 #api
 ujson==5.8.0
-python-multipart==0.0.6
-pydantic==2.4.2
+python-multipart==0.0.22
 python-jose[cryptography]==3.3.0
 sse-starlette==1.6.5
 
@@ -24,3 +24,5 @@ requests==2.31.0
 aiofiles==23.2.1
 passlib==1.7.4
 bcrypt==4.0.1
+
+fastapi-mail==1.6.2

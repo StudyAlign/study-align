@@ -50,14 +50,15 @@ def read_list(db: Session, model: Base):
     return db.query(model).all()
 
 
-def create(db: Session, model: Base, data: Union[BaseModel, Dict]):
+def create(db: Session, model: Base, data: Union[BaseModel, Dict], commit=True):
     if isinstance(data, BaseModel):
         data = data.dict()
 
     db_data = model(**data)
     db.add(db_data)
-    db.commit()
-    db.refresh(db_data)
+    if commit:
+        db.commit()
+        db.refresh(db_data)
     return db_data
 
 
