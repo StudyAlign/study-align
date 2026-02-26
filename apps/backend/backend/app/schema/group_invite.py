@@ -9,6 +9,9 @@ class GroupInviteBase(BaseModel):
     user_id: int
     invited_by_id: int
 
+class GroupInviteBody(BaseModel):
+    user_id: int
+    pass
 
 class GroupInviteCreate(GroupInviteBase):
     pass

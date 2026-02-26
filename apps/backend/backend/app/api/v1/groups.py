@@ -183,9 +183,8 @@ async def read_group_invites(group_id: int = GroupIdCheck, user: schema.user.Use
 
 @router.post("/groups/{group_id}/invites", response_model=schema.group_invite.GroupInvite,
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def group_invite(user_id: int, group_id: int = GroupIdCheck,
-                       user: schema.user.User = Depends(UserValidator(strict_auth_method=True)),
-                       db: Session = Depends(get_db)):
+async def group_invite(invite_body: schema.group_invite.GroupInviteBody, group_id: int = GroupIdCheck, db: Session = Depends(get_db)):
+    user_id = invite_body.user_id
     group_member = methods.read_by_dict(db, model.GroupMember, {"group_id": group_id, "user_id": user_id})
     if group_member:
         raise HTTPException(
