@@ -14,10 +14,11 @@ from schema.questionnaire import Questionnaire, QuestionnaireStep, Questionnaire
 from schema.study import Study, StudyExportDetails
 from schema.task import Task
 from schema.text import Text, TextStep, TextBase
-from schema.user import User
+from schema.user import User, UserView
 from schema.role import Role
 from schema.pause import Pause, PauseStep, PauseBase
 from schema.collaborator import Collaborator
+from schema.group_member import GroupMember
 
 
 class ConditionPopulated(Condition):
@@ -196,6 +197,13 @@ class UserPopulated(User):
 
 class CollaboratorPopulated(Collaborator):
     user: Optional[User] = None
+
+    class Config:
+        from_attributes = True
+
+
+class GroupMemberPopulated(GroupMember):
+    user: Optional[UserView] = None
 
     class Config:
         from_attributes = True

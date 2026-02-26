@@ -7,7 +7,7 @@ import methods
 import model
 from api import get_db, if_exists
 from methods import user_validator, UserRole
-from model import Session, Study
+from model import Session, Study, Group
 from model.base import Base
 from schema.user import User
 
@@ -19,7 +19,13 @@ def is_allowed(study, user, entity = "Study"):
             is_collaborator = collaborator.user_id == user.id
             if is_collaborator: break
 
-        if study.owner_id != user.id and not is_collaborator:
+        is_group_member = False
+        if study.group:
+            for group_member in study.group.group_members:
+                is_group_member = group_member.user_id == user.id
+                if is_group_member: break
+
+        if study.owner_id != user.id and not (is_collaborator or is_group_member):
             message = "Can only edit own studies or collaborative studies" if entity == "Study" else "Can only edit " + entity + " of own or collaborative studies"
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -109,7 +115,25 @@ class ProcedureIdRoleCheck:
         basic_check(procedure_id, "Procedure", user, model.Procedure, db)
         return procedure_id
 
+
 class StudyIdRoleCheck:
     async def __call__(self, study_id: int = Path(), user = Depends(user_validator), db: Session = Depends(get_db)):
         basic_check(study_id, "Study", user, model.Study, db)
         return study_id
+
+
+class GroupIdRoleCheck:
+    async def __call__(self, group_id: int = Path(), user = Depends(user_validator), db: Session = Depends(get_db)):
+        data = methods.read(db, model.Group, group_id)
+        if_exists(data, "Group")
+
+        group = data if isinstance(data, Group) else data.group
+        if user.role.name == UserRole.RESEARCHER:
+            if group.owner_id != user.id:
+                message = "Can only edit own groups"
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=message
+                )
+
+        return group_id

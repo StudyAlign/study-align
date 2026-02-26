@@ -13,3 +13,5 @@ from methods.machine_learning import *
 from methods.questionnaires.limesurvey_rpc import *
 from methods.procedure_navigator import *
 from methods.users import *
+from methods.groups import *
+from methods.mail import *

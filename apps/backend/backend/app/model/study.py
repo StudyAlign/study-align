@@ -36,5 +36,8 @@ class Study(Base):
 
     collaborators = relationship("Collaborator", back_populates="study", cascade="all, delete", passive_deletes=True)
 
+    group_id = Column(Integer, ForeignKey('groups.id'))
+    group = relationship("Group")
+
     def __repr__(self):
         return "<Study(id='%d', name='%s', startDate='%s', endDate='%s')>" % (self.id, self.name, self.startDate, self.endDate)

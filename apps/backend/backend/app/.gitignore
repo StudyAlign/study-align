@@ -1,5 +1,7 @@
 token_samples
 uploads/*
+logos/groups/*
+logos/studies/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

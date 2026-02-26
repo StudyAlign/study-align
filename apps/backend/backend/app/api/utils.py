@@ -1,4 +1,5 @@
 from typing import Any
+from re import sub
 
 from fastapi import HTTPException
 
@@ -31,3 +32,10 @@ def if_belongs_to_study(data: Any, study_id: int):
 def not_found(entity: str):
     return "%s not found" % entity
 
+
+def slugify(s):
+  s = s.lower().strip()
+  s = sub(r'[^\w\s-]', '', s)
+  s = sub(r'[\s_-]+', '_', s)
+  s = sub(r'^-+|-+$', '', s)
+  return s
