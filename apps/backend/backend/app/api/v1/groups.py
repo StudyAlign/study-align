@@ -213,7 +213,7 @@ async def group_invite(invite_body: schema.group_invite.GroupInviteBody, group_i
     html = get_group_invite_email_html(group_invite.group.name, group_invite.token)
 
     message = MessageSchema(
-        subject="Fastapi-Mail module",
+        subject="StudyAlign group invite to " + group_invite.group.name,
         recipients=[group_invite.user.email],
         body=html,
         subtype=MessageType.html)
@@ -256,7 +256,7 @@ async def resend_group_token(token: uuid.UUID, db: Session = Depends(get_db)):
     html = get_group_invite_email_html(group_invite.group.name, group_invite.token)
 
     message = MessageSchema(
-        subject="Fastapi-Mail module",
+        subject="StudyAlign group invite to " + group_invite.group.name,
         recipients=[group_invite.user.email],
         body=html,
         subtype=MessageType.html)

@@ -6,14 +6,31 @@ from pydantic import BaseModel
 
 class UserBase(BaseModel):
     name: str
-    firstname: str
-    lastname: str
+    firstname: Optional[str]
+    lastname: Optional[str]
     email: str
     role_id: int
     is_active: bool
 
 class UserCreate(UserBase):
     password: str
+
+class UserRegisterForm(BaseModel):
+    name: str
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
+    email: str
+    password: str
+
+class UserRegister(UserBase):
+    name: str
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
+    email: str
+    password: str
+    role_id: int
+    is_active: bool
+    email_activation_token: uuid.UUID
 
 class UserUpdate(UserBase):
     name: Optional[str] = None

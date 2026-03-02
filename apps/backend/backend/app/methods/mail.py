@@ -21,3 +21,9 @@ def get_group_invite_email_html(group_name: str, token: uuid.UUID):
     accept_url = frontend_url + "/group/invite/" + str(token) + "/accept"
     return f"""<p>You have been invited to join the StudyAlign group "{group_name}".</p>
             <p>Click on this link to accept: <a href="{accept_url}">{accept_url}</a></p>"""
+
+def get_user_activation_mail_html(token: uuid.UUID):
+    frontend_url = config('FRONTEND_URL')
+    accept_url = frontend_url + "/user/" + str(token) + "/activate"
+    return f"""<p>Click on the link below to activate your StudyAlign account: </p>
+            <p><a href="{accept_url}">{accept_url}</a></p>"""
