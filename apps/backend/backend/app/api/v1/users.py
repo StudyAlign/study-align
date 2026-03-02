@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import Depends, APIRouter, HTTPException
 from typing import List, Literal
 
@@ -16,11 +18,15 @@ from model.base import Session
 from api import get_db, if_exists, if_not_zero
 
 import methods
+from methods.mail import get_user_activation_mail_html, get_email_config
 
 import schema.populated
 
 import model
 from schema.user import UserOrderByFields
+
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
+
 
 router = APIRouter()
 
@@ -92,3 +98,62 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.delete(user)
     db.commit()
     return
+
+
+# Define email config
+email_config = get_email_config()
+
+
+@router.post("/users/register", response_model=schema.user.User)
+async def register_user(user: schema.user.UserRegisterForm, db: Session = Depends(get_db)):
+    user_db = methods.read_by_dict(db, model.User, {"name": user.name})
+    if user_db:
+        raise HTTPException(status_code=400, detail="User with this name already exists")
+
+    user_db = methods.read_by_dict(db, model.User, {"email": user.email})
+    if user_db:
+        raise HTTPException(status_code=400, detail="User with this email already exists")
+
+    if user.password:
+        user.password = get_password_hash(user.password)
+
+    user = {
+        "name": user.name,
+        "firstname": user.firstname,
+        "lastname": user.lastname,
+        "email": user.email,
+        "password": user.password,
+        "role_id": 2, #RESEARCHER ROLE
+        "is_active": False,
+        "email_activation_token": uuid.uuid4(),
+    }
+
+    user = schema.user.UserRegister(**user)
+    user = methods.create(db, model.User, user)
+
+    html = get_user_activation_mail_html(user.email_activation_token)
+
+    message = MessageSchema(
+        subject="StudyAlign activation link",
+        recipients=[user.email],
+        body=html,
+        subtype=MessageType.html)
+
+    fm = FastMail(email_config)
+    await fm.send_message(message)
+
+    return user
+
+
+@router.get("/users/{token}/activate", response_model=schema.user.User)
+async def activate_user(token: uuid.UUID, db: Session = Depends(get_db)):
+    user = methods.read_by(db, model.User, "email_activation_token", token)
+    if_exists(user, ENTITY)
+
+    user.is_active = True
+    user.email_activation_token = None
+
+    db.commit()
+    db.refresh(user)
+
+    return user
