@@ -1,0 +1,47 @@
+.top-bar {
+    height: 7vh;
+    min-height: 45px;
+    border-bottom: 1px solid #ccc;
+}
+
+.top-bar a {
+    font-size: 1rem !important;
+}
+
+.top-bar-logo {
+    margin-left: 10px;
+    font-weight: bold;
+    font-size: 24pt;
+    color: green;
+}
+
+.top-bar-logo:hover {
+    cursor: pointer;
+}
+
+#top-bar-dropdown,
+.top-bar-item {
+    color: black !important;
+    font-size: 14pt;
+    margin-left: 20px;
+}
+
+#top-bar-dropdown:hover,
+.top-bar-item:hover {
+    color: #224396 !important;
+}
+
+.top-bar .nav {
+    align-items: center;
+}
+
+.top-bar .nav-link,
+.top-bar .nav-dropdown {
+    display: flex;
+    align-items: center;
+}
+
+.button-icon {
+    margin-top: -0.15rem;
+    margin-right: 0.5rem;
+}

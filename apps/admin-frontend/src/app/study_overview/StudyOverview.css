@@ -1,0 +1,149 @@
+.nav-link:focus {
+    color: #224396;
+}
+
+.study-id {
+    font-size: 26pt;
+    font-weight: normal;
+    color: #585858;
+}
+
+.small-title {
+    color: #494949;
+    font-weight: bold;
+    font-size: 22pt;
+}
+
+.small-button {
+    text-align: center;
+    color: white;
+    background-color: #224396;
+    border-radius: 20px;
+    border-style: solid;
+    border-color: transparent;
+    padding: 1px 20px 1px 20px;
+    margin-left: 5px;
+    margin-top: -5px;
+}
+
+.big-button {
+    text-align: center;
+    color: white;
+    background-color: #224396;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: transparent;
+    position: absolute;
+    bottom: 10px;
+    left: 0px;
+}
+
+.content-name {
+    padding-right: 40px;
+    color: #494949;
+}
+
+li {
+    margin-top: 5px;
+    color: black;
+    font-size: 14pt;
+}
+
+.procedure-object {
+    text-align: center;
+    padding: 7px;
+    background-color: #224396;
+    border-color: #224396;
+    border-style: solid;
+    border-width: 2px;
+    color: white;
+    border-radius: 20px;
+    margin-bottom: 8px;
+}
+
+.toggled {
+    height: 100px;
+    background-color: rgba(34, 67, 150, 0.55);
+}
+
+.procedure-box {
+    border-color: #494949;
+    border-style: solid;
+    border-width: 1px;
+    height: 80%;
+    margin-top: 20px;
+}
+
+.box-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    color: black;
+    background-color: #ECECEC;
+}
+
+.box-content {
+    padding: 10px;
+}
+
+.data-table {
+    border: solid 1px black;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.data-table-header {
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+    background-color: #ECECEC;
+    font-weight: bold;
+    padding-top: 12px;
+    padding-left: 15px;
+}
+
+.data-table-content {
+    border: solid 1px black;
+    padding-left: 15px;
+}
+
+.dropdown-table {
+    margin-top: 10px;
+}
+.outer-table {
+    width: 100%;
+    margin-top: 10px;
+}
+.inner-table {
+    width: 100%;
+}
+.inner-table th, .inner-table td {
+    padding: 0.3rem;
+    border: 1px solid #dee2e6;
+    font-size: 0.75rem;
+}
+.inner-table th {
+    font-weight: bold;
+}
+.inner-table thead th {
+    border-bottom: 2px solid black;
+}
+.inner-table thead tr th:first-child {
+    border-right: 1px solid black;
+}
+.inner-table td:first-child {
+    border-right: 1px solid black;
+}
+.font-weight-bold {
+    font-weight: bold;
+}
+
+.description-content, .consent-content {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    word-wrap: break-word;
+    white-space: normal; 
+}
