@@ -365,11 +365,6 @@ class StudyAlignLib {
         return this.basicRead("studies/" + studyId + "/duplicate");
     }
 
-    // DEPRECATED function
-    //populateSurveyParticipants(studyId: number) {
-    //    return this.basicRead("studies/" + studyId + "/survey-participants");
-    //}
-
     // Procedure Configs
 
     getProcedureConfig(procedureConfigId: number) {
@@ -477,6 +472,82 @@ class StudyAlignLib {
     deleteCollaborator(collaboratorId: number) {
         return this.basicDelete("collaborators/" + collaboratorId);
     }
+
+    // Groups
+
+    getGroups() {
+        return this.basicRead("groups");
+    }
+
+    createGroup(group: object) {
+        return this.basicCreate("groups", group);
+    }
+
+    getGroup(groupId: number) {
+        return this.basicRead("groups/" + groupId);
+    }
+
+    updateGroup(groupId: number, group: object) {
+        return this.basicUpdate("groups/" + groupId, group);
+    }
+
+    deleteGroup(groupId: number) {
+        return this.basicDelete("groups/" + groupId);
+    }
+
+    // Group Members
+
+    getGroupMembers(groupId: number) {
+        return this.basicRead("groups/" + groupId + "/members");
+    }
+
+    deleteGroupMember(groupId: number, userId: number) {
+        return this.basicDelete("groups/" + groupId + "/members/" + userId);
+    }
+
+    // Group Invites
+
+    getGroupInvites(groupId: number) {
+        return this.basicRead("groups/" + groupId + "/invites");
+    }
+
+    createGroupInvite(groupId: number, group_invite: object) {
+        return this.basicCreate("groups/" + groupId + "/invites", group_invite);
+    }
+
+    acceptGroupInvite(token: string) {
+        return this.basicRead("groups/invite/" + token + "/accept");
+    }
+
+    resendGroupInvite(token: string) {
+        return this.basicRead("groups/invite/" + token + "/resend");
+    }
+
+    deleteGroupInvite(token: string) {
+        return this.basicDelete("groups/invite/" + token);
+    }
+
+    // Group Logo
+
+    createGroupLogo(groupId: number, file: File) {
+        const options: Options = {
+            method: "POST",
+            path: "groups/" + groupId + "/logo",
+            headers: {"content-length": 512000},
+            body: {file: file},
+        }
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
+    getGroupLogo(groupId: number) {
+        return this.basicRead("groups/" + groupId + "/logo");
+    }
+
+    deleteGroupLogo(groupId: string) {
+        return this.basicDelete("groups/" + groupId + "/logo");
+    }
+
 
     // Procedures
 
