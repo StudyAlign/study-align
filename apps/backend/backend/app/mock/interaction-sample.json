@@ -1,0 +1,281 @@
+{
+      "uuid": "e9294c2c-6b3c-49bf-8447-4a98b0302669",
+      "event": "touchend",
+      "time": "2020-08-11T14:15:29.441Z",
+      "altKey": true,
+      "ctrlKey": false,
+      "metaKey": false,
+      "shiftKey": false,
+      "rotation": 141,
+      "scale": 0.41457144705971993,
+      "changedTouches": [
+        {
+          "uuid": "9db5d78d-4ecd-4856-b3ca-2f1acb62cac2",
+          "identifier": 0,
+          "screenX": 380,
+          "screenY": 711,
+          "clientX": 16,
+          "clientY": 197,
+          "pageX": 1639,
+          "pageY": 687,
+          "target": "EfLlyC3aSuS3DN9ww13D"
+        },
+        {
+          "uuid": "caf4dae6-30fe-4bda-add8-9bc09418fcca",
+          "identifier": 1,
+          "screenX": 478,
+          "screenY": 237,
+          "clientX": 1238,
+          "clientY": 713,
+          "pageX": 1557,
+          "pageY": 854,
+          "target": "H9iaHpkSPfZKjrL7ObXR"
+        },
+        {
+          "uuid": "c7104500-72b3-48a4-909b-a190f29d0c2d",
+          "identifier": 2,
+          "screenX": 477,
+          "screenY": 839,
+          "clientX": 628,
+          "clientY": 479,
+          "pageX": 1623,
+          "pageY": 1,
+          "target": "lhyPLmVIoF9q44WWukYZ"
+        },
+        {
+          "uuid": "afc2a334-a514-42f6-80b1-5fa3577df5a3",
+          "identifier": 3,
+          "screenX": 308,
+          "screenY": 496,
+          "clientX": 1270,
+          "clientY": 564,
+          "pageX": 622,
+          "pageY": 318,
+          "target": "CnAYXmLOE57NdSdEYzPf"
+        },
+        {
+          "uuid": "bf5f8a48-e2af-4398-9b6f-19cc588ca689",
+          "identifier": 4,
+          "screenX": 246,
+          "screenY": 432,
+          "clientX": 1664,
+          "clientY": 810,
+          "pageX": 977,
+          "pageY": 46,
+          "target": "4CuVOhfsrujkddxIObLZ"
+        },
+        {
+          "uuid": "c872968f-8e78-4749-80f1-791fae2e2d9d",
+          "identifier": 5,
+          "screenX": 404,
+          "screenY": 645,
+          "clientX": 1815,
+          "clientY": 932,
+          "pageX": 610,
+          "pageY": 699,
+          "target": "eT8HF91FgDGOQnq1DYXf"
+        },
+        {
+          "uuid": "c1de3656-9296-4341-ad4a-4a96455ec6ca",
+          "identifier": 6,
+          "screenX": 1065,
+          "screenY": 300,
+          "clientX": 189,
+          "clientY": 251,
+          "pageX": 754,
+          "pageY": 117,
+          "target": "diCxkZXjZOORpjwvfO3H"
+        },
+        {
+          "uuid": "e8de1615-a2fe-4398-923d-f1a48811571a",
+          "identifier": 7,
+          "screenX": 1594,
+          "screenY": 695,
+          "clientX": 1230,
+          "clientY": 535,
+          "pageX": 970,
+          "pageY": 922,
+          "target": "gsbdTPBUutSPCRCRu6JE"
+        },
+        {
+          "uuid": "e6a8e670-b9a3-4a95-ab61-aaa35144c087",
+          "identifier": 8,
+          "screenX": 353,
+          "screenY": 874,
+          "clientX": 918,
+          "clientY": 103,
+          "pageX": 1177,
+          "pageY": 194,
+          "target": "UMcY3JuiLV0TqmF9crlh"
+        },
+        {
+          "uuid": "45927f58-03b5-4adf-80f6-504625d8ab59",
+          "identifier": 9,
+          "screenX": 944,
+          "screenY": 986,
+          "clientX": 1485,
+          "clientY": 237,
+          "pageX": 1886,
+          "pageY": 508,
+          "target": "Zn2yNgHqINS8jErtxVdo"
+        }
+      ],
+      "targetTouches": [
+        {
+          "uuid": "c872968f-8e78-4749-80f1-791fae2e2d9d",
+          "identifier": 5,
+          "screenX": 404,
+          "screenY": 645,
+          "clientX": 1815,
+          "clientY": 932,
+          "pageX": 610,
+          "pageY": 699,
+          "target": "eT8HF91FgDGOQnq1DYXf"
+        },
+        {
+          "uuid": "c1de3656-9296-4341-ad4a-4a96455ec6ca",
+          "identifier": 6,
+          "screenX": 1065,
+          "screenY": 300,
+          "clientX": 189,
+          "clientY": 251,
+          "pageX": 754,
+          "pageY": 117,
+          "target": "diCxkZXjZOORpjwvfO3H"
+        },
+        {
+          "uuid": "e8de1615-a2fe-4398-923d-f1a48811571a",
+          "identifier": 7,
+          "screenX": 1594,
+          "screenY": 695,
+          "clientX": 1230,
+          "clientY": 535,
+          "pageX": 970,
+          "pageY": 922,
+          "target": "gsbdTPBUutSPCRCRu6JE"
+        },
+        {
+          "uuid": "e6a8e670-b9a3-4a95-ab61-aaa35144c087",
+          "identifier": 8,
+          "screenX": 353,
+          "screenY": 874,
+          "clientX": 918,
+          "clientY": 103,
+          "pageX": 1177,
+          "pageY": 194,
+          "target": "UMcY3JuiLV0TqmF9crlh"
+        }
+      ],
+      "touches": [
+        {
+          "uuid": "9db5d78d-4ecd-4856-b3ca-2f1acb62cac2",
+          "identifier": 0,
+          "screenX": 380,
+          "screenY": 711,
+          "clientX": 16,
+          "clientY": 197,
+          "pageX": 1639,
+          "pageY": 687,
+          "target": "EfLlyC3aSuS3DN9ww13D"
+        },
+        {
+          "uuid": "caf4dae6-30fe-4bda-add8-9bc09418fcca",
+          "identifier": 1,
+          "screenX": 478,
+          "screenY": 237,
+          "clientX": 1238,
+          "clientY": 713,
+          "pageX": 1557,
+          "pageY": 854,
+          "target": "H9iaHpkSPfZKjrL7ObXR"
+        },
+        {
+          "uuid": "c7104500-72b3-48a4-909b-a190f29d0c2d",
+          "identifier": 2,
+          "screenX": 477,
+          "screenY": 839,
+          "clientX": 628,
+          "clientY": 479,
+          "pageX": 1623,
+          "pageY": 1,
+          "target": "lhyPLmVIoF9q44WWukYZ"
+        },
+        {
+          "uuid": "afc2a334-a514-42f6-80b1-5fa3577df5a3",
+          "identifier": 3,
+          "screenX": 308,
+          "screenY": 496,
+          "clientX": 1270,
+          "clientY": 564,
+          "pageX": 622,
+          "pageY": 318,
+          "target": "CnAYXmLOE57NdSdEYzPf"
+        },
+        {
+          "uuid": "bf5f8a48-e2af-4398-9b6f-19cc588ca689",
+          "identifier": 4,
+          "screenX": 246,
+          "screenY": 432,
+          "clientX": 1664,
+          "clientY": 810,
+          "pageX": 977,
+          "pageY": 46,
+          "target": "4CuVOhfsrujkddxIObLZ"
+        },
+        {
+          "uuid": "c872968f-8e78-4749-80f1-791fae2e2d9d",
+          "identifier": 5,
+          "screenX": 404,
+          "screenY": 645,
+          "clientX": 1815,
+          "clientY": 932,
+          "pageX": 610,
+          "pageY": 699,
+          "target": "eT8HF91FgDGOQnq1DYXf"
+        },
+        {
+          "uuid": "c1de3656-9296-4341-ad4a-4a96455ec6ca",
+          "identifier": 6,
+          "screenX": 1065,
+          "screenY": 300,
+          "clientX": 189,
+          "clientY": 251,
+          "pageX": 754,
+          "pageY": 117,
+          "target": "diCxkZXjZOORpjwvfO3H"
+        },
+        {
+          "uuid": "e8de1615-a2fe-4398-923d-f1a48811571a",
+          "identifier": 7,
+          "screenX": 1594,
+          "screenY": 695,
+          "clientX": 1230,
+          "clientY": 535,
+          "pageX": 970,
+          "pageY": 922,
+          "target": "gsbdTPBUutSPCRCRu6JE"
+        },
+        {
+          "uuid": "e6a8e670-b9a3-4a95-ab61-aaa35144c087",
+          "identifier": 8,
+          "screenX": 353,
+          "screenY": 874,
+          "clientX": 918,
+          "clientY": 103,
+          "pageX": 1177,
+          "pageY": 194,
+          "target": "UMcY3JuiLV0TqmF9crlh"
+        },
+        {
+          "uuid": "45927f58-03b5-4adf-80f6-504625d8ab59",
+          "identifier": 9,
+          "screenX": 944,
+          "screenY": 986,
+          "clientX": 1485,
+          "clientY": 237,
+          "pageX": 1886,
+          "pageY": 508,
+          "target": "Zn2yNgHqINS8jErtxVdo"
+        }
+      ]
+    }

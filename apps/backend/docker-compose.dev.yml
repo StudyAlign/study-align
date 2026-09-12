@@ -1,0 +1,46 @@
+version: '3.7'
+networks:
+  outside:
+    external:
+      name: studyalign-network
+  inside:
+    driver: bridge
+  traefik-net:
+    external: true
+
+volumes:
+  database-data:
+services:
+  studyalign-database-dev:
+    container_name: studyalign-database-dev
+    image: postgres:12.3-alpine
+    env_file:
+      - ./database/database.dev.env
+    ports:
+      - "5434:5432"
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    networks:
+      - inside
+  studyalign-backend-dev:
+    container_name: studyalign-backend-dev
+    build: ./backend
+    image: studyalign-backend-dev
+    env_file:
+      - ./database/database.dev.env
+    ports:
+      - "8112:80"
+    depends_on:
+      - studyalign-database-dev
+    networks:
+     - outside
+     - inside
+     - traefik-net
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--reload", "--root-path", "/study-align-dev"]
+    volumes:
+      - ./backend/app:/app
+    labels:
+      - "traefik.port=80"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.enable=true"
+      - "traefik.http.routers.study-align-backend.rule=Host(`study-align-backend.localhost`)"

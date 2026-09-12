@@ -1,0 +1,424 @@
+{
+  "condition_id": 1,
+  "interactions": [
+    {
+      "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "event": "touchstart",
+      "time": "2020-08-10T16:54:36.720Z",
+      "altKey": true,
+      "ctrlKey": true,
+      "metaKey": true,
+      "shiftKey": true,
+      "rotation": 0,
+      "scale": 0,
+      "changedTouches": [
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "identifier": 0,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "id": 0,
+          "touch_interaction_id": 0
+        }
+      ],
+      "targetTouches": [
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cccc",
+          "identifier": 1,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "id": 0,
+          "touch_interaction_id": 0
+        }
+      ],
+      "touches": [
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "identifier": 0,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cccc",
+          "identifier": 1,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "id": 0,
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "id": 0,
+          "touch_interaction_id": 0
+        }
+      ]
+    },
+    {
+      "uuid": "3fa85f64-5717-4562-b3fc-2c963f66aaa1",
+      "event": "touchend",
+      "time": "2020-08-11T16:54:36.720Z",
+      "altKey": true,
+      "ctrlKey": true,
+      "metaKey": true,
+      "shiftKey": true,
+      "rotation": 0,
+      "scale": 0,
+      "changedTouches": [
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66afa6",
+          "identifier": 0,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        }
+      ],
+      "targetTouches": [
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cccc",
+          "identifier": 1,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        }
+      ],
+      "touches": [
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66afa6",
+          "identifier": 0,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cccc",
+          "identifier": 1,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        }
+      ]
+    }
+  ]
+}
+
+
+{
+  "condition_id": 1,
+  "interactions": [
+    {
+      "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "event": "touchstart",
+      "time": "2020-08-10T16:54:36.720Z",
+      "altKey": true,
+      "ctrlKey": true,
+      "metaKey": true,
+      "shiftKey": true,
+      "rotation": 0,
+      "scale": 0,
+      "changedTouches": [
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "identifier": 0,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "id": 0,
+          "touch_interaction_id": 0
+        }
+      ],
+      "targetTouches": [
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cccc",
+          "identifier": 1,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "id": 0,
+          "touch_interaction_id": 0
+        }
+      ],
+      "touches": [
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "identifier": 0,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cccc",
+          "identifier": 1,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "id": 0,
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "3fa85f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "id": 0,
+          "touch_interaction_id": 0
+        }
+      ]
+    },
+    {
+      "uuid": "3fa85f64-5717-4562-b3fc-2c963f66aaa1",
+      "event": "touchend",
+      "time": "2020-08-11T16:54:36.720Z",
+      "altKey": true,
+      "ctrlKey": true,
+      "metaKey": true,
+      "shiftKey": true,
+      "rotation": 0,
+      "scale": 0,
+      "changedTouches": [
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66afa6",
+          "identifier": 0,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        }
+      ],
+      "targetTouches": [
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cccc",
+          "identifier": 1,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        }
+      ],
+      "touches": [
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66afa6",
+          "identifier": 0,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cccc",
+          "identifier": 1,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        },
+        {
+          "uuid": "45685f64-5717-4562-b3fc-2c963f66cfff",
+          "identifier": 2,
+          "screenX": 0,
+          "screenY": 0,
+          "clientX": 0,
+          "clientY": 0,
+          "pageX": 0,
+          "pageY": 0,
+          "target": "string",
+          "touch_interaction_id": 0
+        }
+      ]
+    }
+  ]
+}
