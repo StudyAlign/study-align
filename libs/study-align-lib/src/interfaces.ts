@@ -1,0 +1,18 @@
+type InteractionTypes = "mouseInteractionList" | "dragInteractionList" | "keyboardInteractionList" | "touchInteractionList" | "genericInteractionList"
+
+type NavigatorSource = "condition" | "questionnaire"
+type NavigatorState = "in_progress" | "done"
+
+interface Options {
+    path: string;
+    method: "GET" | "POST" | "PATCH" | "DELETE";
+    headers?: object;
+    params?: object;
+    body?: object;
+    formData?: boolean;
+    asQuery?: boolean;
+    responseType?: XMLHttpRequestResponseType;
+    onload?: any;
+    onprogress?: any;
+    onerror?: any;
+}
