@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Align Library Example</title>
+    <!-- include bundled library -->
+    <script src="study-align-lib-bundle.js"></script>
+    <!-- study-align.js shows the usage of the library's methods -->
+    <script type="text/javascript" src="study-align.js"></script>
+</head>
+
+<body>
+<h1>Basic Example</h1>
+<p>This index.html shows an example on how to integrate studyAlign into a basic html file</p>
+
+<div class="buttons">
+    <button id="button1">button1: mouseenter (add to bulk)</button>
+    <button id="button2">button2: click (add to bulk)</button>
+    <button id="button3">button3: click (log directly)</button>
+    <button id="button4">button4: Transmit mouse bulk</button>
+</div>
+<div>
+    <input id="textinput" type="text" />
+    <button id="keyboardBulkButton">Keyboard Bulk</button>
+</div>
+<div>
+    <canvas id="touchInput" style="width: 500px; height: 500px; background-color: teal"></canvas>
+    <button id="touchBulkButton">Touch Bulk</button>
+</div>
+<div>
+    <button id="genericGenerator">Generic Generator</button>
+    <button id="genericBulkButton">Generic Event Button</button>
+</div>
+<div>
+    <button id="proceedButton">Proceed</button>
+</div>
+
+
+
+<script>
+    function mouseEvent() {
+        // Save mouseenter events on button1 to local storage (can be transmitted in chunks later)
+        const button1 = document.getElementById('button1');
+        button1.addEventListener(LoggerEvents.MOUSE_CLICK, event => {
+            console.log("CLICK!")
+            logger(LoggerEvents.BULK_MOUSE_ENTER, event, {
+                meta: "data",
+                anything: "you'd like to save alongside the browser event"
+            }, event.relatedTarget);
+            console.log("Added mouseenter event to local storage")
+        });
+
+        // Save click events on button2 to local storage (can be transmitted in chunks later)
+        const button2 = document.getElementById('button2');
+
+        button2.addEventListener(LoggerEvents.MOUSE_CLICK, event => {
+            bulkLogger(LoggerEvents.BULK_MOUSE_CLICK, event, {
+                meta: "data",
+                anything: "you'd like to save alongside the browser event"
+            }, event.relatedTarget);
+            console.log("Added click event to local storage")
+        });
+
+        // Log the click events on button3 directly to the backend
+        const button3 = document.getElementById('button3');
+        button3.addEventListener(LoggerEvents.MOUSE_CLICK, event => {
+            logger(LoggerEvents.MOUSE_CLICK, event, {
+                meta: "data",
+                anything: "you'd like to save alongside the browser event"
+            });
+        });
+
+        // On click on button4 transmit mouse interaction bulks
+        const button4 = document.getElementById('button4');
+        button4.addEventListener('click', () => {
+            // Log locally stored mouse interactions in bulks / chunks.
+            transmitter(TransmitterEvents.TRANSMIT_MOUSE_BULK, 100)
+        });
+    }
+    //Add mouse events after document is loaded
+    window.addEventListener("load", mouseEvent);
+
+    function keyboardEvent() {
+        const textinput = document.getElementById('textinput');
+        textinput.addEventListener(LoggerEvents.KEY_DOWN, event => {
+
+            // Log keyboard events to local storage
+            const metaData = {"custom_meta_data": "for example", "text": textinput.value};
+            bulkLogger(LoggerEvents.BULK_KEY_DOWN, event, metaData);
+
+            /*
+            //Alternatively: Log keyboard events directly!
+            logger(LoggerEvents.KEY_DOWN, event, metaData);
+            */
+
+        });
+
+        // Log chunks of keyboard events to the backend. Bulk / chunk size is 10
+        const keyboardBulkButton = document.getElementById('keyboardBulkButton');
+        keyboardBulkButton.addEventListener('click', () => {
+            transmitter(TransmitterEvents.TRANSMIT_KEY_BULK, 10);
+        });
+    }
+    //Add keyboard events after document is loaded
+    window.addEventListener("load", keyboardEvent);
+
+
+    function touchEvent() {
+        const touchInput = document.getElementById('touchInput');
+        touchInput.addEventListener(LoggerEvents.TOUCH_START, event => {
+
+            // Log touch events to local storage
+            bulkLogger(LoggerEvents.BULK_TOUCH_START, event, metaData);
+
+            /*
+            //Alternatively: Log touch events directly! metaData is optional
+            logger(LoggerEvents.TOUCH_START, event, metaData);
+            */
+        });
+
+        // Log chunks of touch events to the backend. Bulk / chunk size is 10, condition id is 1
+        const touchBulkButton = document.getElementById('touchBulkButton');
+        touchBulkButton.addEventListener('click', () => {
+            transmitter(TransmitterEvents.TRANSMIT_TOUCH_BULK, 10);
+        });
+    }
+    //Add touch events after document is loaded
+    window.addEventListener("load", touchEvent);
+
+
+    function genericEvent() {
+        const genericGenerator = document.getElementById('genericGenerator');
+        genericGenerator.addEventListener('click', () => {
+
+            // Log generic events (custom events) to local storage
+            let genericEvent = {"hey": "this JSON object can hold any data"};
+            bulkLogger(LoggerEvents.BULK_CUSTOM_EVENT_EXAMPLE, genericEvent, {"custom_name": "meta_data"});
+
+            /*
+            //Alternatively: Log generic events directly! metaData is optional
+            logger(LoggerEvents.CUSTOM_EVENT_EXAMPLE, genericEvent, metaData);
+            */
+        });
+
+        // Log chunks of generic events to the backend. Bulk / chunk size is 10, condition id is 1
+        const genericBulkButton = document.getElementById('genericBulkButton');
+        genericBulkButton.addEventListener('click', () => {
+            transmitter(TransmitterEvents.TRANSMIT_GENERIC_BULK, 10);
+        });
+    }
+    //Add generic events after document is loaded
+    window.addEventListener("load", genericEvent);
+
+
+    function continueProcedure() {
+        const proceedButton = document.getElementById('proceedButton');
+        proceedButton.addEventListener('click', () => {
+            proceed();
+        });
+    }
+    //Bind to
+    window.addEventListener("load", continueProcedure)
+
+</script>
+</body>
+</html>
