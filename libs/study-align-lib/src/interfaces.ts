@@ -10,6 +10,7 @@ interface Options {
     params?: object;
     body?: object;
     formData?: boolean;
+    multipart?: boolean;
     asQuery?: boolean;
     responseType?: XMLHttpRequestResponseType;
     onload?: any;

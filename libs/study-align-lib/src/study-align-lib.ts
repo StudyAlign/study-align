@@ -54,10 +54,14 @@ class StudyAlignLib {
         return date.getTime();
     }
 
-    setHeaders(options: Options, refresh: boolean = false) {
+    setHeaders(options: Options, refresh: boolean = false, skipContentType: boolean = false) {
         const access_token = !refresh ? this.readTokens("access_token") : this.readTokens("refresh_token");
         options.headers["Authorization"] = "Bearer " + access_token;
-        options.headers["Content-type"] = "application/json";
+        // For multipart uploads the browser must set Content-type (incl. the
+        // boundary) itself, so callers can opt out of the JSON default.
+        if (!skipContentType) {
+            options.headers["Content-type"] = "application/json";
+        }
     }
 
     setLoggerHeaders(options: Options) {
@@ -146,6 +150,8 @@ class StudyAlignLib {
             if (options.method === "POST" || options.method === "PATCH") {
                 if (options.asQuery) {
                     xhr.send()
+                } else if (options.multipart) {
+                    xhr.send(options.body as any)
                 } else {
                     xhr.send(options.formData ? encodeParams(options.body) : JSON.stringify(options.body))
                 }
@@ -548,13 +554,18 @@ class StudyAlignLib {
     // Group Logo
 
     createGroupLogo(groupId: number, file: File) {
+        const formData = new FormData();
+        formData.append("file", file);
         const options: Options = {
             method: "POST",
             path: "groups/" + groupId + "/logo",
-            headers: {"content-length": 512000},
-            body: {file: file},
+            headers: {},
+            body: formData,
+            multipart: true,
         }
-        this.setHeaders(options);
+        // Skip the JSON Content-type so the browser sets multipart/form-data
+        // with the correct boundary itself.
+        this.setHeaders(options, false, true);
         return this.request(options);
     }
 
