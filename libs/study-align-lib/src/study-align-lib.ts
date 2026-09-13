@@ -262,6 +262,24 @@ class StudyAlignLib {
         return this.basicRead("users/roles");
     }
 
+    // ---- Registration & password recovery (unauthenticated) ---- //
+
+    registerUser(user: object) {
+        return this.basicCreate("users/register", user);
+    }
+
+    activateUser(token: string) {
+        return this.basicRead("users/" + token + "/activate");
+    }
+
+    requestPasswordReset(email: string) {
+        return this.basicCreate("users/forgot-password", { email: email });
+    }
+
+    resetPassword(token: string, password: string) {
+        return this.basicCreate("users/reset-password", { token: token, password: password });
+    }
+
     // ---- MAINLY FOR USE IN ADMIN FRONTEND ---- //
 
     // Studies
