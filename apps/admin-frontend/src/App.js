@@ -5,6 +5,8 @@ import {useDispatch, useStore} from "react-redux";
 import Login from './app/login/Login';
 import ForgotPW from './app/login/ForgotPW';
 import ResetPW from './app/login/ResetPW';
+import RegisterForm from './app/login/RegisterForm';
+import Activate from './app/login/Activate';
 import Dashboard from './app/dashboard/Dashboard';
 import StudyOverviewLayout from "./app/study_overview/StudyOverviewLayout";
 import CreateInformation from "./app/create_study_flow/CreateInformation";
@@ -86,7 +88,9 @@ export default function App() {
                     <Route path="/login"            element={<Login/>} />
                     <Route path="/logout"           element={<Login logout/>} />
                     <Route path="/login/forgot"     element={<ForgotPW/>} />
-                    <Route path="/login/reset"      element={<ResetPW/>} />
+                    <Route path="/login/reset/:token" element={<ResetPW/>} />
+                    <Route path="/register"         element={<RegisterForm/>} />
+                    <Route path="/user/:token/activate" element={<Activate/>} />
 
                     {/*dedicated Error*/}
                     <Route path="/error/:status" element={<ErrorPage/>} />

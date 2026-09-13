@@ -76,6 +76,9 @@ export default function Login(props) {
                         <Form.Text>
                             <Link to="/login/forgot">Forgot Password</Link>
                         </Form.Text>
+                        <Form.Text className="mt-2">
+                            No account yet? <Link to="/register">Register now</Link>
+                        </Form.Text>
                     </div>
                 </Form>
             </Card.Body>

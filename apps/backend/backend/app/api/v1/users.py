@@ -1,4 +1,5 @@
 import uuid
+import logging
 
 from fastapi import Depends, APIRouter, HTTPException
 from typing import List, Literal
@@ -31,6 +32,8 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 router = APIRouter()
 
 ENTITY = "User"
+
+logger = logging.getLogger('studyalign')
 
 
 @router.post("/users/login", response_model=schema.api.Tokens)
@@ -166,15 +169,19 @@ async def forgot_password(form: schema.user.ForgotPasswordForm, db: Session = De
     # Only send a mail for existing, active accounts, but always return 204 so
     # the endpoint does not reveal which email addresses are registered.
     if user and user.is_active:
-        token = methods.issue_password_reset_token(str(user.id))
-        html = get_password_reset_mail_html(token)
-        message = MessageSchema(
-            subject="StudyAlign password reset",
-            recipients=[user.email],
-            body=html,
-            subtype=MessageType.html)
-        fm = FastMail(email_config)
-        await fm.send_message(message)
+        try:
+            token = methods.issue_password_reset_token(str(user.id))
+            html = get_password_reset_mail_html(token)
+            message = MessageSchema(
+                subject="StudyAlign password reset",
+                recipients=[user.email],
+                body=html,
+                subtype=MessageType.html)
+            fm = FastMail(email_config)
+            await fm.send_message(message)
+        except Exception as e:
+            # Never surface mail failures: they would reveal which emails exist.
+            logger.error("Failed to send password reset mail: %s", e)
 
     return
 

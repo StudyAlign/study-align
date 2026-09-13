@@ -57,6 +57,28 @@ export function userLoginApi(username, password) {
     return sal.userLogin(username, password);
 }
 
+// Registration & password recovery (unauthenticated)
+
+export function registerUserApi(user) {
+    initApi();
+    return sal.registerUser(user);
+}
+
+export function activateUserApi(token) {
+    initApi();
+    return sal.activateUser(token);
+}
+
+export function requestPasswordResetApi(email) {
+    initApi();
+    return sal.requestPasswordReset(email);
+}
+
+export function resetPasswordApi(token, password) {
+    initApi();
+    return sal.resetPassword(token, password);
+}
+
 export function userMeApi() {
     return sal.userMe();
 }
