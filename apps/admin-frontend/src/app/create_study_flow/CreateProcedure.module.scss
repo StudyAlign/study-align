@@ -118,7 +118,9 @@
     cursor: auto;
     width: 100%;
     border-radius: 2px;
-    border-bottom: none !important;
+    // No box border on the accordion item itself: the type indicator is the
+    // coloured left border on .procedureElement only.
+    border: none !important;
 }
 
 .procedure-text {
@@ -146,27 +148,31 @@
 .procedure-text-button {
     background-color: $sal-proc-text !important;
     border: 2px solid $sal-proc-text !important;
+    color: #f8f9fa !important;
 }
 
 .procedure-condition-button {
     background-color: $sal-proc-cond !important;
     border: 2px solid $sal-proc-cond !important;
+    color: #f8f9fa !important;
 }
 
 .procedure-questionnaire-button {
     background-color: $sal-proc-quest !important;
     border: 2px solid $sal-proc-quest !important;
+    color: #f8f9fa !important;
 }
 
 .procedure-pause-button {
     background-color: $sal-proc-pause !important;
     border: 2px solid $sal-proc-pause !important;
+    color: #f8f9fa !important;
 }
 
 .procedure-block-button {
     border: 2px solid $sal-proc-block-border !important;
     background-color: $sal-proc-block !important;
-    color: $sal-proc-block-border !important;
+    color: #33334d !important; // darker than the border tone, on the light block fill
 }
 
 .wrapper {
@@ -178,7 +184,7 @@
     justify-content: space-evenly;
     align-items: flex-start;
     width: 100%;
-    max-width: 800px;
+    max-width: 1100px;
 }
 .wrapper>* {
     width: 100%;
@@ -231,8 +237,11 @@
     justify-content: space-between;
     align-items: center;
     min-height: 48px;
-    border: 1px solid #cfd4db;
+    /* Only the coloured left border (from the .procedure-* type class) shows;
+       no top/right/bottom border. A soft shadow keeps rows separated. */
+    border: none;
     border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(43, 41, 29, 0.08);
     padding-right: 10px;
     background-color: white;
 }

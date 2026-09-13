@@ -148,6 +148,7 @@ export default function CreateProcedure(props) {
     const [isSetupDone, setIsSetupDone] = useState(false) // Setup State
     const [isDispatched, setIsDispatched] = useState(false) // Dispatch State
     const [showModal, setShowModal] = useState(false) // Modal State
+    const [deleteTargetId, setDeleteTargetId] = useState(null) // pending delete confirmation
 
     // Message State
     const [message, setMessage] = useState({
@@ -363,8 +364,15 @@ export default function CreateProcedure(props) {
         setProcedureObjectMapState(newMap)
     }
 
-    // Delete ProcedureObject + nested children
+    // Ask for confirmation before deleting (see delete modal below). Both the
+    // block delete button and each ProcedureObject call deleteProcedureObject,
+    // so routing it through the modal covers every delete in the order.
     const deleteProcedureObject = (procedureObjectId) => {
+        setDeleteTargetId(procedureObjectId)
+    }
+
+    // Delete ProcedureObject + nested children
+    const performDeleteProcedureObject = (procedureObjectId) => {
         const newMap = new Map(procedureObjectMapState)
 
         // delete procedureObject from backend
@@ -1135,6 +1143,37 @@ export default function CreateProcedure(props) {
                     <Button
                         variant="success" onClick={async () => await navigateForward()}>
                         Proceed
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={deleteTargetId !== null} onHide={() => setDeleteTargetId(null)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title> Delete procedure element? </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {(() => {
+                        const target = deleteTargetId !== null && procedureObjectMapState.get(deleteTargetId)
+                        const label = target && target.type ? target.type.label : "this element"
+                        const isBlock = target && target.type === ProcedureTypes.BlockElement
+                        return (
+                            <>
+                                Are you sure you want to delete <strong>{label}</strong> from the procedure order?
+                                {isBlock && " Every element inside this block will be removed as well."}
+                                {" "}This cannot be undone.
+                            </>
+                        )
+                    })()}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setDeleteTargetId(null)}>
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="danger"
+                        onClick={() => { const id = deleteTargetId; setDeleteTargetId(null); performDeleteProcedureObject(id) }}
+                    >
+                        Delete
                     </Button>
                 </Modal.Footer>
             </Modal>

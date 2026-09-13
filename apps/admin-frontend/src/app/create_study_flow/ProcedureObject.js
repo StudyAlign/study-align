@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef, useContext } from 'react';
 import { DragHandleComponent } from 'react-sortful'
-import {Accordion, Form, Button, Tooltip, OverlayTrigger, Badge} from "react-bootstrap";
+import {Accordion, Form, Button, Badge} from "react-bootstrap";
 import { Trash3, Save } from "react-bootstrap-icons";
 import { useDispatch} from "react-redux";
 
@@ -455,8 +455,6 @@ const ProcedureObject = forwardRef((props, ref) => {
     const [stored, setStored] = useState(props.stored) // Indicator if ProcedureObject already got stored in backed
     const [updated, setUpdated] = useState(false) // Indicator if the content got updated
     const [updateError, setUpdateError] = useState(false) // Indicator if there was an error while updating
-    const [showTooltip, setShowTooltip] = useState(false)
-    const [delayTimeout, setDelayTimeout] = useState(null)
 
     // onclose logic ref from accordion in createProcedure
     useImperativeHandle(ref, () => ({
@@ -793,16 +791,6 @@ const ProcedureObject = forwardRef((props, ref) => {
         return procedureType.color
     }
 
-    const handleMouseEnter = () => {
-        const timeout = setTimeout(() => { setShowTooltip(true) }, 500)
-        setDelayTimeout(timeout)
-    }
-
-    const handleMouseLeave = () => {
-        clearTimeout(delayTimeout)
-        setShowTooltip(false)
-    }
-
     // Sector: ProcedureObject FrontEnd interactions: End --------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -820,22 +808,14 @@ const ProcedureObject = forwardRef((props, ref) => {
                 </Accordion.Body>
             </Accordion.Item>
 
-            <OverlayTrigger
-                placement="top"
-                show={showTooltip}
-                overlay={<Tooltip id="tooltip-top">Manual save</Tooltip>}
+            <Button
+                size="sm"
+                onClick={handleSave}
+                disabled={!updated}
+                className={styles.saveButton}
             >
-                <Button
-                    size="sm"
-                    onClick={handleSave}
-                    disabled={!updated}
-                    className={styles.saveButton}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    <Save />
-                </Button>
-            </OverlayTrigger>
+                <Save className="button-icon" /> Save
+            </Button>
 
             {!disabled &&
                 <Button variant="danger" size="sm" onClick={() => props.deleteProcedureObject(props.id)} className={styles.deleteButton}>
