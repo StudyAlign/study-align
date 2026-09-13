@@ -83,13 +83,8 @@ services:
     working_dir: /repo                            # workspace root (npm workspaces)
     environment:
       PORT: ${STUDY_FRONTEND_PORT:-3366}
-      # react-scripts 4 needs this on Node 17+
-      NODE_OPTIONS: --openssl-legacy-provider
       REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
       DISABLE_ESLINT_PLUGIN: "true"
-      # react-scripts 4's preflight rejects the mixed dep tree from workspace
-      # hoisting (react-scripts 4 alongside admin's react-scripts 5).
-      SKIP_PREFLIGHT_CHECK: "true"
     # study-frontend's package name is "study-align-framework"
     command: >
       sh -c "[ -e node_modules/study-align-lib ] ||

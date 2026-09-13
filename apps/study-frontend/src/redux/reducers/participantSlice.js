@@ -7,7 +7,7 @@ import {
     participateApi,
     readTokensApi,
     refreshTokenApi,
-    storeTokensApi, updateAccessTokenApi, logProlificData, logProlificDataApi, storeLoggerKeyApi
+    storeTokensApi, updateAccessTokenApi, logProlificDataApi, storeLoggerKeyApi
 } from "../../api/studyAlignApi";
 import { LOADING, IDLE } from "../apiStates";
 
