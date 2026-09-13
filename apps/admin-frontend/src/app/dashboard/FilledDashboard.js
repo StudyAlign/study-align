@@ -1,215 +1,127 @@
-import React, { useState } from "react";
-import {
-    Container,
-    Row,
-    Col,
-    Button,
-    NavLink,
-    Navbar,
-    Nav,
-    NavDropdown,
-    Dropdown,
-    DropdownButton,
-    ButtonGroup
-} from "react-bootstrap";
-import { useNavigate } from "react-router";
+import React, { useState, useMemo } from "react";
+import { Container, Row, Col, Form, InputGroup } from "react-bootstrap";
+import { Search } from "react-bootstrap-icons";
 
 import StudyBox from "./StudyBox";
 
 import { STATES } from "../study_overview/StudyOverviewLayout";
 
 import "./Dashboard.scss";
-import {CalendarRange, FunnelFill} from "react-bootstrap-icons";
+
+// Status filters offered above the grid.
+const FILTERS = {
+    ALL: "all",
+    OPEN: STATES.RUNNING,
+    FUTURE: "future",
+    CLOSED: STATES.FINISHED,
+    SETUP_UNFINISHED: STATES.SETUP,
+};
+
+const FILTER_OPTIONS = [
+    { value: FILTERS.ALL, label: "All Studies" },
+    { value: FILTERS.OPEN, label: "Open Studies" },
+    { value: FILTERS.FUTURE, label: "Future Studies" },
+    { value: FILTERS.CLOSED, label: "Closed Studies" },
+    { value: FILTERS.SETUP_UNFINISHED, label: "Setup Not Finished" },
+];
+
+const SORT_OPTIONS = [
+    { value: "date_desc", label: "Newest first" },
+    { value: "date_asc", label: "Oldest first" },
+    { value: "name_asc", label: "Name (A–Z)" },
+    { value: "name_desc", label: "Name (Z–A)" },
+];
+
+const startTime = (s) => new Date(s.startDate).getTime();
 
 export default function FilledDashboard(props) {
+    const [filter, setFilter] = useState(FILTERS.ALL);
+    const [sort, setSort] = useState("date_desc");
+    const [query, setQuery] = useState("");
 
-    const STUDY_ENUM = {
-        RECENT: 'recent',
-        ALL: 'all',
-        RUNNING: STATES.RUNNING,
-        FUTURE: 'future',
-        CLOSED: STATES.FINISHED,
-        SETUP_UNFINISHED: STATES.SETUP
-    }
+    const isFuture = (s) => new Date(s.startDate.split("T")[0]) > new Date();
 
-    const STUDY_LABELS = {
-        ALL: 'All Studies',
-        RUNNING: 'Open Studies',
-        FUTURE: 'Future Studies',
-        CLOSED: 'Closed Studies',
-        SETUP_UNFINISHED: 'Setup Not Finished'
-    }
-
-    const [activeStudyType, setActiveStudyType] = useState(STUDY_ENUM.RUNNING)
-    const [activeLabel, setActiveLabel] = useState(STUDY_LABELS.RUNNING)
-    const [expanded, setExpanded] = useState(false)
-
-    const handleSelect = (eventKey) => {
-        setActiveStudyType(eventKey)
-        setExpanded(false)
-
-        switch (eventKey) {
-            case STUDY_ENUM.ALL:
-                setActiveLabel(STUDY_LABELS.ALL)
-                break
-            case STUDY_ENUM.RUNNING:
-                setActiveLabel(STUDY_LABELS.RUNNING)
-                break
-            case STUDY_ENUM.FUTURE:
-                setActiveLabel(STUDY_LABELS.FUTURE)
-                break
-            case STUDY_ENUM.CLOSED:
-                setActiveLabel(STUDY_LABELS.CLOSED)
-                break
-            case STUDY_ENUM.SETUP_UNFINISHED:
-                setActiveLabel(STUDY_LABELS.SETUP_UNFINISHED)
-                break
+    const matchesFilter = (s) => {
+        switch (filter) {
+            case FILTERS.OPEN: return s.state === STATES.RUNNING;
+            case FILTERS.FUTURE: return isFuture(s);
+            case FILTERS.CLOSED: return s.state === STATES.FINISHED;
+            case FILTERS.SETUP_UNFINISHED: return s.state === STATES.SETUP;
+            case FILTERS.ALL:
+            default: return true;
         }
-    }
+    };
 
-    const navigate = useNavigate()
-    const max_amount_boxes = 5
+    const visibleStudies = useMemo(() => {
+        const term = query.trim().toLowerCase();
+        const list = props.studies
+            .filter(matchesFilter)
+            .filter((s) => !term || (s.name || "").toLowerCase().includes(term));
 
-    const handleClickStudyLink = (event, study_id) => {
-        event.preventDefault()
-        navigate("/study/"+study_id+"/overview")
-    }
-
-    const handleClickCreateStudy = (event) => {
-        event.preventDefault()
-        navigate("/create")
-    }
-
-    const handleClickSetupStudy = (event, study_id) => {
-        event.preventDefault()
-        navigate("/create/" + study_id)
-    }
-
-    const handleClickImportStudy = (event) => {
-        event.preventDefault()
-        navigate("/import")
-    }
-    
-    const study_dict = {
-        [STUDY_ENUM.RECENT]: [],
-        [STUDY_ENUM.ALL]: [],
-        [STUDY_ENUM.RUNNING]: [],
-        [STUDY_ENUM.FUTURE]: [],
-        [STUDY_ENUM.CLOSED]: [],
-        [STUDY_ENUM.SETUP_UNFINISHED]: []
-    }
-
-    for (let s of props.studies) {
-
-        const study = <Row key={s.id}> <NavLink onClick={(event) => handleClickStudyLink(event, s.id)}> {s.name} </NavLink> </Row>
-
-        if(s.state !== STUDY_ENUM.SETUP_UNFINISHED) {
-
-            study_dict[STUDY_ENUM.ALL].push(study)
-
-            // recent = first studies in backend order
-            if(study_dict[STUDY_ENUM.RECENT].length < max_amount_boxes) {
-                study_dict[STUDY_ENUM.RECENT].push(
-                    <Col key={s.id} md={4}> <StudyBox study={s}/> </Col>
-                )
-            }
-
-            if (s.state === STUDY_ENUM.RUNNING) {
-                study_dict[STUDY_ENUM.RUNNING].push(study)
-            }
-
-            if (s.state === STUDY_ENUM.CLOSED) {
-                study_dict[STUDY_ENUM.CLOSED].push(study)
-            }
-
-            if (new Date(s.startDate.split('T')[0]) > new Date()) {
-                study_dict[STUDY_ENUM.FUTURE].push(study)
-            }
-
-        } else {
-            study_dict[STUDY_ENUM.SETUP_UNFINISHED].push(study)
+        const sorted = [...list];
+        switch (sort) {
+            case "date_asc": sorted.sort((a, b) => startTime(a) - startTime(b)); break;
+            case "name_asc": sorted.sort((a, b) => (a.name || "").localeCompare(b.name || "")); break;
+            case "name_desc": sorted.sort((a, b) => (b.name || "").localeCompare(a.name || "")); break;
+            case "date_desc":
+            default: sorted.sort((a, b) => startTime(b) - startTime(a)); break;
         }
-        
-    }
-
-    const renderStudies = () => {
-        let studiesList = null
-
-        switch (activeStudyType) {
-            case STUDY_ENUM.ALL:
-                studiesList = study_dict[STUDY_ENUM.ALL]
-                break
-            case STUDY_ENUM.RUNNING:
-                studiesList = study_dict[STUDY_ENUM.RUNNING]
-                break
-            case STUDY_ENUM.FUTURE:
-                studiesList = study_dict[STUDY_ENUM.FUTURE]
-                break
-            case STUDY_ENUM.CLOSED:
-                studiesList = study_dict[STUDY_ENUM.CLOSED]
-                break
-            case STUDY_ENUM.SETUP_UNFINISHED:
-                studiesList = study_dict[STUDY_ENUM.SETUP_UNFINISHED]
-                break
-        }
-
-        if (!studiesList || studiesList.length === 0) {
-            return <div>No entries available at the moment.</div>
-        }
-
-        return studiesList
-    }
+        return sorted;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.studies, filter, sort, query]);
 
     return (
-        <>
-            <div className="curr-studies">
-                <Container fluid className="p-0 mx-auto">
-                    <Row className="justify-content-between">
-                        <Row>
-                            <h3 className="headline">Recent Studies</h3>
-                        </Row>
-                        <Col lg={9}>
-                            <Row className="g-2">
-                                {study_dict[STUDY_ENUM.RECENT]}
-                            </Row>
-                        </Col>
+        <div className="curr-studies">
+            <Container fluid className="p-0 mx-auto">
+                <Row className="align-items-center justify-content-between g-2 mb-3">
+                    <Col xs="auto">
+                        <h3 className="headline mb-0">Studies</h3>
+                    </Col>
+                    <Col xs={12} md="auto" className="ms-md-auto">
+                        <div className="dashboard-toolbar">
+                            <InputGroup className="dashboard-search">
+                                <InputGroup.Text><Search /></InputGroup.Text>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search studies by title"
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                />
+                            </InputGroup>
+                            <Form.Select
+                                aria-label="Filter studies"
+                                value={filter}
+                                onChange={(e) => setFilter(e.target.value)}
+                            >
+                                {FILTER_OPTIONS.map((o) => (
+                                    <option key={o.value} value={o.value}>{o.label}</option>
+                                ))}
+                            </Form.Select>
+                            <Form.Select
+                                aria-label="Sort studies"
+                                value={sort}
+                                onChange={(e) => setSort(e.target.value)}
+                            >
+                                {SORT_OPTIONS.map((o) => (
+                                    <option key={o.value} value={o.value}>{o.label}</option>
+                                ))}
+                            </Form.Select>
+                        </div>
+                    </Col>
+                </Row>
 
-                        <Col lg={3}>
-
-                            <Navbar expand={false} className="custom-navbar" expanded={expanded}>
-                                <Navbar.Brand>{activeLabel}</Navbar.Brand>
-                                <NavDropdown align="end" title={<FunnelFill />} id="custom-navbar-dropdown">
-                                    <NavDropdown.Item active={activeStudyType === STUDY_ENUM.ALL}
-                                                      onClick={() => handleSelect(STUDY_ENUM.ALL)}>
-                                        {STUDY_LABELS.ALL}
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item active={activeStudyType === STUDY_ENUM.RUNNING}
-                                                      onClick={() => handleSelect(STUDY_ENUM.RUNNING)}>
-                                        {STUDY_LABELS.RUNNING}
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item active={activeStudyType === STUDY_ENUM.FUTURE}
-                                                      onClick={() => handleSelect(STUDY_ENUM.FUTURE)}>
-                                        {STUDY_LABELS.FUTURE}
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item  active={activeStudyType === STUDY_ENUM.CLOSED}
-                                                       onClick={() => handleSelect(STUDY_ENUM.CLOSED)}>
-                                        {STUDY_LABELS.CLOSED}
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Item active={activeStudyType === STUDY_ENUM.SETUP_UNFINISHED}
-                                                      onClick={() => handleSelect(STUDY_ENUM.SETUP_UNFINISHED)}>
-                                        {STUDY_LABELS.SETUP_UNFINISHED}
-                                    </NavDropdown.Item>
-                                </NavDropdown>
-                            </Navbar>
-
-
-                            <div className="study-list mt-3">
-                                {renderStudies()}
-                            </div>
-                        </Col>
+                {visibleStudies.length === 0 ? (
+                    <div className="text-muted">No studies match the current filter.</div>
+                ) : (
+                    <Row className="g-3">
+                        {visibleStudies.map((s) => (
+                            <Col key={s.id} xs={12} sm={6} lg={4} xxl={3}>
+                                <StudyBox study={s} />
+                            </Col>
+                        ))}
                     </Row>
-                </Container>
-            </div>
-        </>
-    )
+                )}
+            </Container>
+        </div>
+    );
 }

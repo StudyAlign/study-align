@@ -70,6 +70,23 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
     cursor: pointer;
+    height: 100%; // equal-height cards across the grid
+}
+
+.dashboard-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.dashboard-search {
+    width: 260px;
+    max-width: 100%;
+}
+
+.dashboard-toolbar .form-select {
+    width: auto;
 }
 
 .info-box {
