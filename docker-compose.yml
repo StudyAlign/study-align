@@ -61,9 +61,6 @@ services:
       PORT: ${ADMIN_FRONTEND_PORT:-3000}
       REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
       REACT_APP_STUDY_ALIGN_STUDY_FRONTEND_URL: http://localhost:${STUDY_FRONTEND_PORT:-3366}
-      # eslint-config-react-app isn't resolvable under workspace hoisting; lint
-      # is run separately, not inside the dev webpack build.
-      DISABLE_ESLINT_PLUGIN: "true"
     # install this app + the lib workspace, build the lib, then start the dev server
     command: >
       sh -c "[ -e node_modules/study-align-lib ] ||
@@ -84,7 +81,6 @@ services:
     environment:
       PORT: ${STUDY_FRONTEND_PORT:-3366}
       REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
-      DISABLE_ESLINT_PLUGIN: "true"
     # study-frontend's package name is "study-align-framework"
     command: >
       sh -c "[ -e node_modules/study-align-lib ] ||
