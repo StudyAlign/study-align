@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Button, Tabs, Tab, Modal, Form } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Button, Tabs, Tab, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { Copy, Trash, PlusCircle } from "react-bootstrap-icons";
+import { Copy, Trash, PersonPlus } from "react-bootstrap-icons";
 
 import { STATES } from "./StudyOverviewLayout";
 import {
@@ -10,15 +10,14 @@ import {
 } from "../../redux/reducers/studySlice";
 
 import {
-    userSlice, getUsers, getCollaborators, createCollaborator, deleteCollaborator, selectUserApiStatus,
-    selectUsers, selectCollaborators
+    userSlice, getCollaborators, createCollaborator, deleteCollaborator, selectCollaborators
 } from "../../redux/reducers/userSlice";
 
 import { LOADING } from "../../redux/apiStates";
 import { reformatDate } from "../../components/CommonFunctions";
 
 import LoadingScreen from "../../components/LoadingScreen";
-import PaginatedSortableTable from "../../components/PaginatedSortableTable";
+import UserSearch from "../../components/UserSearch";
 
 import "./StudyOverview.css";
 import "../SidebarAndReactStyles.scss";
@@ -28,13 +27,10 @@ const url = process.env.REACT_APP_STUDY_ALIGN_STUDY_FRONTEND_URL;
 export default function Overview(props) {
     const [isClicked, setIsClicked] = useState(false);
     //
-    const [showModal, setShowModal] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    //
     const [collaboratorToDelete, setCollaboratorToDelete] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     //
-    const [refreshTableFlag, setRefreshTableFlag] = useState(false);
+    const [adding, setAdding] = useState(false);
     const [refreshCollaboratorsFlag, setRefreshCollaboratorsFlag] = useState(false);
 
     const dispatch = useDispatch();
@@ -45,58 +41,22 @@ export default function Overview(props) {
 
     // Selectors
     const apiStatus = useSelector(selectApiStatus);
-    const userApiStatus = useSelector(selectUserApiStatus);
-    const usersData = useSelector(selectUsers);
     const collaborators = useSelector(selectCollaborators);
-
-    // initial table settings
-    const initialItemsPerPage = 10;
-    const initialSortColumn = "id";
-    const initialSortDirection = "asc";
 
     // retrigger collaborators
     useEffect(() => {
         dispatch(getCollaborators(study.id));
     }, [dispatch, study.id, refreshCollaboratorsFlag]);
 
-    // initial fetch of all users
-    useEffect(() => {
-        dispatch(getUsers({
-            offset: 0,
-            limit: initialItemsPerPage,
-            orderBy: initialSortColumn,
-            direction: initialSortDirection,
-            search: ""
-        }));
-    }, [dispatch]);
-
     // Cleanup
     useEffect(() => {
         return () => {
-            dispatch(userSlice.actions.resetAllUsers());
             dispatch(userSlice.actions.resetCollaborators());
         };
     }, [dispatch]);
 
-    const fetchUserData = useCallback(
-        ({ offset, limit, orderBy, direction }) => {
-            dispatch(getUsers({
-                offset,
-                limit,
-                orderBy,
-                direction,
-                search: searchQuery
-            }));
-        },
-        [dispatch, searchQuery]
-    );
-
-    useEffect(() => {
-        setRefreshTableFlag((prev) => !prev);
-    }, [searchQuery]);
-
     // loading
-    if (apiStatus === LOADING || !usersData.count || !collaborators) {
+    if (apiStatus === LOADING || !collaborators) {
         return <LoadingScreen />;
     }
 
@@ -171,7 +131,6 @@ export default function Overview(props) {
     const handleConfirmDelete = async () => {
         dispatch(deleteCollaborator(collaboratorToDelete))
             .then(() => {
-                setRefreshTableFlag((prev) => !prev);
                 setRefreshCollaboratorsFlag((prev) => !prev);
             });
         setShowConfirmModal(false);
@@ -185,34 +144,12 @@ export default function Overview(props) {
     const handleAddCollaborator = (userId) => {
         dispatch(createCollaborator({ study_id: study.id, user_id: userId }))
             .then(() => {
-                setRefreshTableFlag((prev) => !prev);
                 setRefreshCollaboratorsFlag((prev) => !prev);
             });
-        setShowModal(false);
     };
 
-    // get colab id's
+    // ids of users already collaborating, to disable them in the search
     const colabIds = collaborators.map((collab) => collab.user.id);
-
-    const columns = [
-        { key: "name", label: "Name" },
-        { key: "firstname", label: "First name" },
-        { key: "lastname", label: "Last name" },
-        { key: "email", label: "Email" },
-        {
-            key: "actions",
-            label: "Actions",
-            render: (_, row) => (
-                <Button
-                    variant="link"
-                    onClick={() => handleAddCollaborator(row.id)}
-                    className="add-button"
-                >
-                    <PlusCircle size={22} />
-                </Button>
-            )
-        }
-    ];
 
     return (
         <>
@@ -289,63 +226,40 @@ export default function Overview(props) {
             ) : (
                 <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
                     {collaborators.map((collab) => (
-                        <li key={collab.id} className="collaborator-item">
+                        <li key={collab.id} className="collaborator-item d-flex align-items-center justify-content-between">
+                            <span>
+                                {collab.user.firstname} {collab.user.lastname} ({collab.user.email})
+                            </span>
                             <Button
                                 variant="link"
                                 onClick={() => confirmDelete(collab.id)}
                                 className="delete-button"
                             >
-                                <Trash size={25} color="red" />
-                            </Button>{" "}
-                            {collab.user.firstname} {collab.user.lastname} ({collab.user.email})
+                                <Trash size={22} color="red" />
+                            </Button>
                         </li>
                     ))}
                 </ul>
             )}
-            <Button type="button" className="small-button" onClick={() => setShowModal(true)}>
-                + Add
-            </Button>
 
-            {/* Modal add user */}
-            <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Collaborator</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form.Group controlId="searchUser">
-                        <Form.Label>Search User</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="First name, last name or email"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </Form.Group>
-                    <hr />
-                    {userApiStatus !== LOADING && usersData.items.length === 0 && (
-                        <div className="alert alert-info">No user found.</div>
-                    )}
-                    <PaginatedSortableTable
-                            columns={columns}
-                            fetchData={fetchUserData}
-                            data={usersData.items}
-                            totalCount={usersData.count}
-                            loading={userApiStatus === LOADING}
-                            initialItemsPerPage={initialItemsPerPage}
-                            initialSortColumn={initialSortColumn}
-                            initialSortDirection={initialSortDirection}
-                            loadingText={"Loading Users ..."}
-                            excludeSortingColumns={["firstname" ,"lastname", "email", "actions"]}
-                            refreshFlag={refreshTableFlag}
-                            filter={{"id": colabIds}}
+            {adding ? (
+                <div className="collaborator-add" style={{ maxWidth: 480 }}>
+                    <UserSearch
+                        onSelect={(u) => handleAddCollaborator(u.id)}
+                        excludeIds={colabIds}
+                        excludeLabel="collaborator"
+                        placeholder="Search users by name or email"
+                        autoFocus
                     />
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>
-                        Close
+                    <Button variant="link" className="ps-0 mt-1" onClick={() => setAdding(false)}>
+                        Done
                     </Button>
-                </Modal.Footer>
-            </Modal>
+                </div>
+            ) : (
+                <Button type="button" className="small-button" onClick={() => setAdding(true)}>
+                    <PersonPlus className="button-icon" /> Add
+                </Button>
+            )}
 
             {/* Confirm deletion modal */}
             <Modal show={showConfirmModal} onHide={handleCancelDelete}>
