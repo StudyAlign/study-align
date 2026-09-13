@@ -64,7 +64,7 @@ services:
     # install this app + the lib workspace, build the lib, then start the dev server
     command: >
       sh -c "[ -e node_modules/study-align-lib ] ||
-             npm install -w study-align-admin-frontend -w study-align-lib --no-package-lock --no-audit --no-fund;
+             npm ci -w study-align-admin-frontend -w study-align-lib --no-audit --no-fund;
              npm run build:lib;
              npm start -w study-align-admin-frontend"
     ports:
@@ -84,7 +84,7 @@ services:
     # study-frontend's package name is "study-align-framework"
     command: >
       sh -c "[ -e node_modules/study-align-lib ] ||
-             npm install -w study-align-framework -w study-align-lib --no-package-lock --no-audit --no-fund;
+             npm ci -w study-align-framework -w study-align-lib --no-audit --no-fund;
              npm run build:lib;
              npm start -w study-align-framework"
     ports:
