@@ -318,7 +318,7 @@ export default function ImportStudy() {
                     id="fileUpload"
                 />
                 <Row style={{display: "flex", flexDirection: "row", gap: "10px", marginLeft: "0px"}}>
-                    <Button style={{width: "auto"}} onClick={() => document.getElementById('fileUpload').click()}>Upload</Button>
+                    <Button style={{width: "auto"}} onClick={() => document.getElementById('fileUpload').click()}><Upload className="button-icon" /> Upload from computer</Button>
                     <Button style={{width: "auto"}} onClick={handleCreate} disabled={!text}>Create</Button>
                 </Row>
                 
