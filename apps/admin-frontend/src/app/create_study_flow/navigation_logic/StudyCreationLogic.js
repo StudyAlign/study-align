@@ -7,8 +7,7 @@ import {
     studySlice,
     getStudySetupInfo,
     selectStudyApiStatus,
-    selectStudySetupInfo,
-    resetStudySetupInfo
+    selectStudySetupInfo
 } from "../../../redux/reducers/studySlice";
 
 import LoadingScreen from "../../../components/LoadingScreen";

@@ -4,10 +4,7 @@ import { Upload } from "react-bootstrap-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 
-import CodeMirror from "@uiw/react-codemirror"
-import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import { json } from "@codemirror/lang-json";
-import { linter, lintGutter } from "@codemirror/lint";
+import JsonCodeEditor from "./procedure_editors/JsonCodeEditor";
 
 import * as yaml from "js-yaml";
 
@@ -290,15 +287,14 @@ export default function ImportStudy() {
                         backgroundColor: isDraggingOverTextArea ? '#e0f7ff' : '#fff',
                     }}
                 /> */}
-                <CodeMirror
+                <JsonCodeEditor
                     value={text}
                     onChange={onChange}
                     placeholder={isDragging ? "" : "Write/Drop Json/Yaml here"}
                     onDragOver={handleDragOverTextArea}
                     onDragLeave={handleDragLeaveTextArea}
                     onDrop={handleDrop}
-                    extensions={[json()]}
-                    theme={vscodeDark}
+                    theme="material"
                     height="100%"
                     style={{
                         width: '100%',

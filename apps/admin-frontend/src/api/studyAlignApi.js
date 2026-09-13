@@ -1,4 +1,4 @@
-import StudyAlignLib from "./study-align-lib";
+import StudyAlignLib from "study-align-lib";
 import {authSlice} from "../redux/reducers/authSlice";
 
 const STUDY_ALIGN_URL = process.env.REACT_APP_STUDY_ALIGN_URL || "http://localhost:8000";

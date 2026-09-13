@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CodeMirror from "@uiw/react-codemirror";
-import { vscodeLight } from "@uiw/codemirror-theme-vscode";
-import { json } from "@codemirror/lang-json";
+import JsonCodeEditor from './JsonCodeEditor';
 
 import './Editors.scss';
 
@@ -21,17 +19,12 @@ const JsonEditor = ({ id, value, onChange, readOnly = false }) => {
         <div
             className={`json-editor-wrapper ${readOnly ? 'read-only' : ''}`}
         >
-            <CodeMirror
+            <JsonCodeEditor
                 value={editorValue}
+                theme="idea"
                 height="200px"
-                theme={vscodeLight}
-                extensions={[json()]}
-                editable={!readOnly}
-                onChange={(value) => handleEditorChange(value)}
-                options={{
-                    lineNumbers: true,
-                    tabSize: 4,
-                }}
+                readOnly={readOnly}
+                onChange={handleEditorChange}
             />
         </div>
     )

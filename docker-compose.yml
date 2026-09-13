@@ -20,8 +20,8 @@ networks:
 volumes:
   database-data:
   limesurvey-mysql:
-  admin-node-modules:      # persist deps so npm install doesn't re-run each up
-  study-node-modules:
+  admin-node-modules:      # workspace-root node_modules for the admin dev container
+  study-node-modules:      # workspace-root node_modules for the study dev container
 
 services:
   database:
@@ -56,34 +56,51 @@ services:
 
   admin-frontend:
     image: node:18-alpine
-    working_dir: /ui
+    working_dir: /repo                            # workspace root (npm workspaces)
     environment:
       PORT: ${ADMIN_FRONTEND_PORT:-3000}
       REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
       REACT_APP_STUDY_ALIGN_STUDY_FRONTEND_URL: http://localhost:${STUDY_FRONTEND_PORT:-3366}
-    command: sh -c "[ -d node_modules/react-scripts ] || npm install; npm start"
+      # eslint-config-react-app isn't resolvable under workspace hoisting; lint
+      # is run separately, not inside the dev webpack build.
+      DISABLE_ESLINT_PLUGIN: "true"
+    # install this app + the lib workspace, build the lib, then start the dev server
+    command: >
+      sh -c "[ -e node_modules/study-align-lib ] ||
+             npm install -w study-align-admin-frontend -w study-align-lib --no-package-lock --no-audit --no-fund;
+             npm run build:lib;
+             npm start -w study-align-admin-frontend"
     ports:
       - "${ADMIN_FRONTEND_PORT:-3000}:${ADMIN_FRONTEND_PORT:-3000}"
     volumes:
-      - ./apps/admin-frontend:/ui
-      - admin-node-modules:/ui/node_modules      # persisted across up/down
+      - .:/repo                                   # whole repo (workspaces resolve siblings)
+      - admin-node-modules:/repo/node_modules     # hoisted deps, persisted across up/down
     depends_on: [backend]
     networks: [edge]
 
   study-frontend:
     image: node:18-alpine
-    working_dir: /ui
+    working_dir: /repo                            # workspace root (npm workspaces)
     environment:
       PORT: ${STUDY_FRONTEND_PORT:-3366}
       # react-scripts 4 needs this on Node 17+
       NODE_OPTIONS: --openssl-legacy-provider
       REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
-    command: sh -c "[ -d node_modules/react-scripts ] || npm install; npm start"
+      DISABLE_ESLINT_PLUGIN: "true"
+      # react-scripts 4's preflight rejects the mixed dep tree from workspace
+      # hoisting (react-scripts 4 alongside admin's react-scripts 5).
+      SKIP_PREFLIGHT_CHECK: "true"
+    # study-frontend's package name is "study-align-framework"
+    command: >
+      sh -c "[ -e node_modules/study-align-lib ] ||
+             npm install -w study-align-framework -w study-align-lib --no-package-lock --no-audit --no-fund;
+             npm run build:lib;
+             npm start -w study-align-framework"
     ports:
       - "${STUDY_FRONTEND_PORT:-3366}:${STUDY_FRONTEND_PORT:-3366}"
     volumes:
-      - ./apps/study-frontend:/ui
-      - study-node-modules:/ui/node_modules      # persisted across up/down
+      - .:/repo                                   # whole repo (workspaces resolve siblings)
+      - study-node-modules:/repo/node_modules     # hoisted deps, persisted across up/down
     depends_on: [backend]
     networks: [edge]
 

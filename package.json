@@ -1,0 +1,19 @@
+{
+  "name": "study-align",
+  "version": "1.0.0",
+  "private": true,
+  "description": "StudyAlign monorepo (backend, frontends, shared client library).",
+  "workspaces": [
+    "libs/study-align-lib",
+    "apps/admin-frontend",
+    "apps/study-frontend"
+  ],
+  "scripts": {
+    "build:lib": "npm run build -w study-align-lib",
+    "build:admin": "npm run build:lib && npm run build -w study-align-admin-frontend",
+    "build:study": "npm run build:lib && npm run build -w study-align-framework",
+    "build": "npm run build:lib && npm run build -w study-align-admin-frontend && npm run build -w study-align-framework",
+    "start:admin": "npm run build:lib && npm start -w study-align-admin-frontend",
+    "start:study": "npm run build:lib && npm start -w study-align-framework"
+  }
+}

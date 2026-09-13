@@ -1,4 +1,4 @@
-import studyAlignLib from "./study-align-lib";
+import studyAlignLib from "study-align-lib";
 
 const STUDY_ALIGN_URL = process.env.REACT_APP_STUDY_ALIGN_URL || "http://localhost:8000";
 
