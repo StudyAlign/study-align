@@ -73,9 +73,13 @@ class StudyAlignLib {
 
     request(options: Options) {
         const encodeParams = (data) => {
-            return Object.keys(data).map((key) => {
-                return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
-            }).join('&');
+            return Object.keys(data)
+                // Skip null/undefined values so they are not sent as the literal
+                // strings "null"/"undefined" (e.g. an omitted search filter).
+                .filter((key) => data[key] !== null && data[key] !== undefined)
+                .map((key) => {
+                    return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+                }).join('&');
         }
         return new Promise( (resolve, reject) => {
             let url = this.apiUrl + "/" + options.path;
