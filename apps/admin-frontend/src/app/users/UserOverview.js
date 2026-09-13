@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Form, InputGroup } from "react-bootstrap";
 import {
     Trash,
     PencilSquare,
     ToggleOn,
     ToggleOff,
     Display,
+    Search,
 } from "react-bootstrap-icons";
 
 import {
@@ -44,6 +45,9 @@ export default function UserOverview() {
     const [showModal, setShowModal] = useState(modalStates.CORRECT);
     const [selectedUser, setSelectedUser] = useState(null);
 
+    // name/email filter
+    const [searchQuery, setSearchQuery] = useState("");
+
     // toggle flag to force PaginatedSortableTable to refresh its data after updates
     const [refreshTableFlag, setRefreshTableFlag] = useState(false);
 
@@ -79,9 +83,9 @@ export default function UserOverview() {
     // PaginatedSortableTable fetch callback
     const fetchData = useCallback(
         ({ offset, limit, orderBy, direction }) => {
-            dispatch(getUsers({ offset, limit, orderBy, direction }));
+            dispatch(getUsers({ offset, limit, orderBy, direction, search: searchQuery }));
         },
-        [dispatch]
+        [dispatch, searchQuery]
     );
 
     // --- action handlers ---
@@ -134,14 +138,6 @@ export default function UserOverview() {
             render: (_, row) => (
                 <div className="action-gap">
                     <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleDelete(row.id)}
-                        className="mr-2"
-                    >
-                        <Trash /> Delete
-                    </Button>
-                    <Button
                         variant="warning"
                         size="sm"
                         onClick={() => handleEdit(row.id)}
@@ -161,9 +157,17 @@ export default function UserOverview() {
                         variant={row.is_active ? "secondary" : "success"}
                         size="sm"
                         onClick={() => handleToggleActive(row.id, row.is_active)}
+                        className="mr-2"
                     >
                         {row.is_active ? <ToggleOff /> : <ToggleOn />}{" "}
                         {row.is_active ? "Deactivate" : "Activate"}
+                    </Button>
+                    <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDelete(row.id)}
+                    >
+                        <Trash /> Delete
                     </Button>
                 </div>
             ),
@@ -253,10 +257,19 @@ export default function UserOverview() {
             <div id="page-content-wrapper" style={{ padding: "10px" }}>
                 <h3 className="headline">Users Overview</h3>
 
-                <div className="mb-3">
+                <div className="mb-3 d-flex flex-wrap gap-2 align-items-center justify-content-between">
                     <Button variant="primary" onClick={handleCreate}>
                         Create New User
                     </Button>
+                    <InputGroup style={{ maxWidth: 320 }}>
+                        <InputGroup.Text><Search /></InputGroup.Text>
+                        <Form.Control
+                            type="text"
+                            placeholder="Filter by name or email"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </InputGroup>
                 </div>
 
                 <PaginatedSortableTable
