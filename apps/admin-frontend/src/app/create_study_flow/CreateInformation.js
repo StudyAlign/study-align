@@ -101,27 +101,30 @@ export default function CreateInformation() {
                         <Col>
                             <Form.Group className="mb-3" controlId="formStartDate">
                                 <Form.Label>Start Date</Form.Label>
-                                <Form.Control required type="date" placeholder="Start Date" value={startDate} onChange={handleStartDate} />
+                                <Form.Control required type="date" placeholder="Start Date" value={startDate} onChange={handleStartDate}
+                                    onClick={(e) => e.target.showPicker && e.target.showPicker()} style={{ cursor: "pointer" }} />
                             </Form.Group>
                         </Col>
                         <Col>
                             <Form.Group className="mb-3" controlId="formEndDate">
                                 <Form.Label>End Date</Form.Label>
-                                <Form.Control required type="date" placeholder="End Date" min={startDate} value={endDate} onChange={handleEndDate}/>
+                                <Form.Control required type="date" placeholder="End Date" min={startDate} value={endDate} onChange={handleEndDate}
+                                    onClick={(e) => e.target.showPicker && e.target.showPicker()} style={{ cursor: "pointer" }} />
                             </Form.Group>
                         </Col>
                     </Row>
 
                     <Row>
                         <Form.Group as={Row} className="mb-3 align-items-center" controlId="formPrivateStudy">
-                            <Form.Label column sm={2}>Private Study (invite only)</Form.Label>
-                            <Col sm={10}>
+                            <Form.Label column sm={4} xl={3} style={{ whiteSpace: "nowrap" }}>Private Study (invite only)</Form.Label>
+                            <Col sm={8} xl={9}>
                                 <Form.Check
                                     type="checkbox"
                                     name="is_active"
                                     checked={privateStudy}
                                     onChange={handlePrivateStudy}
                                     className="me-2"
+                                    style={{ cursor: "pointer" }}
                                 />
                             </Col>
                         </Form.Group>
