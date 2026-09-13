@@ -1,8 +1,8 @@
 @import 'colors.scss';
 
-// Brand primary derived from the logo gold. Bootstrap 5 picks readable
-// (dark) text on this light fill automatically via color-contrast().
-$primary: #e0a600;
+// Primary is a confident cobalt blue that pairs with the logo's gold;
+// gold stays as a secondary brand accent (focus rings, group-logo fallback).
+$primary: #1f5eb3;
 
 // --- Modernize via theme variables (softer corners, lighter shadows,
 // a contemporary system font, warm-dark body text) ---
@@ -22,9 +22,10 @@ $theme-colors: (
         "sal-primarylight": $sal-lightblue,
         "sal-darkgold": $sal-darkgold,
         "primary": $primary,
-        "danger": $sal-red,
-        "success": #31d772,
-        "warning": #e6c83c
+        // Softer, less-saturated status colours
+        "danger": #d05d5d,
+        "success": #57a878,
+        "warning": #d9b95c
 );
 
 $input-border-radius: 0.22rem;
