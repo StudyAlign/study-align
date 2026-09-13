@@ -20,6 +20,8 @@ networks:
 volumes:
   database-data:
   limesurvey-mysql:
+  admin-node-modules:      # persist deps so npm install doesn't re-run each up
+  study-node-modules:
 
 services:
   database:
@@ -59,12 +61,12 @@ services:
       PORT: ${ADMIN_FRONTEND_PORT:-3000}
       REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
       REACT_APP_STUDY_ALIGN_STUDY_FRONTEND_URL: http://localhost:${STUDY_FRONTEND_PORT:-3366}
-    command: sh -c "npm install && npm start"
+    command: sh -c "[ -d node_modules/react-scripts ] || npm install; npm start"
     ports:
       - "${ADMIN_FRONTEND_PORT:-3000}:${ADMIN_FRONTEND_PORT:-3000}"
     volumes:
       - ./apps/admin-frontend:/ui
-      - /ui/node_modules                         # keep container's node_modules
+      - admin-node-modules:/ui/node_modules      # persisted across up/down
     depends_on: [backend]
     networks: [edge]
 
@@ -76,12 +78,12 @@ services:
       # react-scripts 4 needs this on Node 17+
       NODE_OPTIONS: --openssl-legacy-provider
       REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
-    command: sh -c "npm install && npm start"
+    command: sh -c "[ -d node_modules/react-scripts ] || npm install; npm start"
     ports:
       - "${STUDY_FRONTEND_PORT:-3366}:${STUDY_FRONTEND_PORT:-3366}"
     volumes:
       - ./apps/study-frontend:/ui
-      - /ui/node_modules
+      - study-node-modules:/ui/node_modules      # persisted across up/down
     depends_on: [backend]
     networks: [edge]
 
