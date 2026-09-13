@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Library to use the study-align API comfortably.",
   "private": true,
-  "main": "dist/study-align-lib.js",
+  "main": "dist/study-align-lib-bundle.js",
   "dependencies": {
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -20,11 +20,10 @@
   "author": "Florian Lehmann",
   "license": "AGPL-3.0",
   "devDependencies": {
-    "@types/uuid": "^8.3.0",
-    "ts-loader": "^8.0.17",
-    "typescript": "^4.1.5",
-    "webpack": "^5.23.0",
-    "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.2"
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.3",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.2.0"
   }
 }

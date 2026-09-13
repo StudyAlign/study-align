@@ -1,5 +1,13 @@
 import {v4 as uuidv4} from "uuid";
 
+// Non-standard Touch properties exposed by Safari / Apple Pencil that are not
+// part of the standard DOM `Touch` type.
+interface ExtendedTouch extends Touch {
+    readonly altitudeAngle?: number;
+    readonly azimuthAngle?: number;
+    readonly touchType?: string;
+}
+
 class InteractionBase {
     uuid: string;
     event: string;
@@ -53,8 +61,8 @@ export class DragInteraction extends MouseInteraction {
 
 class TouchBase {
     uuid: string;
-    altitudeAngle: number;
-    azimuthAngle: number;
+    altitudeAngle?: number;
+    azimuthAngle?: number;
     clientX: number;
     clientY: number;
     force: number;
@@ -67,9 +75,9 @@ class TouchBase {
     radiusY: number;
     rotationAngle: number;
     target: object;
-    touchType: string;
+    touchType?: string;
 
-    constructor(touch: Touch) {
+    constructor(touch: ExtendedTouch) {
         this.uuid = uuidv4();
         this.altitudeAngle = touch.altitudeAngle;
         this.azimuthAngle = touch.azimuthAngle;
