@@ -1,0 +1,44 @@
+# ── Secrets / local config ────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.env
+!*.env.example
+apps/backend/backend/app/.env
+apps/backend/database/*.env
+
+# ── Python (backend) ──────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+apps/backend/backend/app/uploads/
+apps/backend/backend/app/log.log
+apps/backend/backend/app/logs/
+
+# ── Node / React (frontends, lib, docs examples) ──────────────────────────
+node_modules/
+/build/
+**/build/
+dist/
+.nuxt/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# ── Docker / runtime data ─────────────────────────────────────────────────
+database-data/
+
+# ── Editors / OS ──────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

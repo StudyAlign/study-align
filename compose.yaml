@@ -1,0 +1,124 @@
+# ─────────────────────────────────────────────────────────────────────────
+#  StudyAlign — one central dev stack.  Replaces the old per-repo compose
+#  files and the manual create-network.sh (networks are declared here).
+#
+#  Usage:
+#      cp .env.example .env         # once
+#      docker compose up            # db + backend + both frontends
+#      docker compose --profile limesurvey up   # ...also LimeSurvey
+#
+#  Ports (host):  backend 8000 · admin-frontend 3000 · study-frontend 3366
+#                 postgres 5433 · limesurvey 8082
+# ─────────────────────────────────────────────────────────────────────────
+
+name: study-align
+
+networks:
+  internal:            # backend <-> databases, not exposed
+  edge:                # anything the browser / a reverse proxy talks to
+
+volumes:
+  database-data:
+  limesurvey-mysql:
+
+services:
+  database:
+    image: postgres:12.3-alpine
+    container_name: studyalign-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    networks: [internal]
+
+  backend:
+    build:
+      context: ./apps/backend/backend
+    image: studyalign-backend
+    container_name: studyalign-backend
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      # composed from the DB vars so there is a single source of truth
+      SQLALCHEMY_DB_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]
+    ports:
+      - "${BACKEND_PORT:-8000}:80"
+    volumes:
+      - ./apps/backend/backend/app:/app          # live reload of source
+    depends_on: [database]
+    networks: [internal, edge]
+
+  admin-frontend:
+    image: node:18-alpine
+    container_name: studyalign-admin-frontend
+    working_dir: /ui
+    environment:
+      PORT: ${ADMIN_FRONTEND_PORT:-3000}
+      REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
+      REACT_APP_STUDY_ALIGN_STUDY_FRONTEND_URL: http://localhost:${STUDY_FRONTEND_PORT:-3366}
+    command: sh -c "npm install && npm start"
+    ports:
+      - "${ADMIN_FRONTEND_PORT:-3000}:${ADMIN_FRONTEND_PORT:-3000}"
+    volumes:
+      - ./apps/admin-frontend:/ui
+      - /ui/node_modules                         # keep container's node_modules
+    depends_on: [backend]
+    networks: [edge]
+
+  study-frontend:
+    image: node:18-alpine
+    container_name: studyalign-study-frontend
+    working_dir: /ui
+    environment:
+      PORT: ${STUDY_FRONTEND_PORT:-3366}
+      # react-scripts 4 needs this on Node 17+
+      NODE_OPTIONS: --openssl-legacy-provider
+      REACT_APP_STUDY_ALIGN_URL: http://localhost:${BACKEND_PORT:-8000}
+    command: sh -c "npm install && npm start"
+    ports:
+      - "${STUDY_FRONTEND_PORT:-3366}:${STUDY_FRONTEND_PORT:-3366}"
+    volumes:
+      - ./apps/study-frontend:/ui
+      - /ui/node_modules
+    depends_on: [backend]
+    networks: [edge]
+
+  # ── Optional: LimeSurvey (third-party). Start with --profile limesurvey ──
+  limesurvey-mysql:
+    profiles: ["limesurvey"]
+    image: mariadb:10.5.8
+    container_name: limesurvey-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LIMESURVEY_DB_ROOT_PW:-example}
+      MYSQL_DATABASE: limesurvey
+      MYSQL_USER: ${LIMESURVEY_DB_USER:-limesurvey_admin}
+      MYSQL_PASSWORD: ${LIMESURVEY_DB_PASSWORD:-limesurvey_pass}
+    volumes:
+      - limesurvey-mysql:/var/lib/mysql
+    networks: [internal]
+
+  limesurvey:
+    profiles: ["limesurvey"]
+    image: martialblog/limesurvey:latest
+    container_name: limesurvey
+    restart: unless-stopped
+    environment:
+      DB_HOST: limesurvey-mysql
+      DB_NAME: limesurvey
+      DB_USERNAME: ${LIMESURVEY_DB_USER:-limesurvey_admin}
+      DB_PASSWORD: ${LIMESURVEY_DB_PASSWORD:-limesurvey_pass}
+      ADMIN_USER: ${LIMESURVEY_ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${LIMESURVEY_ADMIN_PASSWORD:-password}
+      ADMIN_NAME: Lime Administrator
+      ADMIN_EMAIL: ${LIMESURVEY_ADMIN_EMAIL:-admin@example.com}
+    ports:
+      - "8082:80"
+    depends_on: [limesurvey-mysql]
+    networks: [internal, edge]
