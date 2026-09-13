@@ -36,6 +36,11 @@ yarn-error.log*
 # ── Docker / runtime data ─────────────────────────────────────────────────
 database-data/
 
+# ── Local agent / assistant files (never commit) ──────────────────────────
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+
 # ── Editors / OS ──────────────────────────────────────────────────────────
 .idea/
 .vscode/
