@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {Button, Card, Col, Form, Image, Row} from "react-bootstrap";
+import {Alert, Button, Card, Form} from "react-bootstrap";
 import { Link, Navigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { authSlice, me, userLogin } from "../../redux/reducers/authSlice";
+import { authSlice, me, userLogin, selectUserError } from "../../redux/reducers/authSlice";
 
 import { useAuth } from "../../components/Auth";
 import Logo from "./Logo";
@@ -14,11 +14,17 @@ export default function Login(props) {
     //useDispatch to dispatch redux actions
     const dispatch = useDispatch()
     const auth = useAuth()
+    const loginError = useSelector(selectUserError)
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
     const logoutUser = props.logout;
+
+    // Clear a stale login error when arriving at / leaving the login screen.
+    useEffect(() => {
+        dispatch(authSlice.actions.clearError())
+    }, [dispatch])
 
     useEffect(( ) => {
         console.log("login use effect")
@@ -40,8 +46,17 @@ export default function Login(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("[Login] " + username + " - " + password)
+        dispatch(authSlice.actions.clearError())
         dispatch(userLogin({username: username, password: password}));
+    }
+
+    // 403 => account exists but is not activated; anything else => bad credentials.
+    const renderLoginError = () => {
+        if (!loginError) return null
+        if (loginError.status === 403) {
+            return <Alert variant="warning">This account is not activated yet. Inactive accounts cannot log in — please activate it via the link sent to your email.</Alert>
+        }
+        return <Alert variant="danger">Incorrect username or password.</Alert>
     }
 
     const handleClick = (event) => {
@@ -62,6 +77,7 @@ export default function Login(props) {
         <Logo />
         <Card className={"shadow"}>
             <Card.Body>
+                {renderLoginError()}
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formEmail">
                         <Form.Label>Username</Form.Label>

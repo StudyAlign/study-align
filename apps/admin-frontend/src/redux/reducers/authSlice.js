@@ -119,6 +119,12 @@ export const authSlice = createSlice({
                     state.currentRequestId = undefined
                 }
             })
+            .addCase(userLogin.rejected, (state, action) => {
+                state.api = IDLE
+                state.currentRequestId = undefined
+                // action.payload is the lib reject: { status, statusText, requestBody }
+                state.error = action.payload || { status: 0 }
+            })
             .addCase(me.pending, (state, action) => {
                 state.api = LOADING
                 state.currentRequestId = action.meta.requestId
