@@ -18,6 +18,9 @@ import EditInformation from './app/create_study_flow/EditInformation';
 import ImportStudy from './app/create_study_flow/ImportStudy';
 import { StudyStatus } from './app/create_study_flow/navigation_logic/StudyCreationLayout';
 import UserOverview from './app/users/UserOverview';
+import GroupsOverview from './app/groups/GroupsOverview';
+import GroupCreate from './app/groups/GroupCreate';
+import GroupManage from './app/groups/GroupManage';
 import CreateUserForm from './app/users/CreateUserForm';
 import UserCreationLogic from './app/users/UserCreationLogic';
 import UserInformation from './app/users/UserInformation';
@@ -51,6 +54,9 @@ export default function App() {
                 <Routes>
                     <Route element={<RequireAuth />}>
                         <Route path="/"                         element={<Dashboard/>} />
+                        <Route path="/groups"                   element={<GroupsOverview/>} />
+                        <Route path="/groups/create"            element={<GroupCreate/>} />
+                        <Route path="/groups/:group_id/manage"  element={<GroupManage/>} />
                         <Route path="/study/:study_id/:page"    element={<StudyOverviewLayout/>} />
 
                         <Route path="import"            element={<ImportStudy/>} />

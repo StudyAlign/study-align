@@ -1,4 +1,5 @@
 import uuid
+import logging
 from datetime import datetime
 from getpass import getuser
 from uuid import UUID
@@ -172,7 +173,9 @@ async def remove_logo(group_id: int = GroupIdCheck, db: Session = Depends(get_db
 # Define email config
 email_config = get_email_config()
 
-@router.get("/groups/{group_id}/invites", response_model=List[schema.group.Group],
+logger = logging.getLogger('studyalign')
+
+@router.get("/groups/{group_id}/invites", response_model=List[schema.populated.GroupInvitePopulated],
             dependencies=[Depends(methods.userAccessTokenValidator)])
 async def read_group_invites(group_id: int = GroupIdCheck, user: schema.user.User = Depends(UserValidator(strict_auth_method=True)),
                        db: Session = Depends(get_db)):
@@ -183,7 +186,9 @@ async def read_group_invites(group_id: int = GroupIdCheck, user: schema.user.Use
 
 @router.post("/groups/{group_id}/invites", response_model=schema.group_invite.GroupInvite,
             dependencies=[Depends(methods.userAccessTokenValidator)])
-async def group_invite(invite_body: schema.group_invite.GroupInviteBody, group_id: int = GroupIdCheck, db: Session = Depends(get_db)):
+async def group_invite(invite_body: schema.group_invite.GroupInviteBody, group_id: int = GroupIdCheck,
+                       current_user: schema.user.User = Depends(UserValidator(strict_auth_method=True)),
+                       db: Session = Depends(get_db)):
     user_id = invite_body.user_id
     group_member = methods.read_by_dict(db, model.GroupMember, {"group_id": group_id, "user_id": user_id})
     if group_member:
@@ -205,7 +210,7 @@ async def group_invite(invite_body: schema.group_invite.GroupInviteBody, group_i
     invite = {
         "group_id": group_id,
         "user_id": user_id,
-        "invited_by_id": user.id
+        "invited_by_id": current_user.id
     }
     group_invite = schema.group_invite.GroupInviteCreate(**invite)
     group_invite = methods.create(db, model.GroupInvite, group_invite)
@@ -218,8 +223,11 @@ async def group_invite(invite_body: schema.group_invite.GroupInviteBody, group_i
         body=html,
         subtype=MessageType.html)
 
-    fm = FastMail(email_config)
-    await fm.send_message(message)
+    try:
+        fm = FastMail(email_config)
+        await fm.send_message(message)
+    except Exception as e:
+        logger.error("Failed to send group invite mail: %s", e)
 
     return group_invite
 
@@ -261,8 +269,11 @@ async def resend_group_token(token: uuid.UUID, db: Session = Depends(get_db)):
         body=html,
         subtype=MessageType.html)
 
-    fm = FastMail(email_config)
-    await fm.send_message(message)
+    try:
+        fm = FastMail(email_config)
+        await fm.send_message(message)
+    except Exception as e:
+        logger.error("Failed to resend group invite mail: %s", e)
 
     return
 

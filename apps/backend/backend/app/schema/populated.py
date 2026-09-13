@@ -19,6 +19,7 @@ from schema.role import Role
 from schema.pause import Pause, PauseStep, PauseBase
 from schema.collaborator import Collaborator
 from schema.group_member import GroupMember
+from schema.group_invite import GroupInvite
 
 
 class ConditionPopulated(Condition):
@@ -204,6 +205,14 @@ class CollaboratorPopulated(Collaborator):
 
 class GroupMemberPopulated(GroupMember):
     user: Optional[UserView] = None
+
+    class Config:
+        from_attributes = True
+
+
+class GroupInvitePopulated(GroupInvite):
+    user: Optional[UserView] = None
+    invited_by: Optional[UserView] = None
 
     class Config:
         from_attributes = True

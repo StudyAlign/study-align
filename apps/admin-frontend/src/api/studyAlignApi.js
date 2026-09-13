@@ -443,4 +443,63 @@ export function checkSurveyResultsApi() {
     return sal.checkSurveyResult();
 }
 
+// Groups
+
+export function getGroupsApi() {
+    return sal.getGroups();
+}
+
+export function getGroupApi(groupId) {
+    return sal.getGroup(groupId);
+}
+
+export function createGroupApi(group) {
+    return sal.createGroup(group);
+}
+
+export function updateGroupApi(groupId, group) {
+    return sal.updateGroup(groupId, group);
+}
+
+export function deleteGroupApi(groupId) {
+    return sal.deleteGroup(groupId);
+}
+
+export function getGroupMembersApi(groupId) {
+    return sal.getGroupMembers(groupId);
+}
+
+export function removeGroupMemberApi(groupId, userId) {
+    return sal.deleteGroupMember(groupId, userId);
+}
+
+export function getGroupInvitesApi(groupId) {
+    return sal.getGroupInvites(groupId);
+}
+
+export function createGroupInviteApi(groupId, invite) {
+    return sal.createGroupInvite(groupId, invite);
+}
+
+export function resendGroupInviteApi(token) {
+    return sal.resendGroupInvite(token);
+}
+
+export function deleteGroupInviteApi(token) {
+    return sal.deleteGroupInvite(token);
+}
+
+export function uploadGroupLogoApi(groupId, file) {
+    return sal.createGroupLogo(groupId, file);
+}
+
+export function deleteGroupLogoApi(groupId) {
+    return sal.deleteGroupLogo(groupId);
+}
+
+// The logo endpoint is public (no auth); use the URL directly as an <img> src.
+export function getGroupLogoUrl(groupId) {
+    return STUDY_ALIGN_URL + "/api/v1/groups/" + groupId + "/logo";
+}
+
 

@@ -46,6 +46,7 @@ export default function Topbar() {
                             <Navbar.Text><Link to={"/import"}><Button variant="link-sal">Import Study</Button></Link></Navbar.Text>
                         </Nav>
                         <Nav >
+                            <Nav.Link onClick={() => navigate("/groups")} className="top-bar-item">Groups</Nav.Link>
                             {auth.user.role_id === 1 && <Nav.Link onClick={handleClickUsers} className="top-bar-item">Users</Nav.Link>}
                             <NavDropdown title={auth.user.name} id="top-bar-dropdown" >
                                 <NavDropdown.Item onClick={handleClickProfile}>Profile</NavDropdown.Item>
