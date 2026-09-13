@@ -18,7 +18,7 @@ from model.base import Session
 from api import get_db, if_exists, if_not_zero
 
 import methods
-from methods.mail import get_user_activation_mail_html, get_email_config
+from methods.mail import get_user_activation_mail_html, get_email_config, get_password_reset_mail_html
 
 import schema.populated
 
@@ -153,6 +153,42 @@ async def activate_user(token: uuid.UUID, db: Session = Depends(get_db)):
     user.is_active = True
     user.email_activation_token = None
 
+    db.commit()
+    db.refresh(user)
+
+    return user
+
+
+@router.post("/users/forgot-password", status_code=status.HTTP_204_NO_CONTENT)
+async def forgot_password(form: schema.user.ForgotPasswordForm, db: Session = Depends(get_db)):
+    user = methods.read_by_dict(db, model.User, {"email": form.email})
+
+    # Only send a mail for existing, active accounts, but always return 204 so
+    # the endpoint does not reveal which email addresses are registered.
+    if user and user.is_active:
+        token = methods.issue_password_reset_token(str(user.id))
+        html = get_password_reset_mail_html(token)
+        message = MessageSchema(
+            subject="StudyAlign password reset",
+            recipients=[user.email],
+            body=html,
+            subtype=MessageType.html)
+        fm = FastMail(email_config)
+        await fm.send_message(message)
+
+    return
+
+
+@router.post("/users/reset-password", response_model=schema.user.User)
+async def reset_password(form: schema.user.ResetPasswordForm, db: Session = Depends(get_db)):
+    user_id = methods.read_password_reset_token(form.token)
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+
+    user = methods.read(db, model.User, int(user_id))
+    if_exists(user, ENTITY)
+
+    user.password = get_password_hash(form.password)
     db.commit()
     db.refresh(user)
 

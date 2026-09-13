@@ -58,6 +58,24 @@ def issue_tokens(sub: str, end_date: datetime, auth_method: str):
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
 
+def issue_password_reset_token(user_id: str):
+    return _create_token(
+        data={"sub": user_id, "purpose": "password_reset"},
+        expires_delta=timedelta(hours=1)
+    )
+
+
+def read_password_reset_token(token: str):
+    from jose import JWTError
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        return None
+    if payload.get("purpose") != "password_reset":
+        return None
+    return payload.get("sub")
+
+
 def create_access_token(sub: str, auth_method: str):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = _create_token(

@@ -22,6 +22,13 @@ class UserRegisterForm(BaseModel):
     email: str
     password: str
 
+class ForgotPasswordForm(BaseModel):
+    email: str
+
+class ResetPasswordForm(BaseModel):
+    token: str
+    password: str
+
 class UserRegister(UserBase):
     name: str
     firstname: Optional[str] = None
