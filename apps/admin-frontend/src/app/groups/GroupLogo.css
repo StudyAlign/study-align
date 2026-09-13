@@ -1,0 +1,12 @@
+.group-logo-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    background-color: var(--bs-primary, #e0a600);
+    color: #fff;
+    font-weight: 600;
+    line-height: 1;
+    flex: 0 0 auto;
+    overflow: hidden;
+}

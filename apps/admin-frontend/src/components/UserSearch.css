@@ -1,0 +1,18 @@
+.user-search {
+    position: relative;
+}
+
+/* Floating results dropdown anchored to the input. */
+.user-search-menu {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    z-index: 1056; /* above modals (Bootstrap modal is 1055) */
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.user-search-menu .list-group-item[disabled] {
+    opacity: 0.65;
+}

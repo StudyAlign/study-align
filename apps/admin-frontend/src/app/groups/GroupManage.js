@@ -2,24 +2,20 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
     Container, Card, Tabs, Tab, Form, Button, Table, Modal,
-    Alert, Spinner, Image, InputGroup, Badge,
+    Alert, Spinner, InputGroup,
 } from "react-bootstrap";
-import { ArrowLeft, Trash, Send, ArrowRepeat, PersonPlus } from "react-bootstrap-icons";
+import { ArrowLeft, Trash, ArrowRepeat } from "react-bootstrap-icons";
 
 import Topbar from "../../components/Topbar";
+import UserSearch from "../../components/UserSearch";
+import GroupLogo from "./GroupLogo";
+import { userLabel } from "../../components/CommonFunctions";
 import {
     getGroupApi, updateGroupApi, deleteGroupApi,
-    uploadGroupLogoApi, deleteGroupLogoApi, getGroupLogoUrl,
+    uploadGroupLogoApi, deleteGroupLogoApi,
     getGroupMembersApi, removeGroupMemberApi,
     getGroupInvitesApi, createGroupInviteApi, resendGroupInviteApi, deleteGroupInviteApi,
-    getUsersApi,
 } from "../../api/studyAlignApi";
-
-const userLabel = (u) => {
-    if (!u) return "unknown user";
-    const full = [u.firstname, u.lastname].filter(Boolean).join(" ");
-    return full ? `${u.name} (${full})` : u.name;
-};
 
 export default function GroupManage() {
     const { group_id } = useParams();
@@ -40,11 +36,6 @@ export default function GroupManage() {
     const [showDeleteGroup, setShowDeleteGroup] = useState(false);
     const [memberToRemove, setMemberToRemove] = useState(null);
     const [inviteToDelete, setInviteToDelete] = useState(null);
-
-    // invite search
-    const [search, setSearch] = useState("");
-    const [searchResults, setSearchResults] = useState(null);
-    const [searching, setSearching] = useState(false);
 
     const loadMembers = useCallback(() => {
         getGroupMembersApi(group_id).then((r) => setMembers(r.body || [])).catch(() => {});
@@ -110,22 +101,11 @@ export default function GroupManage() {
     };
 
     // --- invites ---
-    const handleSearch = async (e) => {
-        e.preventDefault();
-        setSearching(true); setError(null);
-        try {
-            const r = await getUsersApi({ offset: 0, limit: 10, orderBy: "name", direction: "asc", search });
-            setSearchResults(r.body || []);
-        } catch (err) { setError("Could not search users."); }
-        finally { setSearching(false); }
-    };
-
     const handleInvite = async (userId) => {
         setError(null);
         try {
             await createGroupInviteApi(group_id, { user_id: userId });
             flash("Invitation sent.");
-            setSearchResults(null); setSearch("");
             loadInvites();
         } catch (err) {
             setError("Could not invite this user (already a member or already invited).");
@@ -161,9 +141,7 @@ export default function GroupManage() {
                     <ArrowLeft /> Back to Groups
                 </Button>
                 <div className="d-flex align-items-center mb-3">
-                    <Image src={getGroupLogoUrl(group.id) + "?v=" + logoVersion} rounded width={48} height={48}
-                        style={{ objectFit: "cover" }} className="me-3"
-                        onError={(e) => { e.target.style.visibility = "hidden"; }} />
+                    <GroupLogo groupId={group.id} name={group.name} size={48} version={logoVersion} className="me-3" />
                     <h3 className="mb-0">{group.name}</h3>
                 </div>
 
@@ -190,9 +168,7 @@ export default function GroupManage() {
                                 <Form.Group className="mb-4" controlId="groupLogoEdit">
                                     <Form.Label>Logo (PNG)</Form.Label>
                                     <div className="d-flex align-items-center">
-                                        <Image src={getGroupLogoUrl(group.id) + "?v=" + logoVersion} rounded width={64} height={64}
-                                            style={{ objectFit: "cover", background: "#f0f0f0" }} className="me-3"
-                                            onError={(e) => { e.target.style.visibility = "hidden"; }} />
+                                        <GroupLogo groupId={group.id} name={group.name} size={64} version={logoVersion} className="me-3" />
                                         <Form.Control type="file" accept="image/png" onChange={handleLogoUpload} className="me-2" style={{ maxWidth: 300 }} />
                                         <Button variant="outline-danger" size="sm" onClick={handleLogoDelete}>Remove logo</Button>
                                     </div>
@@ -232,44 +208,15 @@ export default function GroupManage() {
 
                             {/* -------- Invites -------- */}
                             <Tab eventKey="invites" title={`Invites (${invites.length})`}>
-                                <Form onSubmit={handleSearch} className="mb-3">
+                                <Form.Group className="mb-4">
                                     <Form.Label>Invite a user</Form.Label>
-                                    <InputGroup>
-                                        <Form.Control type="text" placeholder="Search by username"
-                                            value={search} onChange={(e) => setSearch(e.target.value)} />
-                                        <Button type="submit" variant="outline-primary" disabled={searching || !search}>
-                                            {searching ? "Searching…" : "Search"}
-                                        </Button>
-                                    </InputGroup>
-                                </Form>
-
-                                {searchResults !== null && (
-                                    searchResults.length === 0 ? (
-                                        <Alert variant="light">No users found for “{search}”.</Alert>
-                                    ) : (
-                                        <Table size="sm" hover responsive className="align-middle mb-4">
-                                            <tbody>
-                                                {searchResults.map((u) => {
-                                                    const already = memberUserIds.includes(u.id) || invitedUserIds.includes(u.id);
-                                                    return (
-                                                        <tr key={u.id}>
-                                                            <td>{userLabel(u)}</td>
-                                                            <td className="text-end">
-                                                                {already ? (
-                                                                    <Badge bg="secondary">already invited / member</Badge>
-                                                                ) : (
-                                                                    <Button size="sm" variant="primary" onClick={() => handleInvite(u.id)}>
-                                                                        <PersonPlus className="button-icon" /> Invite
-                                                                    </Button>
-                                                                )}
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                })}
-                                            </tbody>
-                                        </Table>
-                                    )
-                                )}
+                                    <UserSearch
+                                        onSelect={(u) => handleInvite(u.id)}
+                                        excludeIds={[...memberUserIds, ...invitedUserIds]}
+                                        excludeLabel="member / invited"
+                                        placeholder="Search by username or email"
+                                    />
+                                </Form.Group>
 
                                 <h6>Pending invitations</h6>
                                 {invites.length === 0 ? (

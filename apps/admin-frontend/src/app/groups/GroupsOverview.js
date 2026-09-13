@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Container, Button, Table, Modal, Spinner, Alert, Image, Badge } from "react-bootstrap";
+import { Container, Button, Table, Modal, Spinner, Alert, Badge } from "react-bootstrap";
 import { PlusCircleFill, Trash, Gear } from "react-bootstrap-icons";
 
 import Topbar from "../../components/Topbar";
 import { useAuth } from "../../components/Auth";
-import { getGroupsApi, deleteGroupApi, getGroupLogoUrl } from "../../api/studyAlignApi";
+import GroupLogo from "./GroupLogo";
+import { getGroupsApi, deleteGroupApi } from "../../api/studyAlignApi";
 
 export default function GroupsOverview() {
     const navigate = useNavigate();
@@ -61,9 +62,7 @@ export default function GroupsOverview() {
                                 return (
                                     <tr key={g.id}>
                                         <td>
-                                            <Image src={getGroupLogoUrl(g.id)} rounded width={40} height={40}
-                                                style={{ objectFit: "cover" }}
-                                                onError={(e) => { e.target.style.visibility = "hidden"; }} />
+                                            <GroupLogo groupId={g.id} name={g.name} size={40} />
                                         </td>
                                         <td>{g.name}</td>
                                         <td>{isOwner ? <Badge bg="primary">Owner</Badge> : <Badge bg="secondary">Member</Badge>}</td>
