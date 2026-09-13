@@ -142,8 +142,16 @@ async def register_user(user: schema.user.UserRegisterForm, db: Session = Depend
         body=html,
         subtype=MessageType.html)
 
-    fm = FastMail(email_config)
-    await fm.send_message(message)
+    try:
+        fm = FastMail(email_config)
+        await fm.send_message(message)
+    except Exception as e:
+        # The account is already created; a mail failure must not fail
+        # registration. Log the activation link so it stays usable when no
+        # mail server is configured (e.g. local dev).
+        logger.error("Failed to send activation mail to %s: %s", user.email, e)
+        logger.warning("Activation link (mail unavailable) for %s: /user/%s/activate",
+                       user.email, user.email_activation_token)
 
     return user
 
