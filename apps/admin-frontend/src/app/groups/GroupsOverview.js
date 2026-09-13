@@ -60,7 +60,8 @@ export default function GroupsOverview() {
                             {groups.map((g) => {
                                 const isOwner = g.owner_id === currentUserId;
                                 return (
-                                    <tr key={g.id}>
+                                    <tr key={g.id} style={{ cursor: "pointer" }}
+                                        onClick={() => navigate("/groups/" + g.id + "/manage")}>
                                         <td>
                                             <GroupLogo groupId={g.id} name={g.name} size={40} />
                                         </td>
@@ -68,11 +69,12 @@ export default function GroupsOverview() {
                                         <td>{isOwner ? <Badge bg="primary">Owner</Badge> : <Badge bg="secondary">Member</Badge>}</td>
                                         <td className="text-end">
                                             <Button size="sm" variant="outline-secondary" className="me-2"
-                                                onClick={() => navigate("/groups/" + g.id + "/manage")}>
+                                                onClick={(e) => { e.stopPropagation(); navigate("/groups/" + g.id + "/manage"); }}>
                                                 <Gear className="button-icon" /> Manage
                                             </Button>
                                             {isOwner && (
-                                                <Button size="sm" variant="outline-danger" onClick={() => setToDelete(g)}>
+                                                <Button size="sm" variant="outline-danger"
+                                                    onClick={(e) => { e.stopPropagation(); setToDelete(g); }}>
                                                     <Trash className="button-icon" /> Delete
                                                 </Button>
                                             )}
