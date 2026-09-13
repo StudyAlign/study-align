@@ -35,6 +35,11 @@ def authenticate_user(db, username: str, password: str):
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This account is not activated yet. Inactive accounts cannot log in.",
+        )
     return user
 
 
@@ -42,6 +47,7 @@ def read_users(db: Session, offset: int = 0, limit: int = 100, order_by: UserOrd
     if search:
         return db.query(model.User).filter(
             or_(
+                model.User.name.ilike(f'%{search}%'),
                 model.User.firstname.ilike(f'%{search}%'),
                 model.User.lastname.ilike(f'%{search}%'),
                 model.User.email.ilike(f'%{search}%')
