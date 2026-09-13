@@ -35,13 +35,13 @@ export default function StudyBox(props) {
                     <span className="study-title">{study.name}</span>
                     {getStatusLabel(study.state)}
                 </Card.Title>
-                <Card.Text>
+                <Card.Text as="div">
                     <span className="study-info">
-                        <span className="label"><span className="icon"><CalendarRangeFill /></span> Date</span>
-                        <span className="data"> {reformatDate(study.startDate) + " - " + reformatDate(study.endDate)} </span>
+                        <span className="label"><span className="icon icon-date"><CalendarRangeFill /></span> Date</span>
+                        <span className="data"> {reformatDate(study.startDate) + " – " + reformatDate(study.endDate)} </span>
                     </span>
                     <span className="study-info">
-                        <span className="label"><span className="icon"><PeopleFill/></span> Participants</span>
+                        <span className="label"><span className="icon icon-participants"><PeopleFill/></span> Participants</span>
                         <span className="data"> {study.done_participants} </span>
                         {study.in_progress_participants > 0 && <span className="data" style={{color: 'red'}}> {" (" + (study.done_participants + study.in_progress_participants) + ")"} </span>}
                         <span className="data"> {" / " + study.total_participants} </span>

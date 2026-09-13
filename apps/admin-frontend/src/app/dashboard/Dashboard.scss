@@ -89,6 +89,29 @@
     width: auto;
 }
 
+/* Staggered entrance for the study cards (delay set inline per card). */
+@keyframes studyCardIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.study-card-anim {
+    animation: studyCardIn 0.35s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .study-card-anim { animation: none; }
+}
+
+/* Distinct, modern icon colours per stat. */
+.study-info .icon.icon-date {
+    color: #3b7dd8;
+}
+
+.study-info .icon.icon-participants {
+    color: #3a9d7a;
+}
+
 .info-box {
     background-color: white;
     border-radius: 10px;
@@ -99,21 +122,34 @@
 }
 
 .study-info {
-    display: block;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 7px 0;
+}
+
+.study-info + .study-info {
+    border-top: 1px solid rgba(43, 41, 29, 0.06);
 }
 
 .study-info .label {
-    font-size: 0.9em;
-    color: #888;
+    font-size: 0.82em;
+    color: #6b6b6b;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: auto; // push the values to the right
 }
 
 .study-info .data {
-    font-size: 0.9em;
+    font-size: 0.92em;
+    font-weight: 600;
+    color: #2b291d;
 }
 
 .study-info .icon {
     position: relative;
-    top: -2px;
+    top: 1px;
     color: #888;
 }
 

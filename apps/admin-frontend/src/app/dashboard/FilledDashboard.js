@@ -73,49 +73,49 @@ export default function FilledDashboard(props) {
     return (
         <div className="curr-studies">
             <Container fluid className="p-0 mx-auto">
-                <Row className="align-items-center justify-content-between g-2 mb-3">
-                    <Col xs="auto">
-                        <h3 className="headline mb-0">Studies</h3>
-                    </Col>
-                    <Col xs={12} md="auto" className="ms-md-auto">
-                        <div className="dashboard-toolbar">
-                            <InputGroup className="dashboard-search">
-                                <InputGroup.Text><Search /></InputGroup.Text>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Search studies by title"
-                                    value={query}
-                                    onChange={(e) => setQuery(e.target.value)}
-                                />
-                            </InputGroup>
-                            <Form.Select
-                                aria-label="Filter studies"
-                                value={filter}
-                                onChange={(e) => setFilter(e.target.value)}
-                            >
-                                {FILTER_OPTIONS.map((o) => (
-                                    <option key={o.value} value={o.value}>{o.label}</option>
-                                ))}
-                            </Form.Select>
-                            <Form.Select
-                                aria-label="Sort studies"
-                                value={sort}
-                                onChange={(e) => setSort(e.target.value)}
-                            >
-                                {SORT_OPTIONS.map((o) => (
-                                    <option key={o.value} value={o.value}>{o.label}</option>
-                                ))}
-                            </Form.Select>
-                        </div>
-                    </Col>
-                </Row>
+                <h3 className="headline">Studies</h3>
+
+                {/* Filters and sort sit on their own row above the grid. */}
+                <div className="dashboard-toolbar mb-3">
+                    <InputGroup className="dashboard-search">
+                        <InputGroup.Text><Search /></InputGroup.Text>
+                        <Form.Control
+                            type="text"
+                            placeholder="Search studies by title"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                    </InputGroup>
+                    <Form.Select
+                        aria-label="Filter studies"
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                    >
+                        {FILTER_OPTIONS.map((o) => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                    </Form.Select>
+                    <Form.Select
+                        aria-label="Sort studies"
+                        value={sort}
+                        onChange={(e) => setSort(e.target.value)}
+                    >
+                        {SORT_OPTIONS.map((o) => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                    </Form.Select>
+                </div>
 
                 {visibleStudies.length === 0 ? (
                     <div className="text-muted">No studies match the current filter.</div>
                 ) : (
-                    <Row className="g-3">
-                        {visibleStudies.map((s) => (
-                            <Col key={s.id} xs={12} sm={6} lg={4} xxl={3}>
+                    // Re-key on filter/sort so the staggered entrance animation
+                    // replays when the ordering or filter changes.
+                    <Row className="g-3" key={`${filter}-${sort}`}>
+                        {visibleStudies.map((s, i) => (
+                            <Col key={s.id} xs={12} sm={6} lg={4} xxl={3}
+                                className="study-card-anim"
+                                style={{ animationDelay: `${Math.min(i, 12) * 45}ms` }}>
                                 <StudyBox study={s} />
                             </Col>
                         ))}
