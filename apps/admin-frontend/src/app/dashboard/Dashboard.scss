@@ -194,13 +194,10 @@
     display: flex;
     gap: 10px;
 }
-/* Study status pills: Setup and Start soon (both orange) */
-.status-pill.status-setup {
-    background-color: #e8850c;
-    color: #fff;
-}
-
+/* Study status pills: Setup and Start soon (both orange).
+   !important overrides react-bootstrap's default .bg-primary utility. */
+.status-pill.status-setup,
 .status-pill.status-start-soon {
-    background-color: #e8850c;
-    color: #fff;
+    background-color: #e8850c !important;
+    color: #fff !important;
 }
