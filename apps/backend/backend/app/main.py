@@ -18,19 +18,28 @@ app = FastAPI(title="study-align-api", version="1")
 # [+ port]), e.g. "https://app.studyalign.com,https://studies.studyalign.com".
 # Browser Origin headers never carry a trailing slash, so strip one if a URL was
 # pasted with it; also drop surrounding whitespace and empty entries.
-origins = config('CORS_ORIGINS', cast=lambda v: [o.strip().rstrip('/') for o in v.split(',') if o.strip()])
+origins = config('CORS_ORIGINS', default='', cast=lambda v: [o.strip().rstrip('/') for o in v.split(',') if o.strip()])
 
-if not origins:
-    logger.warning("CORS_ORIGINS is empty — browser requests from the frontends "
-                   "will be blocked. Set it to the exact frontend origins.")
-elif "*" in origins:
+# Products/prototypes instrumented with study-align-lib log interactions from
+# arbitrary origins that can't be enumerated. CORS_ORIGIN_REGEX allows those:
+# an origin is accepted if it is in CORS_ORIGINS OR matches this regex. Unlike
+# "*", a regex echoes the matched origin, so it still works with credentials.
+#   e.g.  CORS_ORIGIN_REGEX=https://.*   (allow any https origin)
+# Leave it unset for a locked-down deployment (exact origins only).
+origin_regex = config('CORS_ORIGIN_REGEX', default=None) or None
+
+if "*" in origins:
     logger.warning("CORS_ORIGINS contains '*'. A wildcard is incompatible with "
-                   "allow_credentials=True; browsers reject credentialed requests "
-                   "to a wildcard origin. List the exact origins instead.")
+                   "allow_credentials=True; use CORS_ORIGIN_REGEX (e.g. 'https://.*') "
+                   "instead — it echoes the origin and works with credentials.")
+if not origins and not origin_regex:
+    logger.warning("CORS_ORIGINS and CORS_ORIGIN_REGEX are both empty — cross-origin "
+                   "browser requests (incl. interaction logging) will be blocked.")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

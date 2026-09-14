@@ -98,6 +98,9 @@ INITIAL_ADMIN_PW=<strong-secret>
 
 # Public hostnames
 CORS_ORIGINS=https://app.studyalign.com,https://studies.studyalign.com
+# Allow interaction logging from arbitrary instrumented products/prototypes
+# (an origin is allowed if it is in CORS_ORIGINS OR matches this regex):
+CORS_ORIGIN_REGEX=https://.*
 FRONTEND_URL=https://app.studyalign.com          # used in email links (admin app)
 PUBLIC_BACKEND_URL=https://backend.studyalign.com
 PUBLIC_STUDY_URL=https://studies.studyalign.com/ # trailing slash matters
