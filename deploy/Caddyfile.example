@@ -1,0 +1,31 @@
+# Add these blocks to the host's /etc/caddy/Caddyfile (the Caddy container runs
+# on the shared "web" network, and the StudyAlign containers join it too, so
+# Caddy reaches them by container name — no published host ports).
+#
+# Replace studyalign.com with your domain. Caddy obtains/renews TLS certs
+# automatically for each hostname.
+
+# Admin app
+app.studyalign.com {
+    encode zstd gzip
+    reverse_proxy admin-frontend:80
+}
+
+# Study (participant) app
+studies.studyalign.com {
+    encode zstd gzip
+    reverse_proxy study-frontend:80
+}
+
+# Backend API
+backend.studyalign.com {
+    encode zstd gzip
+
+    # Must be >= the backend's own upload cap, or large uploads fail at the
+    # proxy with an error the app never sees (group logos, ML models).
+    request_body {
+        max_size 30MB
+    }
+
+    reverse_proxy backend:80
+}

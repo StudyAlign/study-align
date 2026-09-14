@@ -1,0 +1,16 @@
+# Keep the production frontend build context small.
+**/node_modules
+**/dist
+**/build
+.git
+.gitignore
+.claude
+CLAUDE.md
+CLAUDE.local.md
+PUBLISHING.md
+apps/backend
+database-data
+docs
+*.log
+*.env
+!.env.example

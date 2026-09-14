@@ -1,0 +1,90 @@
+# ─────────────────────────────────────────────────────────────────────────
+#  StudyAlign — production stack.
+#
+#  Served behind Caddy: the three public containers join Caddy's external
+#  "web" network and are reached by container name (no published host ports).
+#  Postgres stays on the private default network.
+#
+#  On the server, put this in .env so every `docker compose` call uses it:
+#      COMPOSE_FILE=docker-compose.prod.yml
+#
+#  Subdomains (via deploy/Caddyfile.example):
+#      app.studyalign.com      -> admin-frontend
+#      studies.studyalign.com  -> study-frontend
+#      backend.studyalign.com  -> backend
+# ─────────────────────────────────────────────────────────────────────────
+
+name: studyalign
+
+networks:
+  default:            # private: backend <-> database
+  web:
+    external: true    # Caddy's shared network (docker network create web)
+
+services:
+  database:
+    image: postgres:12.3-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [default]
+
+  backend:
+    build:
+      context: ./apps/backend/backend
+    image: studyalign-backend
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      SQLALCHEMY_DB_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
+    volumes:
+      - ./data/uploads:/app/uploads     # persist group logos, ML models, …
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if b'true' in urllib.request.urlopen('http://127.0.0.1/health').read() else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    depends_on:
+      database:
+        condition: service_healthy
+    networks: [default, web]   # web: reached by Caddy as http://backend
+
+  admin-frontend:
+    build:
+      context: .
+      dockerfile: deploy/admin-frontend.Dockerfile
+      args:
+        REACT_APP_STUDY_ALIGN_URL: ${PUBLIC_BACKEND_URL:-https://backend.studyalign.com}
+        REACT_APP_STUDY_ALIGN_STUDY_FRONTEND_URL: ${PUBLIC_STUDY_URL:-https://studies.studyalign.com/}
+    image: studyalign-admin-frontend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    networks: [web]
+
+  study-frontend:
+    build:
+      context: .
+      dockerfile: deploy/study-frontend.Dockerfile
+      args:
+        REACT_APP_STUDY_ALIGN_URL: ${PUBLIC_BACKEND_URL:-https://backend.studyalign.com}
+    image: studyalign-study-frontend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    networks: [web]

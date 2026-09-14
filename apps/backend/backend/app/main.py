@@ -25,6 +25,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.get("/health", tags=["Health"])
+def health():
+    # Lightweight liveness probe used by the container healthcheck and the
+    # deploy script.
+    return {"ok": True}
+
 app.include_router(
     users.router,
     prefix=API_PREFIX,

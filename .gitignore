@@ -35,6 +35,8 @@ yarn-error.log*
 
 # ── Docker / runtime data ─────────────────────────────────────────────────
 database-data/
+# production bind mounts (docker-compose.prod.yml): postgres + uploads
+data/
 
 # ── Local agent / assistant files (never commit) ──────────────────────────
 CLAUDE.md
