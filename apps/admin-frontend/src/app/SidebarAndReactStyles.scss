@@ -53,6 +53,9 @@
 #page-content-wrapper {
     position: relative;
     margin-top: 2vh !important;
+    /* Breathing room so content (e.g. form buttons) clears the window edge,
+       without adding whitespace below the sidebar. */
+    padding-bottom: 3rem;
 }
 
 .sidebar-item {
