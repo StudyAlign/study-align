@@ -29,8 +29,7 @@
     "react-sortful": "^0.1.1",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
-    "sass": "^1.80.5",
-    "styled-components": "^5.3.5"
+    "sass": "^1.80.5"
   },
   "scripts": {
     "start": "react-scripts start",
