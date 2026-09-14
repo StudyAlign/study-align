@@ -1,7 +1,7 @@
 import {
-    Redirect,
-    Route,
-    useParams
+    Navigate,
+    useParams,
+    useLocation
 } from "react-router-dom";
 import { useSelector} from "react-redux";
 import {
@@ -16,7 +16,6 @@ import {
 } from "../redux/reducers/studySlice";
 import React from "react";
 import {FINISHED} from "../redux/participantStates";
-import {useLocation} from "react-router-dom/cjs/react-router-dom";
 const {createContext} = require("react");
 const {useContext} = require("react");
 
@@ -58,46 +57,32 @@ function useProvideAuth() {
     };
 }
 
-export function StudyRoute({ children, ...rest }) {
-    let auth = useAuth()
-    let id  = rest.computedMatch.params.id
-    const { search } = useLocation();
+export function StudyRoute({ children }) {
+    const auth = useAuth()
+    const { id } = useParams()
+    const location = useLocation()
 
     if (auth.study && auth.participant && auth.participant.state === FINISHED) {
         return (
-            <Route
-                {...rest}
-                render={({ location }) =>
-                    (
-                        <Redirect
-                            to={{
-                                pathname: "/" + id + "/finish",
-                                state: { from: location }
-                            }}
-                        />
-                    )
-                }
+            <Navigate
+                to={{ pathname: "/" + id + "/finish" }}
+                state={{ from: location }}
+                replace
             />
         );
     }
+
+    // we are only checking if study exists, since active participants should
+    // end the study even though endDate is reached
+    if (auth.study !== null && auth.participant !== null) {
+        return children;
+    }
+
     return (
-        <Route
-            {...rest}
-            render={({ location }) =>
-                auth.study !== null && auth.participant !== null ? (
-                    /* we are only checking if study exists, since active participants should end the study
-                    even though endDate is reached */
-                    children
-                ) : (
-                    <Redirect
-                        to={{
-                            pathname: "/" + id,
-                            search: search,
-                            state: { from: location }
-                        }}
-                    />
-                )
-            }
+        <Navigate
+            to={{ pathname: "/" + id, search: location.search }}
+            state={{ from: location }}
+            replace
         />
     );
 }

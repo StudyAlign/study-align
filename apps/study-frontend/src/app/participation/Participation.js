@@ -1,7 +1,7 @@
 import {useDispatch, useSelector} from "react-redux";
 import {me, participate, selectParticipant} from "../../redux/reducers/participantSlice";
 import {selectStudy, selectStudyError, selectStudyStatus} from "../../redux/reducers/studySlice";
-import {Redirect, useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import React from "react";
 import styles from "../../features/counter/Counter.module.css";
 import {useAuth} from "../../components/Auth";
@@ -69,12 +69,12 @@ export default function Participation(props) {
         let redirectTo;
         if (auth.participant.current_procedure_step) {
             redirectTo = "/" + id + "/run" + queryString
-            return <Redirect to={redirectTo} />
+            return <Navigate to={redirectTo} replace />
         }
     }
     if (currentProcedureStep) {
         const redirectTo = "/" + id + "/run" + queryString
-        return <Redirect to={redirectTo} />
+        return <Navigate to={redirectTo} replace />
     }
 
     // define view

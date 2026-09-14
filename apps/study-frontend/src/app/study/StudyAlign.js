@@ -14,8 +14,9 @@ import {
     selectStudyStatus, studySlice
 } from "../../redux/reducers/studySlice";
 import {
-    Redirect,
-    useParams
+    Navigate,
+    useParams,
+    useLocation
 } from "react-router-dom";
 import {useDispatch, useSelector, useStore} from "react-redux";
 import React, {useEffect, useState} from "react";
@@ -33,7 +34,6 @@ import StudyHeader from "../../components/StudyHeader";
 import ErrorMessage from "../../components/ErrorMessage";
 import Loader from "../../components/Loader";
 import {IN_PROGRESS} from "../../redux/participantStates";
-import {useLocation} from "react-router-dom/cjs/react-router-dom";
 import {getStudyApi} from "../../api/studyAlignApi";
 
 export function useQuery() {
@@ -190,7 +190,7 @@ export default function StudyAlign(props) {
                 redirectTo = "/" + id + "/start" + queryString
             }
             console.log("REDIRECTTO", redirectTo)
-            return <Redirect to={redirectTo}/>
+            return <Navigate to={redirectTo} replace/>
         }
 
 

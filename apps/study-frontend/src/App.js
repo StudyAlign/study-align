@@ -2,7 +2,7 @@ import React, {createContext} from 'react';
 import './App.css';
 import {
     BrowserRouter as Router,
-    Switch,
+    Routes,
     Route
 } from "react-router-dom";
 import Home from "./app/home/Home";
@@ -17,17 +17,15 @@ export default function App() {
     return (
         <ProvideAuth>
             <Router basename={process.env.PUBLIC_URL}>
-                <Switch>
-                    <StudyRoute path="/:id/start" children={<Participation/>} />
-                    <StudyRoute path="/:id/run" children={<Controller/>} />
-                    <StudyRoute path="/:id/end" children={<Finish/>} />
-                    <Route path="/:id/participate/:token" children={<StudyAlign/>} />
-                    <Route path="/:id/proceed/:token" children={<Updater/>} />
-                    <Route path="/:id" children={<StudyAlign/>} />
-                    <Route path="/">
-                        <Home/>
-                    </Route>
-                </Switch>
+                <Routes>
+                    <Route path="/:id/start" element={<StudyRoute><Participation/></StudyRoute>} />
+                    <Route path="/:id/run" element={<StudyRoute><Controller/></StudyRoute>} />
+                    <Route path="/:id/end" element={<StudyRoute><Finish/></StudyRoute>} />
+                    <Route path="/:id/participate/:token" element={<StudyAlign/>} />
+                    <Route path="/:id/proceed/:token" element={<Updater/>} />
+                    <Route path="/:id" element={<StudyAlign/>} />
+                    <Route path="/" element={<Home/>} />
+                </Routes>
             </Router>
         </ProvideAuth>
     );
