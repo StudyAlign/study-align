@@ -1,0 +1,73 @@
+{
+  "study": {
+    "name": "Comparative Study A vs B – Example",
+    "startDate": "2025-01-01T00:00:00.000Z",
+    "endDate": "2025-12-31T00:00:00.000Z",
+    "invite_only": false,
+    "description": "<h3>Comparative study (A vs B)</h3><p>A within-subjects comparison of two variants. Each participant experiences both Variant A and Variant B; the order of the two variants is counterbalanced by placing them inside a block, so roughly half of the participants see A first and half see B first.</p><p><em>Replace the survey and variant URLs below with your own.</em></p>",
+    "consent": "<h3>Consent</h3><p>Participation is voluntary and you may stop at any time. Your interaction data and questionnaire responses are collected and stored pseudonymously and used for research purposes only.</p><p>By continuing you confirm that you are at least 18 years old and agree to take part.</p>",
+    "planned_number_participants": 40
+  },
+  "procedure_config": {
+    "procedure_config_steps": [
+      {
+        "order": 0,
+        "counterbalance": false,
+        "text": {
+          "title": "Welcome",
+          "body": "<h3>Welcome</h3><p>Thank you for taking part. You will use two versions of the same system and answer a short questionnaire after each.</p>"
+        }
+      },
+      {
+        "order": 1,
+        "counterbalance": false,
+        "questionnaire": {
+          "url": "https://your-survey.example.com/demographics",
+          "system": "limesurvey"
+        }
+      },
+      {
+        "order": 2,
+        "counterbalance": false,
+        "block": {
+          "procedure_config_steps": [
+            {
+              "order": 0,
+              "counterbalance": true,
+              "condition": {
+                "name": "Variant A",
+                "config": {},
+                "url": "https://your-prototype.example.com/variant-a"
+              }
+            },
+            {
+              "order": 1,
+              "counterbalance": true,
+              "condition": {
+                "name": "Variant B",
+                "config": {},
+                "url": "https://your-prototype.example.com/variant-b"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "order": 3,
+        "counterbalance": false,
+        "questionnaire": {
+          "url": "https://your-survey.example.com/comparison",
+          "system": "limesurvey"
+        }
+      },
+      {
+        "order": 4,
+        "counterbalance": false,
+        "text": {
+          "title": "Thank you",
+          "body": "<h3>Thank you</h3><p>That's the end of the study. Thank you for comparing both versions!</p>"
+        }
+      }
+    ]
+  }
+}

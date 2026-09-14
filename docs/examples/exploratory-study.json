@@ -1,0 +1,56 @@
+{
+  "study": {
+    "name": "Exploratory Study – Example",
+    "startDate": "2025-01-01T00:00:00.000Z",
+    "endDate": "2025-12-31T00:00:00.000Z",
+    "invite_only": false,
+    "description": "<h3>Exploratory study</h3><p>An open, exploratory session in which a single group of participants interacts with one prototype. There is no comparison group; the goal is to observe behaviour and gather qualitative and quantitative feedback.</p><p><em>Replace the survey and prototype URLs below with your own.</em></p>",
+    "consent": "<h3>Consent</h3><p>Participation is voluntary and you may stop at any time. Your interaction data and questionnaire responses are collected and stored pseudonymously and used for research purposes only.</p><p>By continuing you confirm that you are at least 18 years old and agree to take part.</p>",
+    "planned_number_participants": 20
+  },
+  "procedure_config": {
+    "procedure_config_steps": [
+      {
+        "order": 0,
+        "counterbalance": false,
+        "text": {
+          "title": "Welcome",
+          "body": "<h3>Welcome</h3><p>Thank you for taking part. In this session you will explore a prototype and answer a few short questionnaires. Please think aloud as you go.</p>"
+        }
+      },
+      {
+        "order": 1,
+        "counterbalance": false,
+        "questionnaire": {
+          "url": "https://your-survey.example.com/demographics",
+          "system": "limesurvey"
+        }
+      },
+      {
+        "order": 2,
+        "counterbalance": false,
+        "condition": {
+          "name": "Prototype exploration",
+          "config": {},
+          "url": "https://your-prototype.example.com"
+        }
+      },
+      {
+        "order": 3,
+        "counterbalance": false,
+        "questionnaire": {
+          "url": "https://your-survey.example.com/post-task-feedback",
+          "system": "limesurvey"
+        }
+      },
+      {
+        "order": 4,
+        "counterbalance": false,
+        "text": {
+          "title": "Thank you",
+          "body": "<h3>Thank you</h3><p>That's the end of the session. Thank you for your time and feedback!</p>"
+        }
+      }
+    ]
+  }
+}
