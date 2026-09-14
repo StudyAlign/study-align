@@ -43,7 +43,8 @@ export default function FilledDashboard(props) {
 
     const matchesFilter = (s) => {
         switch (filter) {
-            case FILTERS.OPEN: return s.state === STATES.RUNNING;
+            // Running and already started (future-start "Start soon" studies are excluded).
+            case FILTERS.OPEN: return s.state === STATES.RUNNING && !isFuture(s);
             case FILTERS.FUTURE: return isFuture(s);
             case FILTERS.CLOSED: return s.state === STATES.FINISHED;
             case FILTERS.SETUP_UNFINISHED: return s.state === STATES.SETUP;
