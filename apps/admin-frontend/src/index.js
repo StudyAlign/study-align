@@ -10,8 +10,7 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 // React 18 root API. StrictMode is intentionally omitted: its dev-only
-// double-invocation of effects breaks the legacy drag (react-sortful) and
-// CodeMirror-5 (react-codemirror2) editors used here.
+// double-invocation of effects breaks the legacy react-sortful drag used here.
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
