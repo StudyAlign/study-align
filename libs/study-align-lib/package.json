@@ -9,11 +9,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://gitlab.uni-bayreuth.de/studyalign/study-align.git",
-    "directory": "libs/study-align-lib"
+    "url": "git+https://github.com/StudyAlign/StudyAlign-library.git"
   },
-  "homepage": "https://gitlab.uni-bayreuth.de/studyalign/study-align",
-  "bugs": "https://gitlab.uni-bayreuth.de/studyalign/study-align/-/issues",
+  "homepage": "https://github.com/StudyAlign/StudyAlign-library#readme",
+  "bugs": "https://github.com/StudyAlign/StudyAlign-library/issues",
   "dependencies": {
     "uuid": "^9.0.1"
   },
