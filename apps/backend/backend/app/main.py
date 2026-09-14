@@ -14,8 +14,19 @@ API_PREFIX = "/api/v1"
 
 app = FastAPI(title="study-align-api", version="1")
 
-# read allowed cors origins from .env file
-origins = config('CORS_ORIGINS', cast=lambda v: [s.strip() for s in v.split(',')])
+# Allowed CORS origins from .env: comma-separated EXACT origins (scheme + host
+# [+ port]), e.g. "https://app.studyalign.com,https://studies.studyalign.com".
+# Browser Origin headers never carry a trailing slash, so strip one if a URL was
+# pasted with it; also drop surrounding whitespace and empty entries.
+origins = config('CORS_ORIGINS', cast=lambda v: [o.strip().rstrip('/') for o in v.split(',') if o.strip()])
+
+if not origins:
+    logger.warning("CORS_ORIGINS is empty — browser requests from the frontends "
+                   "will be blocked. Set it to the exact frontend origins.")
+elif "*" in origins:
+    logger.warning("CORS_ORIGINS contains '*'. A wildcard is incompatible with "
+                   "allow_credentials=True; browsers reject credentialed requests "
+                   "to a wildcard origin. List the exact origins instead.")
 
 app.add_middleware(
     CORSMiddleware,
