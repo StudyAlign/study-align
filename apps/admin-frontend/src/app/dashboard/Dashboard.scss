@@ -83,7 +83,7 @@
 /* Scope with .dashboard-toolbar so this beats Bootstrap's
    .input-group { width: 100% } (equal specificity would otherwise lose). */
 .dashboard-toolbar .dashboard-search {
-    width: 260px; // roughly a card's width
+    width: 420px;
     max-width: 100%;
     flex: 0 0 auto;
 }
