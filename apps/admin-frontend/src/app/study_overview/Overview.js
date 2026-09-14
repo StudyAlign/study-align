@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Accordion } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { Copy } from "react-bootstrap-icons";
 
 import { STATES } from "./StudyOverviewLayout";
+import Collaborators from "./Collaborators";
 import { reformatDate } from "../../components/CommonFunctions";
 
 import "./StudyOverview.css";
@@ -43,6 +44,8 @@ export default function Overview(props) {
 
     return (
         <>
+            <Row className="gx-5">
+                <Col lg={7}>
             <table>
                 <tbody>
                     <tr>
@@ -83,27 +86,27 @@ export default function Overview(props) {
                     </tr>
                 </tbody>
             </table>
+                </Col>
+                <Col lg={5} className="mt-4 mt-lg-2">
+                    <Collaborators study={study} />
+                </Col>
+            </Row>
 
-            <Accordion defaultActiveKey={["description"]} alwaysOpen className="mt-4">
-                <Accordion.Item eventKey="description">
-                    <Accordion.Header>Description</Accordion.Header>
-                    <Accordion.Body>
-                        <div
-                            className="description-content"
-                            dangerouslySetInnerHTML={{ __html: study.description }}
-                        />
-                    </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="consent">
-                    <Accordion.Header>Consent</Accordion.Header>
-                    <Accordion.Body>
-                        <div
-                            className="consent-content"
-                            dangerouslySetInnerHTML={{ __html: study.consent }}
-                        />
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
+            {/* Description & consent span the full width below the details. */}
+            <details open className="study-longtext mt-4">
+                <summary>Description</summary>
+                <div
+                    className="description-content"
+                    dangerouslySetInnerHTML={{ __html: study.description }}
+                />
+            </details>
+            <details open className="study-longtext mt-3">
+                <summary>Consent</summary>
+                <div
+                    className="consent-content"
+                    dangerouslySetInnerHTML={{ __html: study.consent }}
+                />
+            </details>
         </>
     );
 }

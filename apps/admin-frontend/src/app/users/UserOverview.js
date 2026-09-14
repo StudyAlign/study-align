@@ -141,7 +141,7 @@ export default function UserOverview() {
         },
         {
             key: "delete",
-            label: "",
+            label: "Danger zone",
             render: (_, row) => (
                 // Admins cannot be deleted.
                 row.role_id === 1 ? null : (

@@ -10,7 +10,6 @@ import * as yaml from "js-yaml";
 import Topbar from "../../components/Topbar";
 import SidebarLayout from "./SidebarLayout";
 import Overview from "./Overview";
-import Collaborators from "./Collaborators";
 import Procedure from "./Procedure";
 import InteractionData from "./InteractionData";
 import Participants from "./Participants";
@@ -317,14 +316,14 @@ export default function StudyOverviewLayout() {
     return (
         <>
             <Topbar/>
-            <SidebarLayout rightSidebar={page === 'overview' ? <Collaborators study={study} /> : null}>
+            <SidebarLayout fullWidth={page === 'overview'}>
                 <Row className="align-items-center">
                     <Col>
                         <h3><Badge bg="secondary">#{study_id}</Badge> {study.name}</h3>
                     </Col>
                     <Col xs="auto">
                         {page === 'procedure' && (
-                            <Button variant="outline-primary" onClick={handleEditProcedure}>
+                            <Button variant="primary" onClick={handleEditProcedure}>
                                 <PencilSquare /> Edit
                             </Button>
                         )}
@@ -337,7 +336,7 @@ export default function StudyOverviewLayout() {
                         <Col>
                             <div className="study-toolbar d-flex flex-wrap gap-2 align-items-center">
                                 {editState !== editEnum.Closed && (
-                                    <Button variant="outline-primary" onClick={handleEdit}>
+                                    <Button variant="primary" onClick={handleEdit}>
                                         <PencilSquare /> Edit
                                     </Button>
                                 )}
