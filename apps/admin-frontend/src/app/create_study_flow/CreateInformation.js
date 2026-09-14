@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Col, Row, Container, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 
 import { createStudy, selectStudy } from "../../redux/reducers/studySlice";
+import { getGroupsApi } from "../../api/studyAlignApi";
 
 import { STATES } from "../study_overview/StudyOverviewLayout";
 
@@ -25,10 +26,17 @@ export default function CreateInformation() {
     const [description, setDescription] = useState('')
     const [consent, setConsent] = useState('')
     const [privateStudy, setPrivateStudy] = useState(false)
+    const [groupId, setGroupId] = useState('')
+    const [groups, setGroups] = useState([])
 
     const [created, setCreated] = useState(false)
 
     const study = useSelector(selectStudy)
+
+    // Groups the current user is a member (or owner) of.
+    useEffect(() => {
+        getGroupsApi().then((r) => setGroups(r.body || [])).catch(() => {})
+    }, [])
 
     const handleTitle = (event) => {
         setTitle(event.target.value)
@@ -70,7 +78,8 @@ export default function CreateInformation() {
             "description": description,
             "consent": consent,
             "planned_number_participants": amountParticipants,
-            "current_setup_step": "information" // jump to procedure after creating
+            "current_setup_step": "information", // jump to procedure after creating
+            "group_id": groupId ? parseInt(groupId, 10) : null
         }
         await dispatch(createStudy(study))
         setCreated(true)
@@ -127,6 +136,21 @@ export default function CreateInformation() {
                                     style={{ cursor: "pointer" }}
                                 />
                             </Col>
+                        </Form.Group>
+                    </Row>
+
+                    <Row>
+                        <Form.Group className="mb-3" controlId="formGroup">
+                            <Form.Label>Group</Form.Label>
+                            <Form.Select value={groupId} onChange={(e) => setGroupId(e.target.value)}>
+                                <option value="">No group</option>
+                                {groups.map((g) => (
+                                    <option key={g.id} value={g.id}>{g.name}</option>
+                                ))}
+                            </Form.Select>
+                            <Form.Text className="text-muted">
+                                Assign this study to one of your groups to brand it with the group.
+                            </Form.Text>
                         </Form.Group>
                     </Row>
 

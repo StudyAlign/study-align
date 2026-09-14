@@ -13,6 +13,7 @@ import {
 } from "../../redux/reducers/studySlice";
 
 import HtmlEditor from "./procedure_editors/HtmlEditor";
+import { getGroupsApi } from "../../api/studyAlignApi";
 
 import LoadingScreen from "../../components/LoadingScreen";
 import StudyCreationLayout, { CreationSteps, StudyStatus } from "./navigation_logic/StudyCreationLayout";
@@ -33,6 +34,8 @@ export default function EditInformation(props) {
     const [description, setDescription] = useState('')
     const [consent, setConsent] = useState('')
     const [privateStudy, setPrivateStudy] = useState(false)
+    const [groupId, setGroupId] = useState('')
+    const [groups, setGroups] = useState([])
 
     const endDateRef = useRef('')
     const amountParticipantsRef = useRef('')
@@ -43,6 +46,7 @@ export default function EditInformation(props) {
     useEffect(() => {
         dispatch(getStudy(study_id))
         dispatch(getStudySetupInfo(study_id))
+        getGroupsApi().then((r) => setGroups(r.body || [])).catch(() => {})
     }, [])
 
     useEffect(() => {
@@ -62,6 +66,7 @@ export default function EditInformation(props) {
             setDescription(study.description)
             setConsent(study.consent)
             setPrivateStudy(study.invite_only)
+            setGroupId(study.group_id ? String(study.group_id) : '')
         }
     }, [study, studySetupInfo])
 
@@ -115,7 +120,8 @@ export default function EditInformation(props) {
                 "description": description,
                 "consent": consent,
                 "planned_number_participants": amountParticipants,
-                "current_setup_step": "information"
+                "current_setup_step": "information",
+                "group_id": groupId ? parseInt(groupId, 10) : null
             }
         }))
         await dispatch(getStudySetupInfo(study_id))
@@ -182,6 +188,21 @@ export default function EditInformation(props) {
                         <Form.Group className="mb-3" controlId="formParticipants">
                             <Form.Label>Number of Participants</Form.Label>
                             <Form.Control min={disabled ? amountParticipantsRef.current : 0} required type="number" placeholder="Number of Participants" value={amountParticipants} onChange={handleParticipants}/>
+                        </Form.Group>
+                    </Row>
+
+                    <Row>
+                        <Form.Group className="mb-3" controlId="formGroup">
+                            <Form.Label>Group</Form.Label>
+                            <Form.Select value={groupId} onChange={(e) => setGroupId(e.target.value)}>
+                                <option value="">No group</option>
+                                {groups.map((g) => (
+                                    <option key={g.id} value={g.id}>{g.name}</option>
+                                ))}
+                            </Form.Select>
+                            <Form.Text className="text-muted">
+                                Assign this study to one of your groups to brand it with the group.
+                            </Form.Text>
                         </Form.Group>
                     </Row>
 
