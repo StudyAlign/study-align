@@ -15,5 +15,8 @@
     "build": "npm run build:lib && npm run build -w study-align-admin-frontend && npm run build -w study-align-framework",
     "start:admin": "npm run build:lib && npm start -w study-align-admin-frontend",
     "start:study": "npm run build:lib && npm start -w study-align-framework"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
   }
 }
