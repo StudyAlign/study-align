@@ -1,18 +1,18 @@
-uvicorn[standard]==0.24.0
-gunicorn==21.2.0
-pydantic==2.12.5
-fastapi[all]==0.129.0
+uvicorn[standard]==0.30.6
+gunicorn==23.0.0
+pydantic==2.13.5
+fastapi[all]==0.141.1
 
 #db
-psycopg2==2.9.9
-sqlalchemy==2.0.23
-alembic==1.12.1
+psycopg2==2.9.13
+sqlalchemy==2.0.52
+alembic==1.14.1
 
 #api
-ujson==5.8.0
-python-multipart==0.0.22
-python-jose[cryptography]==3.3.0
-sse-starlette==1.6.5
+ujson==5.10.0
+python-multipart==0.0.32
+python-jose[cryptography]==3.5.0
+sse-starlette==1.8.2
 
 #ml
 #tensorflow==2.2.0
@@ -20,9 +20,10 @@ sse-starlette==1.6.5
 
 #generic
 python-decouple==3.8
-requests==2.31.0
-aiofiles==23.2.1
+requests==2.32.5
+aiofiles==24.1.0
 passlib==1.7.4
+# Pinned: passlib 1.7.4 is incompatible with bcrypt >= 5 (and warns on >= 4.1)
 bcrypt==4.0.1
 
-fastapi-mail==1.6.2
+fastapi-mail==1.6.8
