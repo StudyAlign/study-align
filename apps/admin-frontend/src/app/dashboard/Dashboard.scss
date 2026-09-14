@@ -194,3 +194,13 @@
     display: flex;
     gap: 10px;
 }
+/* Study status pills: Setup (orange) and Start soon (purple) */
+.status-pill.status-setup {
+    background-color: #e8850c;
+    color: #fff;
+}
+
+.status-pill.status-start-soon {
+    background-color: #7c3aed;
+    color: #fff;
+}

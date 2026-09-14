@@ -19,7 +19,7 @@ const FILTERS = {
 
 const FILTER_OPTIONS = [
     { value: FILTERS.ALL, label: "All Studies" },
-    { value: FILTERS.OPEN, label: "Open Studies" },
+    { value: FILTERS.OPEN, label: "Running Studies" },
     { value: FILTERS.FUTURE, label: "Future Studies" },
     { value: FILTERS.CLOSED, label: "Closed Studies" },
     { value: FILTERS.SETUP_UNFINISHED, label: "Setup Not Finished" },

@@ -21,8 +21,15 @@ export default function StudyBox(props) {
         navigate("/study/"+study.id+"/overview")
     }
 
-    function getStatusLabel(state) {
-        if (state === STATES.RUNNING) {
+    function getStatusLabel(study) {
+        if (study.state === STATES.SETUP) {
+            return <Badge pill className="ms-auto status-pill status-setup">Setup</Badge>
+        }
+        if (study.state === STATES.RUNNING) {
+            const startsInFuture = new Date(study.startDate.split('T')[0]) > new Date()
+            if (startsInFuture) {
+                return <Badge pill className="ms-auto status-pill status-start-soon">Start soon</Badge>
+            }
             return <Badge pill bg="success" className="ms-auto status-pill">Running</Badge>
         }
         return <Badge pill bg="secondary" className="ms-auto status-pill">Closed</Badge>
@@ -33,7 +40,7 @@ export default function StudyBox(props) {
             <Card.Body>
                 <Card.Title className="d-flex align-items-start">
                     <span className="study-title">{study.name}</span>
-                    {getStatusLabel(study.state)}
+                    {getStatusLabel(study)}
                 </Card.Title>
                 <Card.Text as="div">
                     <span className="study-info">
