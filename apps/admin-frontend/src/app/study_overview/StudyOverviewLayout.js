@@ -10,6 +10,7 @@ import * as yaml from "js-yaml";
 import Topbar from "../../components/Topbar";
 import SidebarLayout from "./SidebarLayout";
 import Overview from "./Overview";
+import Collaborators from "./Collaborators";
 import Procedure from "./Procedure";
 import InteractionData from "./InteractionData";
 import Participants from "./Participants";
@@ -316,7 +317,7 @@ export default function StudyOverviewLayout() {
     return (
         <>
             <Topbar/>
-            <SidebarLayout>
+            <SidebarLayout rightSidebar={page === 'overview' ? <Collaborators study={study} /> : null}>
                 <Row className="align-items-center">
                     <Col>
                         <h3><Badge bg="secondary">#{study_id}</Badge> {study.name}</h3>

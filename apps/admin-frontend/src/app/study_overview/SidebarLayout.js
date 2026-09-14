@@ -59,9 +59,14 @@ export default function SidebarLayout(props){
                     </Col>
                     <Col id="page-content-wrapper">
                         <Row>
-                            <Col xs={12} md={12} lg={10} xl={8}>
+                            <Col xs={12} md={12} lg={props.rightSidebar ? 8 : 10} xl={props.rightSidebar ? 7 : 8}>
                                 {props.children}
                             </Col>
+                            {props.rightSidebar && (
+                                <Col xs={12} lg={4} xl={4} className="mt-4 mt-lg-0">
+                                    {props.rightSidebar}
+                                </Col>
+                            )}
                         </Row>
                     </Col>
                 </Row>
