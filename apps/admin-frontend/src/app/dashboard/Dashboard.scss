@@ -105,11 +105,11 @@
 
 /* Distinct, modern icon colours per stat. */
 .study-info .icon.icon-date {
-    color: #3b7dd8;
+    color: #6366f1; // indigo
 }
 
 .study-info .icon.icon-participants {
-    color: #3a9d7a;
+    color: #0ea5a3; // teal
 }
 
 .info-box {
@@ -148,9 +148,15 @@
 }
 
 .study-info .icon {
-    position: relative;
-    top: 1px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.1rem; // a touch bigger than the label text
+    line-height: 1;
     color: #888;
+}
+
+.study-info .icon svg {
+    display: block; // drop the inline-SVG baseline gap so it centres on the text
 }
 
 .study-box:hover {
