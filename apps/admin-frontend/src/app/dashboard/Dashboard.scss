@@ -81,13 +81,19 @@
 }
 
 .dashboard-search {
-    width: 200px;
+    width: 180px;
     max-width: 100%;
     flex: 0 0 auto; // keep it narrow; dropdowns sit to its right
 }
 
 .dashboard-toolbar .form-select {
     width: auto;
+    flex: 0 0 auto;
+}
+
+/* Push the filter/sort dropdowns to the right of the (narrow) search field. */
+.dashboard-toolbar .form-select:first-of-type {
+    margin-left: auto;
 }
 
 /* Staggered entrance for the study cards (delay set inline per card). */
