@@ -107,13 +107,13 @@
     .study-card-anim { animation: none; }
 }
 
-/* Brand pairing per stat: gold + primary blue. */
+/* Warm taupe stat icons (from the colour scheme). */
 .study-info .icon.icon-date {
-    color: #d99a0b; // gold
+    color: $sal-taupe;
 }
 
 .study-info .icon.icon-participants {
-    color: #2563eb; // brand primary blue
+    color: $sal-taupe;
 }
 
 .info-box {
