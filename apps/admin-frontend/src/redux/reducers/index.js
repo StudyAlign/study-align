@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { combineReducers } from "@reduxjs/toolkit";
 import auth from "./authSlice";
 import studies from "./studySlice"
 import texts from "./textSlice"
