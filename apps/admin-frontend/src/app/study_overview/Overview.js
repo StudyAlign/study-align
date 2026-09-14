@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Button, Tabs, Tab, Modal } from "react-bootstrap";
-import { useNavigate } from "react-router";
+import { Button, Modal, Row, Col, Accordion, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { Copy, Trash, PersonPlus } from "react-bootstrap-icons";
+import { Copy, Trash } from "react-bootstrap-icons";
 
 import { STATES } from "./StudyOverviewLayout";
-import {
-    getStudySetupInfo, getStudy, updateStudy, selectApiStatus
-} from "../../redux/reducers/studySlice";
-
+import { selectApiStatus } from "../../redux/reducers/studySlice";
 import {
     userSlice, getCollaborators, createCollaborator, deleteCollaborator, selectCollaborators
 } from "../../redux/reducers/userSlice";
@@ -30,14 +26,14 @@ export default function Overview(props) {
     const [collaboratorToDelete, setCollaboratorToDelete] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     //
-    const [adding, setAdding] = useState(false);
     const [refreshCollaboratorsFlag, setRefreshCollaboratorsFlag] = useState(false);
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const study = props.study;
-    const collab_url = url + study.id + "/";
+    // Normalise the base URL so there is exactly one slash before the study id.
+    const base = (url || "").replace(/\/+$/, "");
+    const collab_url = base + "/" + study.id + "/";
 
     // Selectors
     const apiStatus = useSelector(selectApiStatus);
@@ -66,45 +62,6 @@ export default function Overview(props) {
         setTimeout(() => setIsClicked(false), 500);
     };
 
-    const handleStudyActive = async (event, state) => {
-        event.preventDefault();
-        await dispatch(updateStudy({ studyId: study.id, study: { state: state } }));
-        await dispatch(getStudy(study.id));
-    };
-
-    const handleEdit = async (event) => {
-        event.preventDefault();
-        await dispatch(
-            updateStudy({
-                studyId: study.id,
-                study: { current_setup_step: "study" }
-            })
-        );
-        await dispatch(getStudySetupInfo(study.id));
-        navigate("/create/" + study.id + "/information");
-    };
-
-    const getButton = (state) => {
-        switch (state) {
-            case STATES.RUNNING:
-                return (
-                    <Button onClick={(event) => handleStudyActive(event, "finished")}>
-                        Close Study
-                    </Button>
-                );
-            case STATES.FINISHED:
-                return (
-                    <Button onClick={(event) => handleStudyActive(event, "running")}>
-                        Open Study
-                    </Button>
-                );
-            case STATES.SETUP:
-                return <Button onClick={(event) => handleEdit(event)}> Finish Setup </Button>;
-            default:
-                return null;
-        }
-    };
-
     const getStatus = () => {
         switch (study.state) {
             case STATES.RUNNING:
@@ -127,7 +84,6 @@ export default function Overview(props) {
         setShowConfirmModal(true);
     };
 
-    // confirm collaborator deletion
     const handleConfirmDelete = async () => {
         dispatch(deleteCollaborator(collaboratorToDelete))
             .then(() => {
@@ -153,15 +109,14 @@ export default function Overview(props) {
 
     return (
         <>
-            <Tabs defaultActiveKey="details" id="study-tabs" className="mb-3">
-                <Tab eventKey="details" title="Details">
+            <Row>
+                {/* -------- Details + description/consent -------- */}
+                <Col lg={8}>
                     <table>
                         <tbody>
                             <tr>
                                 <td className="content-name"> Status: </td>
-                                <td>
-                                    {getStatus()} {getStudyIsOver()}
-                                </td>
+                                <td>{getStatus()} {getStudyIsOver()}</td>
                             </tr>
                             <tr>
                                 <td className="content-name"> Private Study: </td>
@@ -177,15 +132,11 @@ export default function Overview(props) {
                             </tr>
                             <tr>
                                 <td className="content-name"> Participants: </td>
-                                <td>
-                                    {study.done_participants} / {study.total_participants}
-                                </td>
+                                <td>{study.done_participants} / {study.total_participants}</td>
                             </tr>
                             <tr>
                                 <td className="content-name"> Participants <br /> (in Progress): </td>
-                                <td>
-                                    {study.in_progress_participants}
-                                </td>
+                                <td>{study.in_progress_participants}</td>
                             </tr>
                             <tr>
                                 <td className="content-name"> Invite Link: </td>
@@ -201,65 +152,68 @@ export default function Overview(props) {
                             </tr>
                         </tbody>
                     </table>
-                </Tab>
-                <Tab eventKey="description" title="Description">
-                    <div
-                        className="description-content"
-                        dangerouslySetInnerHTML={{ __html: study.description }}
-                    ></div>
-                </Tab>
-                <Tab eventKey="consent" title="Consent">
-                    <div
-                        className="consent-content"
-                        dangerouslySetInnerHTML={{ __html: study.consent }}
-                    ></div>
-                </Tab>
-            </Tabs>
-            <hr />
-            {getButton(study.state)}
-            <hr />
-            <h3> Collaborators </h3>
-            {collaborators.length === 0 ? (
-                <div className="alert alert-info">
-                    There are no collaborators added yet.
-                </div>
-            ) : (
-                <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
-                    {collaborators.map((collab) => (
-                        <li key={collab.id} className="collaborator-item d-flex align-items-center justify-content-between">
-                            <span>
-                                {collab.user.firstname} {collab.user.lastname} ({collab.user.email})
-                            </span>
-                            <Button
-                                variant="link"
-                                onClick={() => confirmDelete(collab.id)}
-                                className="delete-button"
-                            >
-                                <Trash size={22} color="red" />
-                            </Button>
-                        </li>
-                    ))}
-                </ul>
-            )}
 
-            {adding ? (
-                <div className="collaborator-add" style={{ maxWidth: 480 }}>
-                    <UserSearch
-                        onSelect={(u) => handleAddCollaborator(u.id)}
-                        excludeIds={colabIds}
-                        excludeLabel="collaborator"
-                        placeholder="Search users by name or email"
-                        autoFocus
-                    />
-                    <Button variant="link" className="ps-0 mt-1" onClick={() => setAdding(false)}>
-                        Done
-                    </Button>
-                </div>
-            ) : (
-                <Button type="button" className="small-button" onClick={() => setAdding(true)}>
-                    <PersonPlus className="button-icon" /> Add
-                </Button>
-            )}
+                    <Accordion defaultActiveKey={["description"]} alwaysOpen className="mt-4">
+                        <Accordion.Item eventKey="description">
+                            <Accordion.Header>Description</Accordion.Header>
+                            <Accordion.Body>
+                                <div
+                                    className="description-content"
+                                    dangerouslySetInnerHTML={{ __html: study.description }}
+                                />
+                            </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="consent">
+                            <Accordion.Header>Consent</Accordion.Header>
+                            <Accordion.Body>
+                                <div
+                                    className="consent-content"
+                                    dangerouslySetInnerHTML={{ __html: study.consent }}
+                                />
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+                </Col>
+
+                {/* -------- Collaborators sidebar -------- */}
+                <Col lg={4}>
+                    <Card className="shadow-sm">
+                        <Card.Header>Collaborators</Card.Header>
+                        <Card.Body>
+                            <UserSearch
+                                onSelect={(u) => handleAddCollaborator(u.id)}
+                                excludeIds={colabIds}
+                                excludeLabel="collaborator"
+                                placeholder="Search users by name or email"
+                            />
+                            {collaborators.length === 0 ? (
+                                <div className="text-muted small mt-3">
+                                    No collaborators added yet.
+                                </div>
+                            ) : (
+                                <ul style={{ listStyleType: "none", paddingLeft: 0 }} className="mt-3 mb-0">
+                                    {collaborators.map((collab) => (
+                                        <li key={collab.id} className="collaborator-item d-flex align-items-center justify-content-between">
+                                            <span>
+                                                {collab.user.firstname} {collab.user.lastname}
+                                                <br />
+                                                <span className="text-muted small">{collab.user.email}</span>
+                                            </span>
+                                            <Button
+                                                variant="link"
+                                                onClick={() => confirmDelete(collab.id)}
+                                                className="delete-button p-0"
+                                            >
+                                                <Trash size={18} color="red" />
+                                            </Button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
 
             {/* Confirm deletion modal */}
             <Modal show={showConfirmModal} onHide={handleCancelDelete}>

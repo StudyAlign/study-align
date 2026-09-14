@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import {Badge, Button, Col, Dropdown, Modal, Row} from "react-bootstrap";
-import { ThreeDots } from "react-bootstrap-icons";
+import {Badge, Button, Col, Modal, Row} from "react-bootstrap";
+import { Trash, PencilSquare } from "react-bootstrap-icons";
 
 import { saveAs } from "file-saver";
 import * as yaml from "js-yaml";
@@ -163,9 +163,41 @@ export default function StudyOverviewLayout() {
         }
     }
 
+    const handleEditProcedure = async (event) => {
+        event.preventDefault()
+        await dispatch(updateStudy({
+            "studyId": study_id,
+            "study": { "current_setup_step": "procedure" }
+        }))
+        await dispatch(getStudySetupInfo(study_id))
+        if (editState === editEnum.NotOpen) {
+            navigate("/create/" + study_id + "/procedure")
+        } else {
+            navigate("/edit/" + study_id + "/procedure")
+        }
+    }
+
+    const handleToggleState = async (newState) => {
+        await dispatch(updateStudy({ "studyId": study_id, "study": { "state": newState } }))
+        await dispatch(getStudy(study_id))
+    }
+
+    const getStateButton = () => {
+        switch (study.state) {
+            case STATES.RUNNING:
+                return <Button variant="outline-secondary" onClick={() => handleToggleState("finished")}>Close Study</Button>
+            case STATES.FINISHED:
+                return <Button variant="outline-secondary" onClick={() => handleToggleState("running")}>Reopen Study</Button>
+            case STATES.SETUP:
+                return <Button variant="outline-secondary" onClick={handleEdit}>Finish Setup</Button>
+            default:
+                return null
+        }
+    }
+
     const handleDuplicate = async (event) => {
         event.preventDefault()
-        
+
         await dispatch(duplicateStudy(study_id)).then((newStudy) => {
             navigate("/create/" + newStudy.payload.body.id + "/information")
         })
@@ -285,26 +317,40 @@ export default function StudyOverviewLayout() {
         <>
             <Topbar/>
             <SidebarLayout>
-                <Row>
+                <Row className="align-items-center">
                     <Col>
                         <h3><Badge bg="secondary">#{study_id}</Badge> {study.name}</h3>
                     </Col>
                     <Col xs="auto">
-                        <Dropdown>
-                            <Dropdown.Toggle variant="link" bsPrefix="p-0" style={{color:'#494949'}}>
-                                <ThreeDots size="28"/>
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                                {editState !== editEnum.Closed && <Dropdown.Item onClick={handleEdit}>Edit</Dropdown.Item>}
-                                <Dropdown.Item onClick={handleDuplicate}>Duplicate</Dropdown.Item>
-                                <Dropdown.Item onClick={() => setShowModal(modalStates.EXPORT)}>Export Study</Dropdown.Item>
-                                <Dropdown.Divider/>
-                                <Dropdown.Item onClick={() => setShowModal(modalStates.DELETE)} style={{color: "red"}}>Delete</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
+                        {page === 'procedure' && (
+                            <Button variant="outline-primary" onClick={handleEditProcedure}>
+                                <PencilSquare /> Edit
+                            </Button>
+                        )}
                     </Col>
                 </Row>
+
+                {/* Study action navbar: only on the details overview. */}
+                {page === 'overview' && (
+                    <Row className="mb-3">
+                        <Col>
+                            <div className="study-toolbar d-flex flex-wrap gap-2 align-items-center">
+                                {editState !== editEnum.Closed && (
+                                    <Button variant="outline-primary" onClick={handleEdit}>
+                                        <PencilSquare /> Edit
+                                    </Button>
+                                )}
+                                <Button variant="outline-secondary" onClick={handleDuplicate}>Duplicate</Button>
+                                <Button variant="outline-secondary" onClick={() => setShowModal(modalStates.EXPORT)}>Export</Button>
+                                {getStateButton()}
+                                <Button variant="outline-danger" className="ms-auto" onClick={() => setShowModal(modalStates.DELETE)}>
+                                    <Trash /> Delete
+                                </Button>
+                            </div>
+                        </Col>
+                    </Row>
+                )}
+
                 {getContent(page)}
             </SidebarLayout>
 

@@ -295,10 +295,9 @@ export default function ImportStudy() {
                     onDragLeave={handleDragLeaveTextArea}
                     onDrop={handleDrop}
                     theme="material"
-                    height="100%"
+                    height="60vh"
                     style={{
                         width: '100%',
-                        height: '600px',
                         border: isDraggingOverTextArea ? '2px solid #00f' : (isDragging ? '2px dashed #000' : '1px solid #ccc'),
                         borderRadius: '5px',
                         margin: '10px 0 10px 0',
