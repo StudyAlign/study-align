@@ -68,6 +68,15 @@ class Study(StudyBase):
         from_attributes = True
 
 
+class StudyGroupBrand(BaseModel):
+    id: int
+    name: str
+    slug: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
 class StudyDetails(StudyBase):
     id: int
     description: str
@@ -77,6 +86,8 @@ class StudyDetails(StudyBase):
     done_participants: Optional[int]
     total_participants: Optional[int]
     group_id: Optional[int]
+    # Group the study is branded by (name for the study-frontend header).
+    group: Optional[StudyGroupBrand] = None
 
     class Config:
         from_attributes = True

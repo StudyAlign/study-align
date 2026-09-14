@@ -80,3 +80,14 @@ html body {
   width: 100%;
   margin-top: 2rem;
 }
+/* Group branding in the study header */
+.group-logo {
+  width: auto;
+  max-height: 90px;
+  max-width: 100%;
+}
+
+.group-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+}

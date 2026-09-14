@@ -27,14 +27,12 @@ const days = [
 
 export const getDate = (dateString) => {
     const date = new Date(dateString)
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
     const day = date.getDate()
     const dayName = days[date.getDay()]
     const monthName = months[date.getMonth()]
     const year = date.getFullYear()
-    const time = date.getTime()
-    return `${dayName}, ${day}. ${monthName} ${year} - ${hours}:${minutes}`
+    // Study start/end are date-only; don't render a (meaningless) 0:0 time.
+    return `${dayName}, ${day}. ${monthName} ${year}`
 }
 
 export function isStudyActive(study) {
