@@ -159,7 +159,7 @@ const PaginatedSortableTable = ({
                         {columns.map((col, idx) => {
                             if(excludeSortingColumns.includes(col.key)) {
                                 return (
-                                    <th key={idx}>
+                                    <th key={idx} className={col.headerClassName}>
                                         {col.label}
                                     </th>
                                 );
@@ -168,6 +168,7 @@ const PaginatedSortableTable = ({
                             return (
                                 <th
                                     key={idx}
+                                    className={col.headerClassName}
                                     onClick={() => handleSort(col.key)}
                                     style={{ cursor: "pointer" }}
                                 >
