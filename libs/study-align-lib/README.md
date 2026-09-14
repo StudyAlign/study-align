@@ -29,6 +29,6 @@ Requests resolve with `{ status, body }` and reject with
 
 ## Notes
 
-- The published artifact is a plain JavaScript bundle; it does **not** ship
-  TypeScript declarations.
-- License: AGPL-3.0.
+- Ships TypeScript declarations (`.d.ts`), so it works out of the box in
+  TypeScript projects.
+- License: MIT.
