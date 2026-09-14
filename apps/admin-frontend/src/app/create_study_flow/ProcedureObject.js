@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef, useContext } from 'react';
 import { DragHandleComponent } from 'react-sortful'
 import {Accordion, Form, Button, Badge} from "react-bootstrap";
-import { Trash3, Save } from "react-bootstrap-icons";
+import { Trash3 } from "react-bootstrap-icons";
 import { useDispatch} from "react-redux";
 
 import { CreateProcedureContext } from './CreateProcedure';
@@ -814,7 +814,7 @@ const ProcedureObject = forwardRef((props, ref) => {
                 disabled={!updated}
                 className={styles.saveButton}
             >
-                <Save className="button-icon" /> Save
+                Save
             </Button>
 
             {!disabled &&
