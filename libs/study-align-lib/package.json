@@ -2,8 +2,17 @@
   "name": "study-align-lib",
   "version": "1.0.0",
   "description": "Library to use the study-align API comfortably.",
-  "private": true,
   "main": "dist/study-align-lib-bundle.js",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.uni-bayreuth.de/studyalign/study-align.git",
+    "directory": "libs/study-align-lib"
+  },
+  "homepage": "https://gitlab.uni-bayreuth.de/studyalign/study-align",
+  "bugs": "https://gitlab.uni-bayreuth.de/studyalign/study-align/-/issues",
   "dependencies": {
     "uuid": "^9.0.1"
   },
