@@ -1,18 +1,25 @@
 @import 'colors.scss';
 
-// Primary is a confident cobalt blue that pairs with the logo's gold;
-// gold stays as a secondary brand accent (focus rings, group-logo fallback).
-$primary: #1f5eb3;
+// A confident, tech-forward blue that pairs with the logo's gold;
+// gold stays as a secondary brand accent (group-logo fallback, highlights).
+$primary: #2563eb;
 
-// --- Modernize via theme variables (softer corners, lighter shadows,
+// --- Modernize via theme variables (crisp corners, layered shadows,
 // a contemporary system font, warm-dark body text) ---
 $font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-$body-color: #2b291d;
+$body-color: #23211a;
 $border-radius: 0.5rem;
-$border-radius-sm: 0.35rem;
+$border-radius-sm: 0.375rem;
 $border-radius-lg: 0.75rem;
-$card-border-color: rgba(43, 41, 29, 0.10);
-$box-shadow-sm: 0 0.125rem 0.5rem rgba(43, 41, 29, 0.08);
+
+$card-border-color: rgba(23, 33, 55, 0.08);
+$card-cap-bg: #ffffff;
+$card-box-shadow: 0 1px 2px rgba(23, 33, 55, 0.06), 0 1px 3px rgba(23, 33, 55, 0.05);
+
+$box-shadow-sm: 0 1px 2px rgba(23, 33, 55, 0.06);
+$box-shadow: 0 4px 16px rgba(23, 33, 55, 0.10);
+
+$headings-font-weight: 650;
 
 // change the theme
 $theme-colors: (
@@ -22,17 +29,17 @@ $theme-colors: (
         "sal-primarylight": $sal-lightblue,
         "sal-darkgold": $sal-darkgold,
         "primary": $primary,
-        // Softer, less-saturated status colours
-        "danger": #d05d5d,
-        "success": #57a878,
-        "warning": #d9b95c
+        // Saturated-but-refined status colours
+        "danger": #e14545,
+        "success": #24a866,
+        "warning": #e2a72c
 );
 
-$input-border-radius: 0.22rem;
+$input-border-radius: 0.4rem;
 $input-border-color: $input-border-color;
 
 //e.g. input field blur (box shadow)
-$component-active-bg: $sal-darkgold;
+$component-active-bg: $primary;
 
 $form-check-input-checked-bg-color:       $primary;
 $form-check-input-checked-border-color:   $primary;
@@ -72,5 +79,77 @@ $form-check-input-focus-box-shadow: 0 0 $input-btn-focus-blur $input-btn-focus-w
   }
 
   // No need for an active state here
+}
+
+
+// -------------------------------------------------------------------------
+// Modern component layer: a crisp, tech-forward but timeless dashboard feel.
+// Applied globally so the whole admin app reads as one system.
+// -------------------------------------------------------------------------
+
+// Headings: slightly tighter tracking for a sharper, contemporary look.
+h1, h2, h3, h4, h5, h6, .headline {
+  letter-spacing: -0.012em;
+}
+
+// Buttons: medium weight, calm motion, a little depth on solid variants.
+.btn {
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+              color 0.15s ease, box-shadow 0.15s ease, transform 0.04s ease;
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+@each $variant in primary, danger, success, warning, secondary {
+  .btn-#{$variant} {
+    box-shadow: 0 1px 2px rgba(23, 33, 55, 0.12);
+
+    &:hover {
+      box-shadow: 0 3px 10px rgba(23, 33, 55, 0.16);
+    }
+  }
+}
+
+// Cards: hairline border + soft layered shadow, crisp header.
+.card {
+  border: 1px solid $card-border-color;
+  box-shadow: 0 1px 2px rgba(23, 33, 55, 0.05), 0 1px 3px rgba(23, 33, 55, 0.05);
+}
+
+.card-header {
+  background-color: #fff;
+  border-bottom: 1px solid rgba(23, 33, 55, 0.07);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+// Tables: micro-label headers and gentle row hover — the classic tech-dashboard cue.
+.table > thead th {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom-width: 1px;
+}
+
+.table-hover > tbody > tr:hover > * {
+  background-color: rgba(37, 99, 235, 0.04);
+}
+
+// Inputs: calm focus ring in the brand blue.
+.form-control:focus,
+.form-select:focus {
+  border-color: tint-color($primary, 35%);
+  box-shadow: 0 0 0 0.2rem rgba($primary, 0.18);
+}
+
+// Nav pills / tabs pick up the crisp radius automatically via $border-radius.
+.nav-tabs .nav-link.active {
+  font-weight: 600;
 }
 

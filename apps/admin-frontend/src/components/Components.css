@@ -1,7 +1,9 @@
 .top-bar {
     height: 7vh;
     min-height: 45px;
-    border-bottom: 1px solid #ccc;
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(23, 33, 55, 0.08);
+    box-shadow: 0 1px 3px rgba(23, 33, 55, 0.05);
 }
 
 .top-bar a {
@@ -28,7 +30,7 @@
 
 #top-bar-dropdown:hover,
 .top-bar-item:hover {
-    color: #224396 !important;
+    color: #2563eb !important;
 }
 
 .top-bar .nav {
