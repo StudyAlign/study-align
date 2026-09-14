@@ -66,6 +66,18 @@ export default function CreateInformation() {
         setConsent(value)
     }
 
+    // Load an example HTML outline (from public/examples) into a field.
+    const insertExample = (field) => {
+        const file = field === 'description' ? 'study-description.html' : 'study-consent.html'
+        fetch(process.env.PUBLIC_URL + '/examples/' + file)
+            .then((r) => r.text())
+            .then((html) => {
+                if (field === 'description') setDescription(html)
+                else setConsent(html)
+            })
+            .catch(() => {})
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault()
         let study = {
@@ -167,14 +179,22 @@ export default function CreateInformation() {
 
                     <Row>
                         <Form.Group className="mb-3" controlId="formDescription">
-                            <Form.Label>Description</Form.Label>
+                            <Form.Label>Description
+                                <Button type="button" variant="link" size="sm" className="p-0 ms-2 align-baseline" onClick={() => insertExample('description')}>
+                                    Insert example
+                                </Button>
+                            </Form.Label>
                             <HtmlEditor value={description} onChange={(value) => handleDescription('description', value)}/>
                         </Form.Group>
                     </Row>
 
                     <Row>
                         <Form.Group className="mb-3" controlId="formConsent">
-                            <Form.Label>Consent</Form.Label>
+                            <Form.Label>Consent
+                                <Button type="button" variant="link" size="sm" className="p-0 ms-2 align-baseline" onClick={() => insertExample('consent')}>
+                                    Insert example
+                                </Button>
+                            </Form.Label>
                             <HtmlEditor value={consent} onChange={(value) => handleConsent('consent', value)}/>
                         </Form.Group>
                     </Row>
