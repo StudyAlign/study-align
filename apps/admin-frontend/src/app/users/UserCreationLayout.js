@@ -36,6 +36,7 @@ export default function UserCreationLayout(props) {
             <Container>
                 <Row>
                     <Col id="page-content-wrapper">
+                        {props.topAction}
                         <h3 className="headline"> {getTitle(props.step)} </h3>
                         {props.children}
                     </Col>

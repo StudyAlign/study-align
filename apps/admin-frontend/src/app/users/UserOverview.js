@@ -4,10 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Form, InputGroup } from "react-bootstrap";
 import {
     Trash,
-    PencilSquare,
     ToggleOn,
     ToggleOff,
-    Display,
     Search,
 } from "react-bootstrap-icons";
 
@@ -94,11 +92,6 @@ export default function UserOverview() {
         setShowModal(modalStates.DELETE);
     };
 
-    const handleEdit = (id) => {
-        dispatch(userSlice.actions.setUserProcess("edit/information"));
-        navigate("/users/" + id + "/edit");
-    };
-
     const handleShow = (id) => {
         dispatch(userSlice.actions.setUserProcess("create"));
         navigate("/users/" + id + "/information");
@@ -133,43 +126,35 @@ export default function UserOverview() {
             render: (_, row) => roleNames[row.role_id],
         },
         {
-            key: "actions",
-            label: "Actions",
+            key: "state",
+            label: "State",
             render: (_, row) => (
-                <div className="action-gap">
-                    <Button
-                        variant="warning"
-                        size="sm"
-                        onClick={() => handleEdit(row.id)}
-                        className="mr-2"
-                    >
-                        <PencilSquare /> Edit
-                    </Button>
-                    <Button
-                        variant="success"
-                        size="sm"
-                        onClick={() => handleShow(row.id)}
-                        className="mr-2"
-                    >
-                        <Display /> Show
-                    </Button>
-                    <Button
-                        variant={row.is_active ? "secondary" : "success"}
-                        size="sm"
-                        onClick={() => handleToggleActive(row.id, row.is_active)}
-                        className="mr-2"
-                    >
-                        {row.is_active ? <ToggleOff /> : <ToggleOn />}{" "}
-                        {row.is_active ? "Deactivate" : "Activate"}
-                    </Button>
-                    <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleDelete(row.id)}
-                    >
-                        <Trash /> Delete
-                    </Button>
-                </div>
+                <Button
+                    variant={row.is_active ? "outline-secondary" : "outline-success"}
+                    size="sm"
+                    onClick={(e) => { e.stopPropagation(); handleToggleActive(row.id, row.is_active); }}
+                >
+                    {row.is_active ? <ToggleOn /> : <ToggleOff />}{" "}
+                    {row.is_active ? "Active" : "Inactive"}
+                </Button>
+            ),
+        },
+        {
+            key: "delete",
+            label: "",
+            render: (_, row) => (
+                // Admins cannot be deleted.
+                row.role_id === 1 ? null : (
+                    <div className="text-end">
+                        <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={(e) => { e.stopPropagation(); handleDelete(row.id); }}
+                        >
+                            <Trash /> Delete
+                        </Button>
+                    </div>
+                )
             ),
         },
     ];
@@ -257,19 +242,10 @@ export default function UserOverview() {
             <div id="page-content-wrapper" style={{ padding: "10px" }}>
                 <h3 className="headline">Users Overview</h3>
 
-                <div className="mb-3 d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                <div className="mb-3">
                     <Button variant="primary" onClick={handleCreate}>
                         Create New User
                     </Button>
-                    <InputGroup style={{ maxWidth: 320 }}>
-                        <InputGroup.Text><Search /></InputGroup.Text>
-                        <Form.Control
-                            type="text"
-                            placeholder="Filter by name or email"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </InputGroup>
                 </div>
 
                 <PaginatedSortableTable
@@ -282,8 +258,20 @@ export default function UserOverview() {
                     initialSortColumn={initialSortColumn}
                     initialSortDirection={initialSortDirection}
                     loadingText={"Loading User Data ..."}
-                    excludeSortingColumns={["actions"]}
+                    excludeSortingColumns={["state", "delete"]}
                     refreshFlag={refreshTableFlag}
+                    onRowClick={(row) => handleShow(row.id)}
+                    leftToolbar={
+                        <InputGroup style={{ maxWidth: 320 }}>
+                            <InputGroup.Text><Search /></InputGroup.Text>
+                            <Form.Control
+                                type="text"
+                                placeholder="Filter by name or email"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </InputGroup>
+                    }
                 />
             </div>
             {returnModal()}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Col, Row, Container, Modal } from "react-bootstrap";
-import { Eye, EyeSlash, PencilSquare } from "react-bootstrap-icons";
+import { Eye, EyeSlash, PencilSquare, ArrowLeft } from "react-bootstrap-icons";
 import UserCreationLayout, { UserSteps } from "./UserCreationLayout";
 
 import { useAuth } from "../../components/Auth";
@@ -144,11 +144,18 @@ export default function UserInformation(props) {
     }
 
     return (
-        <UserCreationLayout step={UserSteps.Information}>
+        <UserCreationLayout
+            step={UserSteps.Information}
+            topAction={
+                <Button variant="link" className="ps-0 mb-2" onClick={returnToUsers}>
+                    <ArrowLeft /> Back to user overview
+                </Button>
+            }
+        >
             <Container>
                 <Row className="mb-3">
                     <Col>
-                        <Button variant="outline-secondary" onClick={toggleEditable}>
+                        <Button variant={editable ? "outline-secondary" : "primary"} onClick={toggleEditable}>
                             <PencilSquare /> {editable ? "Cancel" : "Edit"}
                         </Button>
                     </Col>
@@ -289,7 +296,7 @@ export default function UserInformation(props) {
                         </Form.Group>
                     </Row>
 
-                    {editable ? (
+                    {editable && (
                         <Row>
                             <Col>
                                 <Button type="submit" size="lg">
@@ -297,15 +304,6 @@ export default function UserInformation(props) {
                                 </Button>
                             </Col>
                         </Row>
-                    ) : (
-                        <Row>
-                            <Col>
-                                <Button variant="success" size="lg" onClick={returnToUsers}>
-                                    Done
-                                </Button>
-                            </Col>
-                        </Row>
-                    
                     )}
                 </Form>
             </Container>

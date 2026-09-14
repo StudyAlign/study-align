@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Container, Button, Table, Modal, Spinner, Alert, Badge } from "react-bootstrap";
-import { PlusCircleFill, Trash, Gear } from "react-bootstrap-icons";
+import { PlusCircleFill, Trash } from "react-bootstrap-icons";
 
 import Topbar from "../../components/Topbar";
 import { useAuth } from "../../components/Auth";
@@ -54,7 +54,7 @@ export default function GroupsOverview() {
                 ) : (
                     <Table hover responsive className="align-middle">
                         <thead>
-                            <tr><th style={{ width: 60 }}></th><th>Name</th><th>Role</th><th className="text-end">Actions</th></tr>
+                            <tr><th style={{ width: 60 }}></th><th>Name</th><th>Role</th><th className="text-end">Danger zone</th></tr>
                         </thead>
                         <tbody>
                             {groups.map((g) => {
@@ -68,10 +68,6 @@ export default function GroupsOverview() {
                                         <td>{g.name}</td>
                                         <td>{isOwner ? <Badge bg="primary">Owner</Badge> : <Badge bg="secondary">Member</Badge>}</td>
                                         <td className="text-end">
-                                            <Button size="sm" variant="outline-secondary" className="me-2"
-                                                onClick={(e) => { e.stopPropagation(); navigate("/groups/" + g.id + "/manage"); }}>
-                                                <Gear className="button-icon" /> Manage
-                                            </Button>
                                             {isOwner && (
                                                 <Button size="sm" variant="outline-danger"
                                                     onClick={(e) => { e.stopPropagation(); setToDelete(g); }}>

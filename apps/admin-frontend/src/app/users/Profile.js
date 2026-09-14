@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Col, Row, Container, Modal } from "react-bootstrap";
-import { Eye, EyeSlash, PencilSquare } from "react-bootstrap-icons";
-import UserCreationLayout, { UserSteps } from "./UserCreationLayout";
+import { Eye, EyeSlash } from "react-bootstrap-icons";
 import { userSlice, getUser, selectUser, updateUser } from "../../redux/reducers/userSlice";
 import { me } from "../../redux/reducers/authSlice";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import Topbar from "../../components/Topbar";
 import LoadingScreen from "../../components/LoadingScreen";
 
 export default function Profile(props) {
     const dispatch = useDispatch()
-    const navigate = useNavigate()
     const { user_id } = useParams()
     const user = useSelector(selectUser)
 
@@ -34,7 +32,8 @@ export default function Profile(props) {
         })
     }, [user])
 
-    const [editable, setEditable] = useState(props.editable)
+    // The own profile opens straight into edit mode.
+    const editable = true
     const [formData, setFormData] = useState({
         name: user?.name || "",
         firstname: user?.firstname || "",
@@ -91,21 +90,9 @@ export default function Profile(props) {
                     dispatch(getUser(user_id))
                     dispatch(me())
                 })
-                
-                setEditable(false)
                 return
             }
         }
-    }
-
-    const returnToUsers = (e) => {
-        e.preventDefault()
-        dispatch(userSlice.actions.setUserProcess("information"))
-        navigate("/users")
-    }
-
-    const toggleEditable = () => {
-        setEditable(!editable)
     }
 
     const returnModal = () => {
@@ -150,13 +137,6 @@ export default function Profile(props) {
                 <h3 className="headline">Profile</h3>
 
                 <Container>
-                    <Row className="mb-3">
-                        <Col>
-                            <Button variant="outline-secondary" onClick={toggleEditable}>
-                                <PencilSquare /> {editable ? "Cancel" : "Edit"}
-                            </Button>
-                        </Col>
-                    </Row>
                     <Form onSubmit={handleSubmit}>
                         <Row>
                             <Form.Group className="mb-3" controlId="formName">
@@ -274,24 +254,13 @@ export default function Profile(props) {
                             </Form.Group>
                         </Row>
 
-                        {editable ? (
-                            <Row>
-                                <Col>
-                                    <Button type="submit" size="lg">
-                                        Update
-                                    </Button>
-                                </Col>
-                            </Row>
-                        ) : (
-                            <Row>
-                                <Col>
-                                    <Button variant="success" size="lg" onClick={returnToUsers}>
-                                        Done
-                                    </Button>
-                                </Col>
-                            </Row>
-
-                        )}
+                        <Row>
+                            <Col>
+                                <Button type="submit" size="lg">
+                                    Update
+                                </Button>
+                            </Col>
+                        </Row>
                     </Form>
                 </Container>
 

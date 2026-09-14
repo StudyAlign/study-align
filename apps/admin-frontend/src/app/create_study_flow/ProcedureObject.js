@@ -40,7 +40,7 @@ export const ProcedureTypes = {
         class: "procedure-condition",
         btnclass: "procedure-condition-button",
         color: "rgb(191,96,16)",
-        emptyContent: { "name": "", "config": "", "url": "", "study_id": -1 }
+        emptyContent: { "name": "", "config": "{}", "url": "", "study_id": -1 }
     },
     Questionnaire: {
         id: 2,
@@ -58,7 +58,7 @@ export const ProcedureTypes = {
         class: "procedure-pause",
         btnclass: "procedure-pause-button",
         color: "rgb(81,99,39)",
-        emptyContent: { "title": "", "body": "", "proceed_body": "", "type": "time_based", "config": "", "study_id": -1 }
+        emptyContent: { "title": "", "body": "", "proceed_body": "", "type": "time_based", "config": "{}", "study_id": -1 }
     },
     BlockElement: {
         id: 4,

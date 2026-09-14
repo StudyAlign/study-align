@@ -16,6 +16,8 @@ const PaginatedSortableTable = ({
     excludeSortingColumns = [],
     refreshFlag = false,
     filter = {},
+    leftToolbar = null,
+    onRowClick = null,
 }) => {
     const [activePage, setActivePage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
@@ -109,43 +111,46 @@ const PaginatedSortableTable = ({
 
     return (
         <>
-            <div className="d-flex justify-content-between mb-3">
-                <Dropdown>
-                    <Dropdown.Toggle variant="primary">
-                        Items per page: {itemsPerPage}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        {[10, 25, 50].map((size) => (
-                            <Dropdown.Item
-                                key={size}
-                                onClick={() => {
-                                    setItemsPerPage(size);
-                                    setActivePage(1);
-                                }}
-                            >
-                                {size}
-                            </Dropdown.Item>
-                        ))}
-                    </Dropdown.Menu>
-                </Dropdown>
-                {totalPages > 10 && (
-                    <Form onSubmit={handleJumpPage} className="d-flex align-items-center action-gap">
-                        <Form.Label className="mb-0 mr-2">Jump to page:</Form.Label>
-                        <InputGroup style={{ width: "160px" }}>
-                            <Form.Control
-                                type="number"
-                                min="1"
-                                max={totalPages}
-                                value={jumpPage}
-                                onChange={(e) => setJumpPage(e.target.value)}
-                                placeholder={`1 - ${totalPages}`}
-                            />
-                            <Button type="submit" variant="primary" disabled={!jumpPage}>
-                                Go
-                            </Button>
-                        </InputGroup>
-                    </Form>
-                )}
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>{leftToolbar}</div>
+                <div className="d-flex align-items-center flex-wrap gap-2">
+                    {totalPages > 10 && (
+                        <Form onSubmit={handleJumpPage} className="d-flex align-items-center action-gap">
+                            <Form.Label className="mb-0 mr-2">Jump to page:</Form.Label>
+                            <InputGroup style={{ width: "160px" }}>
+                                <Form.Control
+                                    type="number"
+                                    min="1"
+                                    max={totalPages}
+                                    value={jumpPage}
+                                    onChange={(e) => setJumpPage(e.target.value)}
+                                    placeholder={`1 - ${totalPages}`}
+                                />
+                                <Button type="submit" variant="primary" disabled={!jumpPage}>
+                                    Go
+                                </Button>
+                            </InputGroup>
+                        </Form>
+                    )}
+                    <Dropdown>
+                        <Dropdown.Toggle variant="primary">
+                            Items per page: {itemsPerPage}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            {[10, 25, 50].map((size) => (
+                                <Dropdown.Item
+                                    key={size}
+                                    onClick={() => {
+                                        setItemsPerPage(size);
+                                        setActivePage(1);
+                                    }}
+                                >
+                                    {size}
+                                </Dropdown.Item>
+                            ))}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </div>
             </div>
 
             <Table striped bordered hover responsive>
@@ -183,7 +188,9 @@ const PaginatedSortableTable = ({
                 </thead>
                 <tbody>
                     {filteredData.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
+                        <tr key={rowIndex}
+                            onClick={onRowClick ? () => onRowClick(row) : undefined}
+                            style={onRowClick ? { cursor: "pointer" } : undefined}>
                             {columns.map((col, colIndex) => (
                                 <td key={colIndex} style={{wordBreak: col.key === "event" ? "break-all" : "normal"}}>
                                     {col.render ? col.render(row[col.key], row) : row[col.key] ?? ""}
