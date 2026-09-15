@@ -6,6 +6,9 @@
 !*.env.example
 apps/backend/backend/app/.env
 apps/backend/database/*.env
+# npm auth (may contain a registry token)
+.npmrc
+**/.npmrc
 
 # ── Python (backend) ──────────────────────────────────────────────────────
 __pycache__/

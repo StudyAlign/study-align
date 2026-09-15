@@ -21,6 +21,7 @@
     "dev": "webpack --watch",
     "build": "webpack && npm run build:types",
     "build:types": "tsc -p tsconfig.types.json",
+    "prepublishOnly": "npm run build",
     "start:dev": "webpack serve"
   },
   "keywords": [
