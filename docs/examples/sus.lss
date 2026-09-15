@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+ <LimeSurveyDocType>Survey</LimeSurveyDocType>
+ <DBVersion>641</DBVersion>
+ <languages>
+  <language>en</language>
+ </languages>
+ <groups>
+  <fields>
+   <fieldname>gid</fieldname>
+   <fieldname>sid</fieldname>
+   <fieldname>group_order</fieldname>
+   <fieldname>randomization_group</fieldname>
+   <fieldname>grelevance</fieldname>
+  </fields>
+  <rows>
+   <row><gid><![CDATA[1]]></gid><sid><![CDATA[736100]]></sid><group_order><![CDATA[0]]></group_order><randomization_group><![CDATA[]]></randomization_group><grelevance><![CDATA[]]></grelevance></row>
+  </rows>
+ </groups>
+ <group_l10ns>
+  <fields>
+   <fieldname>id</fieldname>
+   <fieldname>gid</fieldname>
+   <fieldname>group_name</fieldname>
+   <fieldname>description</fieldname>
+   <fieldname>language</fieldname>
+  </fields>
+  <rows>
+   <row><id><![CDATA[1]]></id><gid><![CDATA[1]]></gid><group_name><![CDATA[System Usability Scale]]></group_name><description><![CDATA[]]></description><language><![CDATA[en]]></language></row>
+  </rows>
+ </group_l10ns>
+ <questions>
+  <fields>
+   <fieldname>qid</fieldname>
+   <fieldname>parent_qid</fieldname>
+   <fieldname>sid</fieldname>
+   <fieldname>gid</fieldname>
+   <fieldname>type</fieldname>
+   <fieldname>title</fieldname>
+   <fieldname>preg</fieldname>
+   <fieldname>other</fieldname>
+   <fieldname>mandatory</fieldname>
+   <fieldname>encrypted</fieldname>
+   <fieldname>question_order</fieldname>
+   <fieldname>scale_id</fieldname>
+   <fieldname>same_default</fieldname>
+   <fieldname>relevance</fieldname>
+   <fieldname>question_theme_name</fieldname>
+   <fieldname>same_script</fieldname>
+  </fields>
+  <rows>
+   <row><qid><![CDATA[1]]></qid><parent_qid><![CDATA[0]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[F]]></type><title><![CDATA[SUS]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[Y]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[1]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[array]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[12]]></qid><parent_qid><![CDATA[0]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[S]]></type><title><![CDATA[SALID]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[N]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[2]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[shortfreetext]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[13]]></qid><parent_qid><![CDATA[0]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[S]]></type><title><![CDATA[SALTOKEN]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[N]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[3]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[shortfreetext]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+  </rows>
+ </questions>
+ <subquestions>
+  <fields>
+   <fieldname>qid</fieldname>
+   <fieldname>parent_qid</fieldname>
+   <fieldname>sid</fieldname>
+   <fieldname>gid</fieldname>
+   <fieldname>type</fieldname>
+   <fieldname>title</fieldname>
+   <fieldname>preg</fieldname>
+   <fieldname>other</fieldname>
+   <fieldname>mandatory</fieldname>
+   <fieldname>encrypted</fieldname>
+   <fieldname>question_order</fieldname>
+   <fieldname>scale_id</fieldname>
+   <fieldname>same_default</fieldname>
+   <fieldname>relevance</fieldname>
+   <fieldname>question_theme_name</fieldname>
+   <fieldname>same_script</fieldname>
+  </fields>
+  <rows>
+   <row><qid><![CDATA[2]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS01]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[1]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[3]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS02]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[2]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[4]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS03]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[3]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[5]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS04]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[4]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[6]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS05]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[5]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[7]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS06]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[6]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[8]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS07]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[7]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[9]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS08]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[8]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[10]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS09]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[9]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+   <row><qid><![CDATA[11]]></qid><parent_qid><![CDATA[1]]></parent_qid><sid><![CDATA[736100]]></sid><gid><![CDATA[1]]></gid><type><![CDATA[]]></type><title><![CDATA[SUS10]]></title><preg><![CDATA[]]></preg><other><![CDATA[N]]></other><mandatory><![CDATA[]]></mandatory><encrypted><![CDATA[N]]></encrypted><question_order><![CDATA[10]]></question_order><scale_id><![CDATA[0]]></scale_id><same_default><![CDATA[0]]></same_default><relevance><![CDATA[1]]></relevance><question_theme_name><![CDATA[]]></question_theme_name><same_script><![CDATA[0]]></same_script></row>
+  </rows>
+ </subquestions>
+ <question_l10ns>
+  <fields>
+   <fieldname>id</fieldname>
+   <fieldname>qid</fieldname>
+   <fieldname>question</fieldname>
+   <fieldname>help</fieldname>
+   <fieldname>script</fieldname>
+   <fieldname>language</fieldname>
+  </fields>
+  <rows>
+   <row><id><![CDATA[1]]></id><qid><![CDATA[1]]></qid><question><![CDATA[<p>For each statement, mark the response that best describes your reaction to the system.</p>]]></question><help><![CDATA[1 = Strongly disagree, 5 = Strongly agree]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[2]]></id><qid><![CDATA[2]]></qid><question><![CDATA[I think that I would like to use this system frequently.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[3]]></id><qid><![CDATA[3]]></qid><question><![CDATA[I found the system unnecessarily complex.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[4]]></id><qid><![CDATA[4]]></qid><question><![CDATA[I thought the system was easy to use.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[5]]></id><qid><![CDATA[5]]></qid><question><![CDATA[I think that I would need the support of a technical person to be able to use this system.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[6]]></id><qid><![CDATA[6]]></qid><question><![CDATA[I found the various functions in this system were well integrated.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[7]]></id><qid><![CDATA[7]]></qid><question><![CDATA[I thought there was too much inconsistency in this system.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[8]]></id><qid><![CDATA[8]]></qid><question><![CDATA[I would imagine that most people would learn to use this system very quickly.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[9]]></id><qid><![CDATA[9]]></qid><question><![CDATA[I found the system very cumbersome to use.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[10]]></id><qid><![CDATA[10]]></qid><question><![CDATA[I felt very confident using the system.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[11]]></id><qid><![CDATA[11]]></qid><question><![CDATA[I needed to learn a lot of things before I could get going with this system.]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[12]]></id><qid><![CDATA[12]]></qid><question><![CDATA[Study ID (set automatically by StudyAlign)]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[13]]></id><qid><![CDATA[13]]></qid><question><![CDATA[Participant token (set automatically by StudyAlign)]]></question><help><![CDATA[]]></help><script><![CDATA[]]></script><language><![CDATA[en]]></language></row>
+  </rows>
+ </question_l10ns>
+ <answers>
+  <fields>
+   <fieldname>aid</fieldname>
+   <fieldname>qid</fieldname>
+   <fieldname>code</fieldname>
+   <fieldname>sortorder</fieldname>
+   <fieldname>assessment_value</fieldname>
+   <fieldname>scale_id</fieldname>
+  </fields>
+  <rows>
+   <row><aid><![CDATA[1]]></aid><qid><![CDATA[1]]></qid><code><![CDATA[1]]></code><sortorder><![CDATA[1]]></sortorder><assessment_value><![CDATA[1]]></assessment_value><scale_id><![CDATA[0]]></scale_id></row>
+   <row><aid><![CDATA[2]]></aid><qid><![CDATA[1]]></qid><code><![CDATA[2]]></code><sortorder><![CDATA[2]]></sortorder><assessment_value><![CDATA[2]]></assessment_value><scale_id><![CDATA[0]]></scale_id></row>
+   <row><aid><![CDATA[3]]></aid><qid><![CDATA[1]]></qid><code><![CDATA[3]]></code><sortorder><![CDATA[3]]></sortorder><assessment_value><![CDATA[3]]></assessment_value><scale_id><![CDATA[0]]></scale_id></row>
+   <row><aid><![CDATA[4]]></aid><qid><![CDATA[1]]></qid><code><![CDATA[4]]></code><sortorder><![CDATA[4]]></sortorder><assessment_value><![CDATA[4]]></assessment_value><scale_id><![CDATA[0]]></scale_id></row>
+   <row><aid><![CDATA[5]]></aid><qid><![CDATA[1]]></qid><code><![CDATA[5]]></code><sortorder><![CDATA[5]]></sortorder><assessment_value><![CDATA[5]]></assessment_value><scale_id><![CDATA[0]]></scale_id></row>
+  </rows>
+ </answers>
+ <answer_l10ns>
+  <fields>
+   <fieldname>id</fieldname>
+   <fieldname>aid</fieldname>
+   <fieldname>answer</fieldname>
+   <fieldname>language</fieldname>
+  </fields>
+  <rows>
+   <row><id><![CDATA[1]]></id><aid><![CDATA[1]]></aid><answer><![CDATA[Strongly disagree]]></answer><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[2]]></id><aid><![CDATA[2]]></aid><answer><![CDATA[Disagree]]></answer><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[3]]></id><aid><![CDATA[3]]></aid><answer><![CDATA[Neither agree nor disagree]]></answer><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[4]]></id><aid><![CDATA[4]]></aid><answer><![CDATA[Agree]]></answer><language><![CDATA[en]]></language></row>
+   <row><id><![CDATA[5]]></id><aid><![CDATA[5]]></aid><answer><![CDATA[Strongly agree]]></answer><language><![CDATA[en]]></language></row>
+  </rows>
+ </answer_l10ns>
+ <question_attributes>
+  <fields>
+   <fieldname>qid</fieldname>
+   <fieldname>attribute</fieldname>
+   <fieldname>value</fieldname>
+  </fields>
+  <rows>
+   <row><qid><![CDATA[12]]></qid><attribute><![CDATA[hidden]]></attribute><value><![CDATA[1]]></value></row>
+   <row><qid><![CDATA[13]]></qid><attribute><![CDATA[hidden]]></attribute><value><![CDATA[1]]></value></row>
+  </rows>
+ </question_attributes>
+ <survey_url_parameters>
+  <fields>
+   <fieldname>sid</fieldname>
+   <fieldname>parameter</fieldname>
+   <fieldname>targetqid</fieldname>
+  </fields>
+  <rows>
+   <row><sid><![CDATA[736100]]></sid><parameter><![CDATA[SAL_ID]]></parameter><targetqid><![CDATA[12]]></targetqid></row>
+   <row><sid><![CDATA[736100]]></sid><parameter><![CDATA[SAL_TOKEN]]></parameter><targetqid><![CDATA[13]]></targetqid></row>
+  </rows>
+ </survey_url_parameters>
+ <surveys>
+  <fields>
+   <fieldname>sid</fieldname>
+   <fieldname>admin</fieldname>
+   <fieldname>active</fieldname>
+   <fieldname>anonymized</fieldname>
+   <fieldname>format</fieldname>
+   <fieldname>language</fieldname>
+   <fieldname>additional_languages</fieldname>
+   <fieldname>datestamp</fieldname>
+   <fieldname>usecookie</fieldname>
+   <fieldname>allowregister</fieldname>
+   <fieldname>allowsave</fieldname>
+   <fieldname>autonumber_start</fieldname>
+   <fieldname>autoredirect</fieldname>
+   <fieldname>allowprev</fieldname>
+   <fieldname>printanswers</fieldname>
+   <fieldname>publicstatistics</fieldname>
+   <fieldname>publicgraphs</fieldname>
+   <fieldname>listpublic</fieldname>
+   <fieldname>htmlemail</fieldname>
+   <fieldname>sendconfirmation</fieldname>
+   <fieldname>tokenlength</fieldname>
+   <fieldname>showxquestions</fieldname>
+   <fieldname>showgroupinfo</fieldname>
+   <fieldname>shownoanswer</fieldname>
+   <fieldname>showqnumcode</fieldname>
+   <fieldname>showwelcome</fieldname>
+   <fieldname>showprogress</fieldname>
+   <fieldname>questionindex</fieldname>
+   <fieldname>navigationdelay</fieldname>
+   <fieldname>nokeyboard</fieldname>
+   <fieldname>alloweditaftercompletion</fieldname>
+  </fields>
+  <rows>
+   <row>
+    <sid><![CDATA[736100]]></sid><admin><![CDATA[Administrator]]></admin><active><![CDATA[N]]></active><anonymized><![CDATA[Y]]></anonymized>
+    <format><![CDATA[A]]></format><language><![CDATA[en]]></language><additional_languages><![CDATA[]]></additional_languages>
+    <datestamp><![CDATA[N]]></datestamp><usecookie><![CDATA[N]]></usecookie><allowregister><![CDATA[N]]></allowregister>
+    <allowsave><![CDATA[Y]]></allowsave><autonumber_start><![CDATA[0]]></autonumber_start><autoredirect><![CDATA[N]]></autoredirect>
+    <allowprev><![CDATA[N]]></allowprev><printanswers><![CDATA[N]]></printanswers><publicstatistics><![CDATA[N]]></publicstatistics>
+    <publicgraphs><![CDATA[N]]></publicgraphs><listpublic><![CDATA[N]]></listpublic><htmlemail><![CDATA[Y]]></htmlemail>
+    <sendconfirmation><![CDATA[Y]]></sendconfirmation><tokenlength><![CDATA[15]]></tokenlength><showxquestions><![CDATA[Y]]></showxquestions>
+    <showgroupinfo><![CDATA[B]]></showgroupinfo><shownoanswer><![CDATA[Y]]></shownoanswer><showqnumcode><![CDATA[X]]></showqnumcode>
+    <showwelcome><![CDATA[Y]]></showwelcome><showprogress><![CDATA[Y]]></showprogress><questionindex><![CDATA[0]]></questionindex>
+    <navigationdelay><![CDATA[0]]></navigationdelay><nokeyboard><![CDATA[N]]></nokeyboard><alloweditaftercompletion><![CDATA[N]]></alloweditaftercompletion>
+   </row>
+  </rows>
+ </surveys>
+ <surveys_languagesettings>
+  <fields>
+   <fieldname>surveyls_survey_id</fieldname>
+   <fieldname>surveyls_language</fieldname>
+   <fieldname>surveyls_title</fieldname>
+   <fieldname>surveyls_description</fieldname>
+   <fieldname>surveyls_welcometext</fieldname>
+   <fieldname>surveyls_endtext</fieldname>
+   <fieldname>surveyls_url</fieldname>
+   <fieldname>surveyls_urldescription</fieldname>
+   <fieldname>surveyls_dateformat</fieldname>
+   <fieldname>surveyls_numberformat</fieldname>
+  </fields>
+  <rows>
+   <row>
+    <surveyls_survey_id><![CDATA[736100]]></surveyls_survey_id><surveyls_language><![CDATA[en]]></surveyls_language>
+    <surveyls_title><![CDATA[System Usability Scale (SUS)]]></surveyls_title>
+    <surveyls_description><![CDATA[<p>The System Usability Scale (Brooke, 1996): ten statements rated 1&ndash;5 (strongly disagree &ndash; strongly agree). Wired for StudyAlign: two hidden fields capture the study id and participant token, and the end URL returns the participant to StudyAlign.</p>]]></surveyls_description>
+    <surveyls_welcometext><![CDATA[<p>Please rate your experience with the system you just used.</p>]]></surveyls_welcometext>
+    <surveyls_endtext><![CDATA[<p>Please click on the following link</p>]]></surveyls_endtext>
+    <surveyls_url><![CDATA[http://localhost:8000/{PASSTHRU:SAL_ID}/proceed/{PASSTHRU:SAL_TOKEN}]]></surveyls_url>
+    <surveyls_urldescription><![CDATA[Continue the study]]></surveyls_urldescription>
+    <surveyls_dateformat><![CDATA[1]]></surveyls_dateformat><surveyls_numberformat><![CDATA[0]]></surveyls_numberformat>
+   </row>
+  </rows>
+ </surveys_languagesettings>
+</document>
