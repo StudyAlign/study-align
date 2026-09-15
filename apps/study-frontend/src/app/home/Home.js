@@ -8,7 +8,7 @@ export default function Home() {
             <Container>
                 <Row>
                     <Col lg={{ span: 8, offset: 2 }} md={{ span: 10, offset: 1 }} xs={12}>
-                        <img className={"logo home"} src={process.env.PUBLIC_URL + '/hciai-ubt-combination-rgb-white-dense.png'} />
+                        <img className={"logo home"} alt="StudyAlign" src={process.env.PUBLIC_URL + '/studyalign-logo.png'} />
                     </Col>
                 </Row>
             </Container>

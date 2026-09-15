@@ -36,7 +36,7 @@ export default function Topbar() {
             <img
                 className="logo"
                 alt="StudyAlign"
-                src={process.env.PUBLIC_URL + '/hciai-ubt-combination-rgb-white-dense.png'}
+                src={process.env.PUBLIC_URL + '/studyalign-logo.png'}
             />
         );
     }
