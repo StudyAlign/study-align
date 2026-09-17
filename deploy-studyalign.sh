@@ -49,7 +49,7 @@ fi
 # --- confirm the API actually serves, through the container ------------------
 log "checking the backend responds"
 for _ in $(seq 1 10); do
-    if docker compose exec -T backend python -c \
+    if docker compose exec -T study_align_backend python -c \
             "import urllib.request,sys; sys.exit(0 if b'true' in urllib.request.urlopen('http://127.0.0.1/health').read() else 1)" \
             2>/dev/null; then
         docker image prune -f >/dev/null || true

@@ -8,13 +8,13 @@
 # Admin app
 app.studyalign.com {
     encode zstd gzip
-    reverse_proxy admin-frontend:80
+    reverse_proxy study_align_admin_frontend:80
 }
 
 # Study (participant) app
 studies.studyalign.com {
     encode zstd gzip
-    reverse_proxy study-frontend:80
+    reverse_proxy study_align_study_frontend:80
 }
 
 # Backend API
@@ -27,7 +27,7 @@ backend.studyalign.com {
         max_size 30MB
     }
 
-    reverse_proxy backend:80
+    reverse_proxy study_align_backend:80
 }
 
 # LimeSurvey (surveys). The study frontend embeds surveys in an <iframe>, so the
@@ -46,5 +46,5 @@ surveys.studyalign.com {
         Content-Security-Policy "frame-ancestors 'self' https://studies.studyalign.com https://app.studyalign.com"
     }
 
-    reverse_proxy limesurvey:80
+    reverse_proxy study_align_limesurvey:80
 }

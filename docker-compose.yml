@@ -7,8 +7,8 @@
 #      docker compose up            # db + backend + both frontends
 #      docker compose --profile limesurvey up   # ...also LimeSurvey
 #
-#  Ports (host):  backend 8000 · admin-frontend 3000 · study-frontend 3366
-#                 postgres 5433 · limesurvey 8082
+#  Ports (host):  study_align_backend 8000 · study_align_admin_frontend 3000
+#                 study_align_study_frontend 3366 · postgres 5433 · limesurvey 8082
 # ─────────────────────────────────────────────────────────────────────────
 
 name: studyalign
@@ -38,7 +38,7 @@ services:
       - database-data:/var/lib/postgresql/data/
     networks: [internal]
 
-  backend:
+  study_align_backend:
     build:
       context: ./apps/backend/backend
     image: studyalign-backend
@@ -55,7 +55,7 @@ services:
     depends_on: [database]
     networks: [internal, edge]
 
-  admin-frontend:
+  study_align_admin_frontend:
     image: node:18-alpine
     working_dir: /repo                            # workspace root (npm workspaces)
     environment:
@@ -73,10 +73,10 @@ services:
     volumes:
       - .:/repo                                   # whole repo (workspaces resolve siblings)
       - admin-node-modules:/repo/node_modules     # hoisted deps, persisted across up/down
-    depends_on: [backend]
+    depends_on: [study_align_backend]
     networks: [edge]
 
-  study-frontend:
+  study_align_study_frontend:
     image: node:18-alpine
     working_dir: /repo                            # workspace root (npm workspaces)
     environment:
@@ -93,7 +93,7 @@ services:
     volumes:
       - .:/repo                                   # whole repo (workspaces resolve siblings)
       - study-node-modules:/repo/node_modules     # hoisted deps, persisted across up/down
-    depends_on: [backend]
+    depends_on: [study_align_backend]
     networks: [edge]
 
   # ── Optional: LimeSurvey (third-party). Start with --profile limesurvey ──
@@ -116,7 +116,7 @@ services:
       retries: 10
     networks: [internal]
 
-  limesurvey:
+  study_align_limesurvey:
     profiles: ["limesurvey"]
     # 7.0.15-260910 ships a broken survey editor (its /editor/index.html
     # references build assets that aren't in the image -> 404s). 7.0.13 is the

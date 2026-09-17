@@ -9,9 +9,9 @@
 #      COMPOSE_FILE=docker-compose.prod.yml
 #
 #  Subdomains (via deploy/Caddyfile.example):
-#      app.studyalign.com      -> admin-frontend
-#      studies.studyalign.com  -> study-frontend
-#      backend.studyalign.com  -> backend
+#      app.studyalign.com      -> study_align_admin_frontend
+#      studies.studyalign.com  -> study_align_study_frontend
+#      backend.studyalign.com  -> study_align_backend
 # ─────────────────────────────────────────────────────────────────────────
 
 name: studyalign
@@ -46,7 +46,7 @@ services:
       retries: 10
     networks: [default]
 
-  backend:
+  study_align_backend:
     build:
       context: ./apps/backend/backend
     image: studyalign-backend
@@ -64,9 +64,9 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    networks: [default, web]   # web: reached by Caddy as http://backend
+    networks: [default, web]   # web: reached by Caddy as http://study_align_backend
 
-  admin-frontend:
+  study_align_admin_frontend:
     build:
       context: .
       dockerfile: deploy/admin-frontend.Dockerfile
@@ -82,7 +82,7 @@ services:
       retries: 6
     networks: [web]
 
-  study-frontend:
+  study_align_study_frontend:
     build:
       context: .
       dockerfile: deploy/study-frontend.Dockerfile
@@ -117,7 +117,7 @@ services:
       retries: 10
     networks: [default]
 
-  limesurvey:
+  study_align_limesurvey:
     # 7.0.15-260910 ships a broken survey editor (its /editor/index.html
     # references build assets that aren't in the image -> 404s). 7.0.13 is the
     # latest tag with a self-consistent editor build. Re-check newer tags later.
@@ -147,4 +147,4 @@ services:
     depends_on:
       limesurvey-mysql:
         condition: service_healthy
-    networks: [default, web]   # web: reached by Caddy as http://limesurvey
+    networks: [default, web]   # web: reached by Caddy as http://study_align_limesurvey

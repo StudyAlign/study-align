@@ -34,7 +34,7 @@ cp .env.example .env         # then edit: set SECRET_KEY, API_ADMIN_KEY, DB cred
 docker compose up            # database + backend + both frontends
 
 # initialise the database (first run only)
-docker compose exec backend python /app/init_db.py
+docker compose exec study_align_backend python /app/init_db.py
 
 # optional: bring up LimeSurvey too
 docker compose --profile limesurvey up
