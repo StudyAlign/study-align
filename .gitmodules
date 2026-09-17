@@ -1,0 +1,3 @@
+[submodule "docs/app-examples"]
+	path = docs/app-examples
+	url = git@github.com:StudyAlign/app-examples.git
