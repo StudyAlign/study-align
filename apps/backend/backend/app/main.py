@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 from decouple import config
 import logging
 
@@ -12,7 +15,37 @@ logger = logging.getLogger('studyalign')
 
 API_PREFIX = "/api/v1"
 
-app = FastAPI(title="study-align-api", version="1")
+# Default docs are disabled so they can be re-served below with the orb favicon.
+app = FastAPI(title="study-align-api", version="1", docs_url=None, redoc_url=None)
+
+# Static assets (favicon lives here). Directory is relative to the app's CWD
+# (/app), where static/orb.svg is shipped.
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+FAVICON_PATH = "static/orb.svg"
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return FileResponse(FAVICON_PATH, media_type="image/svg+xml")
+
+
+@app.get("/docs", include_in_schema=False)
+def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title=app.title + " - Swagger UI",
+        swagger_favicon_url="/static/orb.svg",
+    )
+
+
+@app.get("/redoc", include_in_schema=False)
+def custom_redoc_html():
+    return get_redoc_html(
+        openapi_url=app.openapi_url,
+        title=app.title + " - ReDoc",
+        redoc_favicon_url="/static/orb.svg",
+    )
 
 # Allowed CORS origins from .env: comma-separated EXACT origins (scheme + host
 # [+ port]), e.g. "https://app.studyalign.com,https://studies.studyalign.com".
