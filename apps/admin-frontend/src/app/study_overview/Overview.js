@@ -22,7 +22,7 @@ export default function Overview(props) {
     const handleCopy = () => {
         navigator.clipboard.writeText(collab_url);
         setIsClicked(true);
-        setTimeout(() => setIsClicked(false), 500);
+        setTimeout(() => setIsClicked(false), 1500);
     };
 
     const getStatus = () => {
@@ -79,9 +79,11 @@ export default function Overview(props) {
                             <button
                                 onClick={handleCopy}
                                 className={`copy-button ${isClicked ? "clicked" : ""}`}
+                                title="Copy invite link"
                             >
                                 <Copy size={10} />
                             </button>
+                            {isClicked && <span className="ms-2 small text-success">Copied to clipboard!</span>}
                         </td>
                     </tr>
                 </tbody>
