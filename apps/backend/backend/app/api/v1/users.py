@@ -83,8 +83,14 @@ async def read_user(user_id: int, db: Session = Depends(get_db)):
 
 
 UserIdCheck = Depends(UserIdRoleCheck())
-@router.patch("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(methods.userAccessTokenValidator)])
-async def update_user(user_id: int = UserIdCheck, user: schema.user.UserUpdate = None, db: Session = Depends(get_db)):
+@router.patch("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_user(user_id: int = UserIdCheck, user: schema.user.UserUpdate = None,
+                      current_user = Depends(methods.userAccessTokenValidator), db: Session = Depends(get_db)):
+    # Users must not be able to deactivate their own account: an admin could
+    # otherwise lock themselves — and potentially everyone — out. `is False`
+    # distinguishes an explicit deactivation from the field being omitted (None).
+    if user is not None and user.is_active is False and current_user is not None and current_user.id == user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You cannot deactivate your own account.")
     if user.password:
         user.password = get_password_hash(user.password)
     user_update = methods.patch(db, model.User, user, user_id)
