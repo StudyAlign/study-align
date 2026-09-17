@@ -4,7 +4,7 @@
 # neither. Safe to run by hand too. Expect a few seconds of downtime on restart.
 set -Eeuo pipefail
 
-REPO=/opt/studyalign
+REPO=/opt/studyalign/study-align
 BRANCH=main
 HEALTH_TIMEOUT=300
 LOCK_FILE=/tmp/deploy-studyalign.lock
