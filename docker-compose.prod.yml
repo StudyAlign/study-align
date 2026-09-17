@@ -118,7 +118,10 @@ services:
     networks: [default]
 
   limesurvey:
-    image: martialblog/limesurvey:7.0.15-260910-apache
+    # 7.0.15-260910 ships a broken survey editor (its /editor/index.html
+    # references build assets that aren't in the image -> 404s). 7.0.13 is the
+    # latest tag with a self-consistent editor build. Re-check newer tags later.
+    image: martialblog/limesurvey:7.0.13-260903-apache
     restart: unless-stopped
     environment:
       DB_TYPE: mysql
