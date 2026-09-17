@@ -44,6 +44,8 @@
 }
 
 .button-icon {
-    margin-top: -0.15rem;
+    /* Align the inline SVG icon with the button text instead of sitting on the
+       text baseline (which makes it appear to drop below the label). */
+    vertical-align: -0.125em;
     margin-right: 0.5rem;
 }

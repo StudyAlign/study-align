@@ -316,7 +316,7 @@ export default function StudyOverviewLayout() {
     return (
         <>
             <Topbar/>
-            <SidebarLayout fullWidth={page === 'overview'}>
+            <SidebarLayout fullWidth={page === 'overview' || page === 'data'}>
                 <Row className="align-items-center">
                     <Col>
                         <h3><Badge bg="secondary">#{study_id}</Badge> {study.name}</h3>
