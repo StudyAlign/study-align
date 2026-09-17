@@ -85,11 +85,14 @@ The Library is the counterpart to the Backend's API and is used in the prototype
     - implement a useLogger hook to define the events
     - call the useLogger hook in your App.js and make it available to all components through a LoggerContext
     - in child components, get the logger through the LoggerContext and log the events
-    - **see the [react-example](/react-example) directory for an example implementation**
+    - **see `apps/react-app` in the [app-examples](app-examples) submodule for a React example**
   - into your vanilla JavaScript projects
     - integrate the bundled library
     - bind events to UI elements
-    - **see the [basic-example](/basic-example) directory for an example implementation**
+    - **see `apps/vanilla-app` in the [app-examples](app-examples) submodule for a vanilla JavaScript example**
+
+  The example prototypes live in a submodule. Fetch them with
+  `git submodule update --init docs/app-examples`.
 - Create an online study
 - Integrate questionnaires from external services (e.g. Qualtrics)
 - Share links with participants
@@ -99,7 +102,7 @@ The Library is the counterpart to the Backend's API and is used in the prototype
 
 We have generated study schemas you can import into StudyAlign, for example, within and between subject designs.
 
-See the schema-examples directory to find the JSON files.
+See the [examples](examples) directory for the JSON study schemas, along with ready-to-import LimeSurvey questionnaires (`nasa-tlx.lss`, `sus.lss`).
 
 
 ## Philosophy

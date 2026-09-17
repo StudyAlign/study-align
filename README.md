@@ -1,30 +1,32 @@
 # StudyAlign
 
-Monorepo for the **StudyAlign** platform — a system for building, running, and
-logging online HCI/AI user studies. Consolidated from five separate GitLab
-repositories into one repo with full history preserved.
+Monorepo for the StudyAlign platform, a system for building, running, and
+logging online HCI/AI user studies. It was consolidated from five separate
+GitLab repositories into one repo, with full history preserved.
 
 ## Repository layout
 
 ```
 study-align/
 ├── apps/
-│   ├── backend/           FastAPI + SQLAlchemy + Postgres API (app in backend/app)
-│   ├── admin-frontend/    React admin UI — design & manage studies
-│   └── study-frontend/    React participant UI — run the study
+│   ├── backend/            FastAPI + SQLAlchemy + Postgres API (app in backend/app)
+│   ├── admin-frontend/     React admin UI for designing and managing studies
+│   └── study-frontend/     React participant UI that runs the study
 ├── libs/
-│   └── study-align-lib/   TypeScript client library (interaction logging)
-├── docs/                  Documentation + integration examples
-├── compose.yaml           One dev stack for the whole system
-└── .env.example           Environment template (copy to .env)
+│   └── study-align-lib/    TypeScript client library for interaction logging
+├── docs/                   Documentation, study and questionnaire examples, and
+│                           the app-examples submodule (demo prototypes)
+├── docker-compose.yml      Dev stack for the whole system
+├── docker-compose.prod.yml Production stack (served behind Caddy)
+└── .env.example            Environment template (copy to .env)
 ```
 
 | Component | Stack | Dev port |
 |-----------|-------|----------|
 | backend | FastAPI, SQLAlchemy, Alembic, Postgres | 8000 |
-| admin-frontend | React 17, Redux Toolkit, react-router 6, Bootstrap 5 | 3000 |
-| study-frontend | React 17, Redux Toolkit, react-router 5, Bootstrap 4 | 3366 |
-| study-align-lib | TypeScript, webpack | — |
+| admin-frontend | React 19, Redux Toolkit, react-router 6, Bootstrap 5 | 3000 |
+| study-frontend | React 19, Redux Toolkit, react-router 6, Bootstrap 5 | 3366 |
+| study-align-lib | TypeScript, webpack | n/a |
 | LimeSurvey (optional) | third-party, MariaDB | 8082 |
 
 ## Quick start
@@ -40,18 +42,33 @@ docker compose exec study_align_backend python /app/init_db.py
 docker compose --profile limesurvey up
 ```
 
-- Backend API + docs: http://localhost:8000/docs
+- Backend API and docs: http://localhost:8000/docs
 - Admin frontend: http://localhost:3000
 - Study frontend: http://localhost:3366
+
+The compose services are named `study_align_backend`,
+`study_align_admin_frontend`, `study_align_study_frontend`, and, under the
+`limesurvey` profile, `study_align_limesurvey`. In production
+(`docker-compose.prod.yml`) LimeSurvey runs by default, without the profile.
+
+## Example prototypes (submodule)
+
+The instrumented demo prototypes live in a submodule at `docs/app-examples`
+(https://github.com/StudyAlign/app-examples). It contains a React and a vanilla
+JavaScript app, each wiring `study-align-lib` into a small editor. Fetch it with:
+
+```bash
+git submodule update --init docs/app-examples
+```
 
 ## Notes
 
 - Secrets live only in `.env` (gitignored). Never commit real keys. Generate
-  with `openssl rand -hex 32`.
-- The backend application code lives at `apps/backend/backend/app` (the extra
+  them with `openssl rand -hex 32`.
+- The backend application code lives at `apps/backend/backend/app`. The extra
   `backend/` level is preserved from the original repo and can be flattened
-  later in a dedicated commit).
-- History for every component predates this monorepo — use
+  later in a dedicated commit.
+- History for every component predates this monorepo. Use
   `git log --follow <path>` to trace a file across the consolidation.
 
 ## History
