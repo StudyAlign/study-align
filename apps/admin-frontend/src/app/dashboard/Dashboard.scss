@@ -194,14 +194,31 @@
     display: flex;
     gap: 10px;
 }
-/* Study status pills: Setup (purple), Start soon (orange).
-   !important overrides react-bootstrap's default .bg-primary utility. */
+/* Study status pills — a muted, cohesive "high-grade" palette (deeper, less
+   saturated than the bootstrap defaults). !important overrides react-bootstrap's
+   default .badge / .bg-* utilities. */
+.status-pill.status-running {
+    background-color: #2a875f !important;    // emerald
+    color: #fff !important;
+}
+
 .status-pill.status-setup {
-    background-color: #7c3aed !important;
+    background-color: #5f52c4 !important;     // indigo
     color: #fff !important;
 }
 
 .status-pill.status-start-soon {
-    background-color: #e8850c !important;
+    background-color: #bd7a24 !important;     // amber
     color: #fff !important;
+}
+
+.status-pill.status-closed {
+    background-color: #5b6472 !important;     // slate (neutral)
+    color: #fff !important;
+}
+
+/* Procedure editor: "not stored" pill — a washed-out (desaturated) orange. */
+.status-pill.status-not-stored {
+    background-color: #f0c58a !important;
+    color: #7a4a14 !important;
 }

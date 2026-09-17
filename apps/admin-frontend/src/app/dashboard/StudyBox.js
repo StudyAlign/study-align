@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import { Badge, Card } from "react-bootstrap";
 import {
     PeopleFill,
-    CalendarRangeFill
+    Calendar3
 } from "react-bootstrap-icons";
 
 import { STATES } from "../study_overview/StudyOverviewLayout";
@@ -30,9 +30,9 @@ export default function StudyBox(props) {
             if (startsInFuture) {
                 return <Badge pill className="ms-auto status-pill status-start-soon">Start soon</Badge>
             }
-            return <Badge pill bg="success" className="ms-auto status-pill">Running</Badge>
+            return <Badge pill className="ms-auto status-pill status-running">Running</Badge>
         }
-        return <Badge pill bg="secondary" className="ms-auto status-pill">Closed</Badge>
+        return <Badge pill className="ms-auto status-pill status-closed">Closed</Badge>
     }
 
     return (
@@ -44,7 +44,7 @@ export default function StudyBox(props) {
                 </Card.Title>
                 <Card.Text as="div">
                     <span className="study-info">
-                        <span className="label"><span className="icon icon-date"><CalendarRangeFill /></span> Date</span>
+                        <span className="label"><span className="icon icon-date"><Calendar3 /></span> Date</span>
                         <span className="data"> {reformatDate(study.startDate) + " – " + reformatDate(study.endDate)} </span>
                     </span>
                     <span className="study-info">
