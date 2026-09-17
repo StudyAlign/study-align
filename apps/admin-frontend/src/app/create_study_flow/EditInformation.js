@@ -33,6 +33,8 @@ export default function EditInformation(props) {
     const [amountParticipants, setAmountParticipants] = useState('')
     const [description, setDescription] = useState('')
     const [consent, setConsent] = useState('')
+    // Which field ('description' | 'consent') is awaiting overwrite confirmation.
+    const [confirmExample, setConfirmExample] = useState(null)
     const [privateStudy, setPrivateStudy] = useState(false)
     const [groupId, setGroupId] = useState('')
     const [groups, setGroups] = useState([])
@@ -103,13 +105,29 @@ export default function EditInformation(props) {
     }
 
     // Load an example HTML outline (from public/examples) into a field.
+    // True when a field holds real content (not empty / an empty Quill paragraph).
+    const hasContent = (html) =>
+        !!html && html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim().length > 0
+
+    // Insert requested: overwrite straight away when the field is empty, else ask
+    // for confirmation first (inline, see the prompt next to the label).
     const insertExample = (field) => {
+        const current = field === 'description' ? description : consent
+        if (hasContent(current)) {
+            setConfirmExample(field)
+        } else {
+            applyExample(field)
+        }
+    }
+
+    const applyExample = (field) => {
         const file = field === 'description' ? 'study-description.html' : 'study-consent.html'
         fetch(process.env.PUBLIC_URL + '/examples/' + file)
             .then((r) => r.text())
             .then((html) => {
                 if (field === 'description') setDescription(html)
                 else setConsent(html)
+                setConfirmExample(null)
             })
             .catch(() => {})
     }
@@ -229,6 +247,14 @@ export default function EditInformation(props) {
                                     Insert example
                                 </Button>
                             </Form.Label>
+                            {confirmExample === 'description' &&
+                                <div className="small d-flex flex-wrap align-items-center gap-2 mb-2" style={{ color: '#9a6b2f' }}>
+                                    <span>Inserting the example will overwrite your current description.</span>
+                                    <Button type="button" variant="link" size="sm" className="p-0" onClick={() => applyExample('description')}>Overwrite</Button>
+                                    <span className="text-muted">·</span>
+                                    <Button type="button" variant="link" size="sm" className="p-0 text-secondary" onClick={() => setConfirmExample(null)}>Keep current</Button>
+                                </div>
+                            }
                             <HtmlEditor value={description} onChange={(value) => handleDescription('description', value)}/>
                         </Form.Group>
                     </Row>
@@ -240,6 +266,14 @@ export default function EditInformation(props) {
                                     Insert example
                                 </Button>
                             </Form.Label>
+                            {confirmExample === 'consent' &&
+                                <div className="small d-flex flex-wrap align-items-center gap-2 mb-2" style={{ color: '#9a6b2f' }}>
+                                    <span>Inserting the example will overwrite your current consent.</span>
+                                    <Button type="button" variant="link" size="sm" className="p-0" onClick={() => applyExample('consent')}>Overwrite</Button>
+                                    <span className="text-muted">·</span>
+                                    <Button type="button" variant="link" size="sm" className="p-0 text-secondary" onClick={() => setConfirmExample(null)}>Keep current</Button>
+                                </div>
+                            }
                             <HtmlEditor value={consent} onChange={(value) => handleConsent('consent', value)}/>
                         </Form.Group>
                     </Row>

@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router";
-import { Container, Row, Col, Card, Button, Tabs, Tab } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Accordion } from "react-bootstrap";
+import { ArrowDown } from "react-bootstrap-icons";
 import React, { useState, useEffect } from "react";
 
 import { getTexts, selectTexts } from "../../redux/reducers/textSlice";
@@ -111,57 +112,64 @@ export default function CreateCheck(props) {
                             <Col className="mb-4">Please check your input. You cannot edit the procedure order after creating the study.</Col>
                     }
                 </Row>
-                <Row className="mt-3"> <hr /> </Row>
             </Container>
-            
+
             <Container>
-                <Tabs defaultActiveKey="details" id="study-tabs" className="mb-3">
-                    <Tab eventKey="details" title="Study Details">
-                        <Row>
-                            <Col xs={3}> <b> Name: </b> </Col>
-                            <Col> {study.name} </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={3}> <b> Private Study: </b> </Col>
-                            <Col> {study.invite_only ? "Yes" : "No"} </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={3}> <b> Start Date: </b> </Col>
-                            <Col> {reformatDate(study.startDate)} </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={3}> <b> End Date: </b> </Col>
-                            <Col> {reformatDate(study.endDate)} </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={3}> <b> Planned Participants: </b> </Col>
-                            <Col> {studySetupInfo.planned_number_participants} </Col>
-                        </Row>
-                    </Tab>
-                    <Tab eventKey="description" title="Description">
-                        <div
-                            className="description-content"
-                            dangerouslySetInnerHTML={{ __html: study.description }}>
-                        </div>
-                    </Tab>
-                    <Tab eventKey="consent" title="Consent">
-                        <div
-                            className="consent-content"
-                            dangerouslySetInnerHTML={{ __html: study.consent }}>
-                        </div>
-                    </Tab>
-                </Tabs>
+                <h4 className="mb-3">Study Details</h4>
+                <Row>
+                    <Col xs={3}> <b> Name: </b> </Col>
+                    <Col> {study.name} </Col>
+                </Row>
+                <Row>
+                    <Col xs={3}> <b> Private Study: </b> </Col>
+                    <Col> {study.invite_only ? "Yes" : "No"} </Col>
+                </Row>
+                <Row>
+                    <Col xs={3}> <b> Start Date: </b> </Col>
+                    <Col> {reformatDate(study.startDate)} </Col>
+                </Row>
+                <Row>
+                    <Col xs={3}> <b> End Date: </b> </Col>
+                    <Col> {reformatDate(study.endDate)} </Col>
+                </Row>
+                <Row>
+                    <Col xs={3}> <b> Planned Participants: </b> </Col>
+                    <Col> {studySetupInfo.planned_number_participants} </Col>
+                </Row>
 
-                <Row className="mt-3"> <hr /> </Row>
+                {/* Description & consent as open boxes, matching the study details view. */}
+                <Accordion defaultActiveKey={["description", "consent"]} alwaysOpen className="mt-4">
+                    <Accordion.Item eventKey="description">
+                        <Accordion.Header>Description</Accordion.Header>
+                        <Accordion.Body>
+                            <div
+                                className="description-content"
+                                dangerouslySetInnerHTML={{ __html: study.description }}
+                            />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                    <Accordion.Item eventKey="consent">
+                        <Accordion.Header>Consent</Accordion.Header>
+                        <Accordion.Body>
+                            <div
+                                className="consent-content"
+                                dangerouslySetInnerHTML={{ __html: study.consent }}
+                            />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Accordion>
 
-                <Row> <h4> Procedure </h4></Row>
+                <Row className="mt-4 align-items-center">
+                    <Col> <h4 className="mb-0"> Procedure </h4></Col>
+                    <Col xs="auto" className="text-muted small d-flex align-items-center gap-1">
+                        counterbalanced <ArrowDown />
+                    </Col>
+                </Row>
                 <Row>
                     <ShowProcedure procedureId={procedureConfig && procedureConfig.id} />
                 </Row>
 
-                <Row className="mt-3"> <hr /> </Row>
-
-                <Row className='mt-0' xs="auto">
+                <Row className='mt-4' xs="auto">
                     <Button size="lg" onClick={handleFinish}>Finish</Button>
                 </Row>
             </Container>
