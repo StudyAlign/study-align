@@ -732,6 +732,18 @@ class StudyAlignLib {
         return this.request(options);
     }
 
+    getInteractionTimeline(studyId: number) {
+        const options: Options = {
+            method: "GET",
+            path: "interactions/timeline",
+            headers: {},
+            params: { study_id: studyId },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
+    }
+
     getInteractionExport(studyId: number) {
         const options: Options = {
             method: "GET",

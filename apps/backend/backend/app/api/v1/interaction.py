@@ -60,6 +60,13 @@ async def read_interaction_counts(study_id: int, db: Session = Depends(get_db)):
     return interaction_count
 
 
+@router.get("/interactions/timeline", response_model=List[schema.interaction.interactions.InteractionTimelineBucket], dependencies=[Depends(methods.userAccessTokenValidator)])
+async def read_interaction_timeline(study_id: int, db: Session = Depends(get_db)):
+    study = methods.read(db, model.Study, study_id)
+    if_exists(study, "Study")
+    return methods.interaction_timeline(db, study_id)
+
+
 @router.get("/interactions/export", response_class=Response, dependencies=[Depends(methods.userAccessTokenValidator)])
 def export_interaction_data(study_id: int, db: Session = Depends(get_db)):
     study = methods.read(db, model.Study, study_id)

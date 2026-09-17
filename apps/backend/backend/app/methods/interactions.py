@@ -4,7 +4,9 @@ from typing import Union, Literal
 
 from fastapi import HTTPException
 from pydantic import BaseModel
-from sqlalchemy import exc
+from collections import defaultdict
+
+from sqlalchemy import exc, func
 from sqlalchemy.orm import Session
 
 import model
@@ -110,6 +112,36 @@ def interaction_counts(db: Session, study_id: int):
         "drag": db.query(model.DragInteraction).filter(model.DragInteraction.study_id == study_id).count(),
         "touch": db.query(model.TouchInteraction).filter(model.TouchInteraction.study_id == study_id).count()
     }
+
+
+def interaction_timeline(db: Session, study_id: int):
+    """Events logged per day across all interaction types, merged and sorted.
+
+    Buckets by calendar day (interaction `time`), summing the five interaction
+    tables. Returns a list of {"date": "YYYY-MM-DD", "count": n}.
+    """
+    buckets = defaultdict(int)
+    models = [
+        model.GenericInteraction,
+        model.MouseInteraction,
+        model.KeyboardInteraction,
+        model.DragInteraction,
+        model.TouchInteraction,
+    ]
+    for interaction_model in models:
+        rows = (
+            db.query(
+                func.date_trunc('day', interaction_model.time).label('day'),
+                func.count().label('c'),
+            )
+            .filter(interaction_model.study_id == study_id, interaction_model.time.isnot(None))
+            .group_by('day')
+            .all()
+        )
+        for day, count in rows:
+            if day is not None:
+                buckets[day.date().isoformat()] += count
+    return [{"date": day, "count": buckets[day]} for day in sorted(buckets)]
 
 
 def prepare_interaction_data(data: BaseModel, participant: schema.participant.Participant):

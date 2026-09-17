@@ -13,6 +13,11 @@ class InteractionCounts(BaseModel):
     touch: int
 
 
+class InteractionTimelineBucket(BaseModel):
+    date: str    # day, ISO format (YYYY-MM-DD)
+    count: int   # events logged that day across all interaction types
+
+
 # meta interactions do not extend CreateBase model to allow for optional condition_id
 class InteractionCreateBase(BaseModel):
     condition_id: int

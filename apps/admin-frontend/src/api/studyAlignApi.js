@@ -400,6 +400,10 @@ export function getInteractionCountsApi(args) {
     return sal.getInteractionCounts(args.studyId);
 }
 
+export function getInteractionTimelineApi(args) {
+    return sal.getInteractionTimeline(args.studyId);
+}
+
 export function getInteractionExportApi(args) {
     return sal.getInteractionExport( args.studyId );
 }
