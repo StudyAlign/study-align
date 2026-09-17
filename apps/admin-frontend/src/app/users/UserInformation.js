@@ -20,6 +20,10 @@ export default function UserInformation(props) {
 
     const auth = useAuth()
 
+    // Editing your own profile: you must not be able to deactivate yourself
+    // (an admin could otherwise lock themselves — and possibly everyone — out).
+    const isSelf = auth?.user?.id === parseInt(user_id, 10)
+
     useEffect(() => {
         dispatch(getUser(user_id))
         dispatch(getRoles())
@@ -290,8 +294,13 @@ export default function UserInformation(props) {
                                     checked={formData.is_active}
                                     onChange={handleInputChange}
                                     className="me-2"
-                                    disabled={!editable}
+                                    disabled={!editable || isSelf}
                                 />
+                                {editable && isSelf && (
+                                    <Form.Text className="text-muted">
+                                        You can't deactivate your own account.
+                                    </Form.Text>
+                                )}
                             </Col>
                         </Form.Group>
                     </Row>
