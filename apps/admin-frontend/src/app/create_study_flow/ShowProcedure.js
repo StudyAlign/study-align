@@ -405,7 +405,7 @@ export default function ShowProcedure(props) {
     )
 
     return (
-        <div className={styles.ProcedureOrder}>
+        <div className={`${styles.ProcedureOrder} ${styles.bare}`}>
             <List
                 className={styles.wrapper}
                 renderDropLine={renderDropLineElement}

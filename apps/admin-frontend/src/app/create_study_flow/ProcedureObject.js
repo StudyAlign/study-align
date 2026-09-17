@@ -780,7 +780,7 @@ const ProcedureObject = forwardRef((props, ref) => {
                 break
         }
 
-        const notStoredBadge = !stored && <Badge pill bg="secondary" className="status-pill ms-1">not stored</Badge>
+        const notStoredBadge = !stored && <Badge pill bg="secondary" className="status-pill status-not-stored ms-1">not stored</Badge>
         const updateErrorBadge = (stored && updateError) && <Badge pill bg="danger" className="status-pill ms-1">update error</Badge>
         return <>
             { header } { notStoredBadge } { updateErrorBadge }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef, createContext, useContext } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Button, Card, Col, Container, Row, Accordion, Modal, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { Trash3 } from "react-bootstrap-icons";
+import { Trash3, ArrowDown } from "react-bootstrap-icons";
 import { DragHandleComponent, List, Item } from "react-sortful";
 import { useDispatch, useSelector } from "react-redux";
 import arrayMove from "array-move";
@@ -1073,10 +1073,15 @@ export default function CreateProcedure(props) {
 
 
                     <Row className='mt-3'>
-                        <Container>
+                        <Col>
                             <Card>
-                                <Card.Header>Procedure Order</Card.Header>
-                                <Card.Body>
+                                <Card.Header className="d-flex justify-content-between align-items-center">
+                                    <span>Procedure Order</span>
+                                    <span className={styles.counterbalanceHint}>
+                                        Counterbalance <ArrowDown />
+                                    </span>
+                                </Card.Header>
+                                <Card.Body className="p-0">
                                     <div className={styles.ProcedureOrder}>
                                         <List
                                             className={styles.wrapper}
@@ -1098,11 +1103,11 @@ export default function CreateProcedure(props) {
                                     </div>
                                 </Card.Body>
                             </Card>
-                        </Container>
+                        </Col>
                     </Row>
 
                     <Row className='mt-3'>
-                        <Col> <Button onClick={handleProceed}>Save and Continue</Button> </Col>
+                        <Col> <Button onClick={handleProceed}>Continue</Button> </Col>
                     </Row>
 
                 </Container>

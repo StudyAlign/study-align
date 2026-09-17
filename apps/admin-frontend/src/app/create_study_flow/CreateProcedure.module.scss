@@ -28,19 +28,40 @@
 
 .deleteButton {
     margin-left: 10px;
-    color: rgb(85, 0, 0) !important;
+    // White trash icon on the red (danger) button for clear contrast.
+    color: #fff !important;
     align-items: center;
     justify-content: center;
 }
 
 .deleteButtonBlock {
     margin-left: 10px;
-    color: rgb(85, 0, 0) !important;
-    background: none !important;
-    border: none !important;
+    // Solid red (danger) button with a white trash icon, matching .deleteButton.
+    color: #fff !important;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+// Right-aligned hint in the Procedure Order header pointing at the
+// counterbalance checkboxes column on the right of each row.
+.counterbalanceHint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+// ShowProcedure (final check) renders the order without the editor's grey panel
+// — that page already provides its own background — and left-aligned so the
+// elements line up with the page headline instead of being centred.
+.ProcedureOrder.bare {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    justify-content: flex-start;
 }
 
 .ProcedureOrder {
@@ -51,8 +72,13 @@
     font-size: 14px;
     background-repeat: no-repeat;
     box-sizing: inherit;
-    padding: 0;
+    // Light panel filling the whole card body (Card.Body is p-0) behind the
+    // (white) procedure elements so they have contrast. Square at the top (flush
+    // under the header), rounded at the bottom to match the card's corners.
+    padding: 16px;
     margin: 0;
+    background-color: #f4f5f7;
+    border-radius: 0 0 6px 6px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -197,6 +223,11 @@
     border: 2px solid $sal-proc-block-border;
     border-radius: 3px;
     background-color: $sal-proc-block;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+/* Fade in only real blocks, not the transient drag ghost / stacked previews. */
+.block:not(.stacked):not(.ghost) {
+    animation: procedureFadeIn 220ms ease both;
 }
 .blockHeader {
     /* design to show trash button */
@@ -230,6 +261,13 @@
     line-height: 1.4;
 }
 
+/* Elements fade + slide in when added to the order. React keeps stable keys, so
+   this plays on mount only (new element / initial load), not on reorder. */
+@keyframes procedureFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 .procedureElement {
     /* ProcedureObject Design */
     display: flex;
@@ -244,6 +282,8 @@
     box-shadow: 0 1px 3px rgba(43, 41, 29, 0.08);
     padding-right: 10px;
     background-color: white;
+    animation: procedureFadeIn 220ms ease both;
+    transition: box-shadow 0.15s ease, transform 0.08s ease;
 }
 .procedureElement.ghost {
     /* Drag procedureElement */
