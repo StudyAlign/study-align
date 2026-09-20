@@ -31,6 +31,41 @@
     margin-bottom: 10px
 }
 
+.subtitle-noStudies {
+    font-size: 16px;
+    color: #5b6472;
+    max-width: min(440px, 88vw);
+    margin: 0 auto 16px;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.empty-secondary {
+    margin-top: 40px;
+}
+
+// Keep the empty state within narrow viewports (the .center box is absolutely
+// centered, so cap its width and add a side gutter on phones).
+.emptyDashboard .center {
+    width: 100%;
+    max-width: 480px;
+    padding: 0 16px;
+}
+
+@media (max-width: 480px) {
+    .emptyDashboard .headline-noStudies {
+        font-size: 28px;
+    }
+    .emptyDashboard .headline {
+        font-size: 22px;
+    }
+}
+
 .buttonDashboard {
     text-align: center;
     color: white;
