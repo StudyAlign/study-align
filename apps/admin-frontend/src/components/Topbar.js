@@ -36,23 +36,27 @@ export default function Topbar() {
     }
 
     return (
-        <Navbar className="top-bar">
+        <Navbar className="top-bar" expand="lg">
             <Container fluid>
                 <Navbar.Brand onClick={handleClickStudyAlign} className="top-bar-logo"><Image width="160" src={logo} /></Navbar.Brand>
                 {auth && auth.user && (
                     <>
-                        <Nav className="me-auto">
-                            <Navbar.Text className="me-2"><Link to={"/create"}><Button variant="primary"><PlusCircleFill className="button-icon" /> Create Study</Button></Link></Navbar.Text>
-                            <Navbar.Text><Link to={"/import"}><Button variant="link-sal">Import Study</Button></Link></Navbar.Text>
-                        </Nav>
-                        <Nav >
-                            <Nav.Link onClick={() => navigate("/groups")} className="top-bar-item">Groups</Nav.Link>
-                            {auth.user.role_id === 1 && <Nav.Link onClick={handleClickUsers} className="top-bar-item">Users</Nav.Link>}
-                            <NavDropdown title={auth.user.name} id="top-bar-dropdown" >
-                                <NavDropdown.Item onClick={handleClickProfile}>Profile</NavDropdown.Item>
-                                <NavDropdown.Item onClick={handleClickLogout}>Logout</NavDropdown.Item>
-                            </NavDropdown>
-                        </Nav>
+                        <Navbar.Toggle aria-controls="top-bar-nav" />
+                        <Navbar.Collapse id="top-bar-nav">
+                            <Nav className="me-auto">
+                                <Navbar.Text className="me-2"><Link to={"/create"}><Button variant="primary"><PlusCircleFill className="button-icon" /> Create Study</Button></Link></Navbar.Text>
+                                <Navbar.Text><Link to={"/import"}><Button variant="link-sal">Import Study</Button></Link></Navbar.Text>
+                            </Nav>
+                            <Nav>
+                                <Nav.Link onClick={() => navigate("/questionnaires")} className="top-bar-item">Questionnaires</Nav.Link>
+                                <Nav.Link onClick={() => navigate("/groups")} className="top-bar-item">Groups</Nav.Link>
+                                {auth.user.role_id === 1 && <Nav.Link onClick={handleClickUsers} className="top-bar-item">Users</Nav.Link>}
+                                <NavDropdown title={auth.user.name} id="top-bar-dropdown" >
+                                    <NavDropdown.Item onClick={handleClickProfile}>Profile</NavDropdown.Item>
+                                    <NavDropdown.Item onClick={handleClickLogout}>Logout</NavDropdown.Item>
+                                </NavDropdown>
+                            </Nav>
+                        </Navbar.Collapse>
                     </>
                 )}
             </Container>
