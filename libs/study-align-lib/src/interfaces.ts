@@ -5,7 +5,7 @@ type NavigatorState = "in_progress" | "done"
 
 interface Options {
     path: string;
-    method: "GET" | "POST" | "PATCH" | "DELETE";
+    method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
     headers?: object;
     params?: object;
     body?: object;

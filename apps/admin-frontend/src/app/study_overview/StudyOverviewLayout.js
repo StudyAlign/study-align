@@ -13,6 +13,7 @@ import Overview from "./Overview";
 import Procedure from "./Procedure";
 import InteractionData from "./InteractionData";
 import Participants from "./Participants";
+import FormResponses from "./FormResponses";
 import LoadingScreen from "../../components/LoadingScreen";
 
 import {
@@ -137,6 +138,8 @@ export default function StudyOverviewLayout() {
         }
         else if(page === 'data') {
             content = <InteractionData/>
+        } else if(page === 'responses') {
+            content = <FormResponses/>
         } else if(page === 'participants') {
             content = <Participants/>
         }

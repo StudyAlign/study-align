@@ -404,6 +404,48 @@ export function getInteractionTimelineApi(args) {
     return sal.getInteractionTimeline(args.studyId);
 }
 
+// Native questionnaires (Forms)
+
+export function getFormTemplatesApi() {
+    return sal.getFormTemplates();
+}
+
+export function getStudyFormsApi(studyId) {
+    return sal.getStudyForms(studyId);
+}
+
+export function getGlobalFormsApi() {
+    return sal.getGlobalForms();
+}
+
+export function getGlobalFormsUsageApi() {
+    return sal.getGlobalFormsUsage();
+}
+
+export function getFormApi(formId) {
+    return sal.getForm(formId);
+}
+
+export function createFormApi(form) {
+    return sal.createForm(form);
+}
+
+export function createFormFromTemplateApi(args) {
+    return sal.createFormFromTemplate(args.templateId, args.studyId);
+}
+
+export function updateFormApi(args) {
+    return sal.updateForm(args.formId, args.patch);
+}
+
+export function deleteFormApi(formId) {
+    return sal.deleteForm(formId);
+}
+
+export function getStudyFormResponsesApi(studyId) {
+    return sal.getStudyFormResponses(studyId);
+}
+
 export function getInteractionExportApi(args) {
     return sal.getInteractionExport( args.studyId );
 }

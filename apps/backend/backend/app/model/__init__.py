@@ -8,6 +8,7 @@ from .procedure_config import ProcedureConfig
 from .procedure_config_step import ProcedureConfigStep
 from .questionnaire import Questionnaire
 # from .questionnaire_result import QuestionnaireResult
+from .form import Form, FormResponse
 from .study import Study
 from .task import Task
 from .text import Text

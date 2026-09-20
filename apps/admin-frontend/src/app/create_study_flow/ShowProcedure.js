@@ -4,6 +4,7 @@ import { List, Item } from "react-sortful";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getProcedureConfigOverview, selectStudyProcedureOverview } from "../../redux/reducers/studySlice";
+import { getFormApi } from "../../api/studyAlignApi";
 
 import { ProcedureTypes } from "./ProcedureObject";
 
@@ -64,6 +65,34 @@ function ShowProdecureObject(props) {
     }
 
     function QuestionnaireForm(props) {
+
+        const isNative = props.content.system === "native"
+        const formId = props.content.form_id || props.content.source_form_id
+        const [formName, setFormName] = useState("")
+
+        useEffect(() => {
+            if (isNative && formId) {
+                getFormApi(formId)
+                    .then((r) => setFormName((r.body && r.body.name) || ""))
+                    .catch(() => setFormName(""))
+            }
+        }, [isNative, formId])
+
+        if (isNative) {
+            return (
+                <Form>
+                    <Form.Group className="mb-3" controlId="system">
+                        <Form.Label> System </Form.Label>
+                        <Form.Control type="text" value="Native (built-in)" readOnly/>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="form">
+                        <Form.Label> Questionnaire </Form.Label>
+                        <Form.Control type="text" value={formName || (formId ? "Questionnaire #" + formId : "None selected")} readOnly/>
+                    </Form.Group>
+                </Form>
+            )
+        }
 
         return (
             <Form>

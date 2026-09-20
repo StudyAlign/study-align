@@ -15,3 +15,4 @@ from methods.procedure_navigator import *
 from methods.users import *
 from methods.groups import *
 from methods.mail import *
+from methods.forms import seed_form_templates, copy_template, upsert_response, validate_required

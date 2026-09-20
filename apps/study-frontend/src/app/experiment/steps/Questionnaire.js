@@ -5,6 +5,7 @@ import {
     selectProcedureStatus
 } from "../../../redux/reducers/procedureSlice";
 import {useAuth} from "../../../components/Auth";
+import NativeQuestionnaire from "./NativeQuestionnaire";
 
 export default function Questionnaire(props) {
 
@@ -13,6 +14,11 @@ export default function Questionnaire(props) {
     const currentProcedureStep = useSelector(selectCurrentProcedureStep)
     const procedureStatus = useSelector(selectProcedureStatus)
     const procedureError =  useSelector(selectProcedureError)
+
+    // Native (built-in) questionnaire: render it inline instead of an iframe.
+    if (currentProcedureStep && (currentProcedureStep.system === "native" || currentProcedureStep.form_id)) {
+        return <NativeQuestionnaire formId={currentProcedureStep.form_id} height={props.height} />;
+    }
 
     const participantToken = auth.participant.token;
 

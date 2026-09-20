@@ -112,7 +112,9 @@ export default function Navigator(props) {
             setIsDisabled(true);
             proceedCondition();
         } else if (procedureStepType === QUESTIONNAIRE) {
-            setIsDisabled(true);
+            // Native questionnaires enable Next via enableNext (isNextActive) on
+            // submit; external ones enable it via the SSE "state_change" DONE event.
+            setIsDisabled(!isNextActive);
         } else if (procedureStepType === TEXT) {
             proceedText();
         } else if (procedureStepType === PAUSE) {
@@ -129,7 +131,7 @@ export default function Navigator(props) {
                 navigatorStart();
             }
         } else if (procedureStepType === QUESTIONNAIRE) {
-            setIsDisabled(true);
+            setIsDisabled(!isNextActive);
             navigatorStart();
         } else if (procedureStepType === TEXT) {
             proceedText();

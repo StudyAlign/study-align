@@ -32,7 +32,7 @@ def import_study(db: Session, import_study: StudyImport, owner_id: int):
     procedure_config_main = model.ProcedureConfig(study=study, main=True)
     bulk_insert.append(procedure_config_main)
 
-    bulk_insert = _iterate_procedure_config_steps_import(db, bulk_insert, study, procedure_config_main, import_study.procedure_config.procedure_config_steps)
+    bulk_insert = _iterate_procedure_config_steps_import(db, bulk_insert, study, procedure_config_main, import_study.procedure_config.procedure_config_steps, form_suffix=" IMPORTED")
     db.add_all(bulk_insert)
     db.commit()
     db.refresh(study)
@@ -50,7 +50,7 @@ def duplicate_study(db: Session, duplicate_study: StudyDuplicate):
     procedure_config_main = model.ProcedureConfig(study=study, main=True)
     bulk_insert.append(procedure_config_main)
 
-    bulk_insert = _iterate_procedure_config_steps_import(db, bulk_insert, study, procedure_config_main, duplicate_study["procedure_config"].procedure_config_steps)
+    bulk_insert = _iterate_procedure_config_steps_import(db, bulk_insert, study, procedure_config_main, duplicate_study["procedure_config"].procedure_config_steps, form_suffix=" DUPLICATED")
     db.add_all(bulk_insert)
     db.commit()
     db.refresh(study)

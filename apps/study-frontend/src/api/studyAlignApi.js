@@ -85,6 +85,15 @@ export function checkSurveyResultsApi() {
     return sal.checkSurveyResult();
 }
 
+// Native questionnaires (participant-authenticated)
+export function getFormForParticipantApi(formId) {
+    return sal.getFormForParticipant(formId);
+}
+
+export function saveFormResponseApi(formId, answers, submitted) {
+    return sal.saveFormResponse(formId, answers, submitted);
+}
+
 export function startNavigatorApi() {
     return sal.startNavigator();
 }

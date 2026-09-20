@@ -14,6 +14,7 @@ import { createText, updateText } from "../../redux/reducers/textSlice";
 import { createCondition, updateCondition } from "../../redux/reducers/conditionSlice";
 import { createQuestionnaire, updateQuestionnaire } from "../../redux/reducers/questionnaireSlice";
 import { createPause, updatePause } from "../../redux/reducers/pauseSlice";
+import { getGlobalFormsApi } from "../../api/studyAlignApi";
 
 import styles from './CreateProcedure.module.scss'
 
@@ -49,7 +50,7 @@ export const ProcedureTypes = {
         class: "procedure-questionnaire",
         btnclass: "procedure-questionnaire-button",
         color: "rgb(144,30,64)",
-        emptyContent: { "url": "", "system": "", "study_id": -1}
+        emptyContent: { "url": "", "system": "", "form_id": null, "source_form_id": null, "study_id": -1}
     },
     Pause:  {
         id: 3,
@@ -221,6 +222,13 @@ function ConditionForm(props) {
 function QuestionnaireForm(props) {
 
     const [errorObj, setErrorObj] = useState({url: false, system: false})
+    const [globalForms, setGlobalForms] = useState([])
+
+    useEffect(() => {
+        getGlobalFormsApi().then((r) => setGlobalForms(r.body || [])).catch(() => setGlobalForms([]))
+    }, [])
+
+    const isNative = props.content.system === "native"
 
     useEffect(() => {
         if (props.error) {
@@ -286,20 +294,13 @@ function QuestionnaireForm(props) {
 
     return (
         <Form onSubmit={(event) => {event.preventDefault()}}>
-            <Form.Group className="mb-3" controlId="url">
-                <Form.Label className={errorObj.url ? styles.invalidLabel : ''}>
-                    {errorObj.url ? 'Url*' : 'Url'}
-                </Form.Label>
-                <Form.Control type="url" value={props.content.url} onChange={onChange}/>
-                {errorObj.url && <div style={{ display: "flex" }} className="invalid-feedback">Url can't be empty</div>}
-            </Form.Group>
-
             <Form.Group className="mb-3" controlId="system">
                 <Form.Label className={(props.error && errorObj.system) ? styles.invalidLabel : ''}>
                     {(props.error && errorObj.system) ? 'System*' : 'System'}
                 </Form.Label>
                 <Form.Select value={props.content.system} onChange={onChange}>
                     <option disabled value={""}> -- Select a System -- </option>
+                    <option value={"native"}> Native (built-in) </option>
                     <option value={"limesurvey"}> Limesurvey </option>
                     <option value={"qualtrics"}> Qualtrics </option>
                     {/* <option value={"surveymonkey"}> Survey Monkey </option>
@@ -309,6 +310,29 @@ function QuestionnaireForm(props) {
                 </Form.Select>
                 {(props.error && errorObj.system) && <div style={{display:"flex"}} className="invalid-feedback">Please select a system.</div>}
             </Form.Group>
+
+            {isNative ? (
+                <Form.Group className="mb-3" controlId="source_form_id">
+                    <Form.Label>Questionnaire</Form.Label>
+                    <Form.Select value={props.content.source_form_id || ""}
+                        onChange={(event) => props.editProcedureStep("source_form_id", event.target.value ? parseInt(event.target.value, 10) : null)}>
+                        <option value=""> -- Select a questionnaire -- </option>
+                        {globalForms.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+                    </Form.Select>
+                    <Form.Text muted>
+                        Pick one of your global questionnaires. A copy is placed into this study, so
+                        later edits to the global questionnaire will not change this study.
+                    </Form.Text>
+                </Form.Group>
+            ) : (
+                <Form.Group className="mb-3" controlId="url">
+                    <Form.Label className={errorObj.url ? styles.invalidLabel : ''}>
+                        {errorObj.url ? 'Url*' : 'Url'}
+                    </Form.Label>
+                    <Form.Control type="url" value={props.content.url} onChange={onChange}/>
+                    {errorObj.url && <div style={{ display: "flex" }} className="invalid-feedback">Url can't be empty</div>}
+                </Form.Group>
+            )}
         </Form>
     )
 }
@@ -486,7 +510,17 @@ const ProcedureObject = forwardRef((props, ref) => {
     // Sector: update ProcedureObject backend: Start --------------------------------------------------------------
 
     const contentComplete = () => {
-        let required = Object.keys(props.type.emptyContent).filter(k => k !== "study_id")
+        // Native questionnaire: require a selected source questionnaire instead of a url.
+        if (props.type === ProcedureTypes.Questionnaire && content.system === "native") {
+            if (!content.source_form_id) {
+                props.setMessage({type: "danger", text: "Please select a questionnaire!"})
+                return false
+            }
+            return true
+        }
+        // form_id / source_form_id only apply to native questionnaires.
+        let required = Object.keys(props.type.emptyContent)
+            .filter(k => k !== "study_id" && k !== "form_id" && k !== "source_form_id")
         for (let k of required) {
             if (content[k] === "") {
                 if (k === "system") {
@@ -561,7 +595,8 @@ const ProcedureObject = forwardRef((props, ref) => {
         // update Questionnaire in Backend
         const response = await dispatch(updateQuestionnaire({questionnaireId: backendId, questionnaire: {
             "url": newContent.url,
-            "system": newContent.system
+            "system": newContent.system,
+            "source_form_id": newContent.source_form_id
         }}))
 
         // if response successful status 204
@@ -690,7 +725,8 @@ const ProcedureObject = forwardRef((props, ref) => {
         else if (props.type === ProcedureTypes.Questionnaire) {
             response = await dispatch(updateQuestionnaire({questionnaireId: backendId, questionnaire: {
                     "url": content.url,
-                    "system": content.system
+                    "system": content.system,
+                    "source_form_id": content.source_form_id
                 }}))
         }
         else if (props.type === ProcedureTypes.Pause) {

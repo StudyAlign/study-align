@@ -151,7 +151,7 @@ class StudyAlignLib {
                 }
                 xhr.send(encodedParams);
             }
-            if (options.method === "POST" || options.method === "PATCH") {
+            if (options.method === "POST" || options.method === "PATCH" || options.method === "PUT") {
                 if (options.asQuery) {
                     xhr.send()
                 } else if (options.multipart) {
@@ -741,6 +741,60 @@ class StudyAlignLib {
             asQuery: true
         };
         this.setHeaders(options);
+        return this.request(options);
+    }
+
+    // ── Native questionnaires (Forms) ──────────────────────────────────────
+    getFormTemplates() {
+        return this.basicRead("forms/templates");
+    }
+    getStudyForms(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/forms");
+    }
+    getGlobalForms() {
+        return this.basicRead("forms/global");
+    }
+    getGlobalFormsUsage() {
+        return this.basicRead("forms/global/usage");
+    }
+    getForm(formId: number) {
+        return this.basicRead("forms/" + formId);
+    }
+    createForm(form: object) {
+        return this.basicCreate("forms", form);
+    }
+    createFormFromTemplate(templateId: number, studyId: number) {
+        const options: Options = {
+            method: "POST",
+            path: "forms/from-template/" + templateId,
+            headers: {},
+            params: { study_id: studyId },
+            asQuery: true
+        };
+        this.setHeaders(options);
+        return this.request(options);
+    }
+    updateForm(formId: number, patch: object) {
+        return this.basicUpdate("forms/" + formId, patch);
+    }
+    deleteForm(formId: number) {
+        return this.basicDelete("forms/" + formId);
+    }
+    getStudyFormResponses(studyId: number) {
+        return this.basicRead("studies/" + studyId + "/form-responses");
+    }
+    // Participant-authenticated: returns { form, response } for the renderer.
+    getFormForParticipant(formId: number) {
+        return this.basicRead("forms/" + formId + "/participant");
+    }
+    saveFormResponse(formId: number, answers: object, submitted: boolean) {
+        const options: Options = {
+            method: "PUT",
+            path: "forms/" + formId + "/participant",
+            headers: {}
+        };
+        this.setHeaders(options);
+        options.body = { answers: answers, submitted: submitted };
         return this.request(options);
     }
 

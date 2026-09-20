@@ -19,6 +19,7 @@ import ImportStudy from './app/create_study_flow/ImportStudy';
 import { StudyStatus } from './app/create_study_flow/navigation_logic/StudyCreationLayout';
 import UserOverview from './app/users/UserOverview';
 import GroupsOverview from './app/groups/GroupsOverview';
+import GlobalQuestionnaires from './app/questionnaires/GlobalQuestionnaires';
 import GroupCreate from './app/groups/GroupCreate';
 import GroupManage from './app/groups/GroupManage';
 import CreateUserForm from './app/users/CreateUserForm';
@@ -57,6 +58,7 @@ export default function App() {
                         <Route path="/groups"                   element={<GroupsOverview/>} />
                         <Route path="/groups/create"            element={<GroupCreate/>} />
                         <Route path="/groups/:group_id/manage"  element={<GroupManage/>} />
+                        <Route path="/questionnaires"           element={<GlobalQuestionnaires/>} />
                         <Route path="/study/:study_id/:page"    element={<StudyOverviewLayout/>} />
 
                         <Route path="import"            element={<ImportStudy/>} />

@@ -1,4 +1,6 @@
 import io
+import csv
+import json
 import zipfile
 from datetime import datetime
 
@@ -105,6 +107,47 @@ def export_interaction_data(study_id: int, db: Session = Depends(get_db)):
             csv_data = create_csv(procedure_progress_keys, procedure_progress_rows)
             zip_info = zipfile.ZipInfo(f'procedure_progress.csv', datetime.now().timetuple()[:6])
             zip_file.writestr(zip_info, csv_data)
+
+            # Native questionnaire responses (answers as a JSON column).
+            form_response_keys = [column.key for column in model.FormResponse.__table__.columns]
+            form_response_rows = db.query(model.FormResponse).filter(
+                model.FormResponse.study_id == study_id).order_by(model.FormResponse.id.asc()).all()
+            csv_data = create_csv(form_response_keys, form_response_rows)
+            zip_info = zipfile.ZipInfo('form_responses.csv', datetime.now().timetuple()[:6])
+            zip_file.writestr(zip_info, csv_data)
+
+            # Native questionnaire structures, so answer keys can be mapped to the
+            # questions they belong to. forms.json holds the full definitions;
+            # form_items.csv is a flat key -> question lookup for quick analysis.
+            forms = db.query(model.Form).filter(
+                model.Form.study_id == study_id).order_by(model.Form.id.asc()).all()
+
+            forms_json = json.dumps([
+                {"id": f.id, "name": f.name, "version": f.version, "definition": f.definition}
+                for f in forms
+            ], indent=2, default=str)
+            zip_info = zipfile.ZipInfo('forms.json', datetime.now().timetuple()[:6])
+            zip_file.writestr(zip_info, forms_json.encode('utf-8'))
+
+            item_sio = io.StringIO()
+            item_writer = csv.writer(item_sio, delimiter='\t')
+            item_writer.writerow(["form_id", "form_name", "item_key", "item_type", "question"])
+            for f in forms:
+                for page in (f.definition or {}).get("pages", []):
+                    for item in page.get("items", []):
+                        itype = item.get("type")
+                        if itype == "display":
+                            continue
+                        if itype == "scale":
+                            for row in item.get("config", {}).get("rows", []):
+                                question = row.get("text") or (
+                                    str(row.get("left", "")) + " / " + str(row.get("right", "")))
+                                item_writer.writerow([f.id, f.name, row.get("key"), "scale_row", question])
+                        else:
+                            item_writer.writerow([f.id, f.name, item.get("key"), itype, item.get("label")])
+            zip_info = zipfile.ZipInfo('form_items.csv', datetime.now().timetuple()[:6])
+            zip_file.writestr(zip_info, item_sio.getvalue().encode('utf-16'))
+            item_sio.close()
 
         zip_buffer.seek(0)
         headers = {"Content-Disposition": f"attachment; filename=data_export-{study.name.replace(' ', '_')}.zip"}

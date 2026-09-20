@@ -131,9 +131,9 @@ def _create_procedure_config_step(db: Session, procedure_config_id: int, step: P
     return step
 
 
-def _iterate_procedure_config_steps_import(db: Session, bulk_insert: List, study: Study, procedure_config: ProcedureConfig, steps: ProcedureConfigSteps):
+def _iterate_procedure_config_steps_import(db: Session, bulk_insert: List, study: Study, procedure_config: ProcedureConfig, steps: ProcedureConfigSteps, form_suffix: str = ""):
     for i in range(len(steps)):
-        bulk_insert = _import_procedure_config_steps(db, bulk_insert, study, procedure_config, i, steps[i])
+        bulk_insert = _import_procedure_config_steps(db, bulk_insert, study, procedure_config, i, steps[i], form_suffix)
     return bulk_insert
 
 
@@ -141,7 +141,7 @@ def _import_procedure_config_steps(db: Session, bulk_insert: Optional[List], stu
 TextBase,
 QuestionnaireBase,
 PauseBase,
-ProcedureConfigImport]):
+ProcedureConfigImport], form_suffix: str = ""):
     procedure_config_step = model.ProcedureConfigStep(procedure_config=procedure_config, order=order, counterbalance=step.counterbalance)
     if isinstance(step.condition, ConditionBase):
         condition = model.Condition(**step.condition.model_dump())
@@ -154,8 +154,32 @@ ProcedureConfigImport]):
         bulk_insert.append(text)
         procedure_config_step.text = text
     if isinstance(step.questionnaire, QuestionnaireBase):
-        questionnaire = model.Questionnaire(**step.questionnaire.model_dump())
+        q_data = step.questionnaire.model_dump()
+        embedded_form = q_data.pop("form", None)
+        # Ids from the source system are meaningless in the target; the form is
+        # recreated below for native questionnaires.
+        q_data.pop("form_id", None)
+        q_data.pop("source_form_id", None)
+        questionnaire = model.Questionnaire(**q_data)
         questionnaire.study = study
+        if embedded_form and q_data.get("system") == "native":
+            import copy as _copy
+            name = (embedded_form.get("name") or "Imported questionnaire") + form_suffix
+            definition = embedded_form.get("definition") or {}
+            version = embedded_form.get("version") or 1
+            # A global, reusable copy so the questionnaire shows up in the
+            # importer's Questionnaires editor and can be picked in other studies.
+            global_form = model.Form(name=name, definition=_copy.deepcopy(definition),
+                                     is_template=False, is_global=True,
+                                     owner_id=study.owner_id, version=version)
+            # A study-scoped copy the participant renders (copy-on-place, frozen).
+            study_form = model.Form(name=name, definition=_copy.deepcopy(definition),
+                                    is_template=False, is_global=False,
+                                    study=study, version=version)
+            bulk_insert.append(global_form)
+            bulk_insert.append(study_form)
+            questionnaire.form = study_form
+            questionnaire.source_form = global_form
         bulk_insert.append(questionnaire)
         procedure_config_step.questionnaire = questionnaire
     if isinstance(step.pause, PauseBase):
@@ -167,7 +191,7 @@ ProcedureConfigImport]):
         block = model.ProcedureConfig(study=study, main=False)
         bulk_insert.append(block)
         procedure_config_step.block = block
-        bulk_insert = _iterate_procedure_config_steps_import(db, bulk_insert, study, block, step.block.procedure_config_steps)
+        bulk_insert = _iterate_procedure_config_steps_import(db, bulk_insert, study, block, step.block.procedure_config_steps, form_suffix)
     bulk_insert.append(procedure_config_step)
     return bulk_insert
 

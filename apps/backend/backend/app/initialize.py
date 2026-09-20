@@ -32,6 +32,7 @@ from model.user import User
 from model.interaction import GenericInteraction, KeyboardInteraction, MouseInteraction, \
     DragInteraction, TouchInteraction, Touch
 from model.machine_learning import MLModel, Prediction
+from model.form import Form, FormResponse
 from schema.role import RoleCreate
 from schema.user import UserCreate
 
@@ -60,6 +61,10 @@ def main():
         print("initialize: created tables, roles and the initial admin user.")
     else:
         print("initialize: tables ensured; roles already present, skipping seed.")
+
+    # 3. Seed the global questionnaire templates (idempotent, keyed by slug).
+    created = methods.seed_form_templates(db)
+    print("initialize: form templates ensured (%d newly created)." % created)
 
 
 if __name__ == "__main__":
