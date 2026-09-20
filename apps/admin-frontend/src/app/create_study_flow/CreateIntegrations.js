@@ -166,6 +166,28 @@ export default function CreateIntegrations(props) {
         })
     }, [])
 
+    // This step only configures external survey systems. If the study has no
+    // external questionnaire (none, or only native), skip straight to the check.
+    useEffect(() => {
+        if (procedureConfigOverview == null) return
+        const collect = (steps) => {
+            let systems = []
+            for (const step of (steps || [])) {
+                if (step.questionnaire && step.questionnaire.system) systems.push(step.questionnaire.system)
+                if (step.block && step.block.procedure_config_steps) {
+                    systems = systems.concat(collect(step.block.procedure_config_steps))
+                }
+            }
+            return systems
+        }
+        const hasExternal = collect(procedureConfigOverview.procedure_config_steps).some((s) => s && s !== "native")
+        if (!hasExternal) {
+            const base = (!studySetupInfo || studySetupInfo.state === "setup") ? "create" : "edit"
+            navigate("/" + base + "/" + study_id + "/check", { replace: true })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [procedureConfigOverview])
+
     if (procedureConfig == null || procedureConfigOverview == null) {
         return (
             <>

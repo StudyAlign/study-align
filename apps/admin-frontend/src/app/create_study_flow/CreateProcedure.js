@@ -1019,18 +1019,23 @@ export default function CreateProcedure(props) {
     // Sector: Handle leave CreateProcedure Page: Start --------------------------------------------------------------
 
     const navigateForward = async () => {
+        // The Integrations step only configures external survey systems. If the
+        // study uses no external questionnaire (none, or only native ones), skip
+        // it: mark it done and jump to the Final Check.
+        const skipIntegrations = currentSystem === NO_QUESTIONNAIRE_SYSTEM || currentSystem === "native"
         await dispatch(updateStudy({
             "studyId": study_id,
             "study": {
-                "current_setup_step": "procedure"
+                "current_setup_step": skipIntegrations ? "integrations" : "procedure"
             }
         }))
         await dispatch(getStudySetupInfo(study_id))
         setEmptyOrderListener(false)
+        const target = skipIntegrations ? "check" : "integrations"
         if (studySetupInfo.state === "setup") {
-            navigate("/create/" + study_id + "/integrations")
+            navigate("/create/" + study_id + "/" + target)
         } else {
-            navigate("/edit/" + study_id + "/integrations")
+            navigate("/edit/" + study_id + "/" + target)
         }
     }
 

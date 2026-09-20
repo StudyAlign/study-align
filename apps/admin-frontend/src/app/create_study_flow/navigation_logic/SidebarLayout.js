@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Nav } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router";
 import {useDispatch, useSelector} from "react-redux";
@@ -8,6 +8,7 @@ import { CreationSteps } from "./StudyCreationLayout";
 import {studySlice, updateStudy, getStudySetupInfo, selectStudySetupInfo} from "../../../redux/reducers/studySlice";
 import { CreationOrder } from "./StudyCreationLayout";
 import { CreateProcedureContext } from "../CreateProcedure";
+import { apiWithAuth, getQuestionnairesApi } from "../../../api/studyAlignApi";
 
 import "../../SidebarAndReactStyles.scss";
 
@@ -22,6 +23,14 @@ export default function SidebarLayout(props){
     const dispatch = useDispatch()
     const location = useLocation()
     const navigate = useNavigate()
+
+    // The Integrations step only matters for external questionnaire systems.
+    const [hasExternalQuestionnaire, setHasExternalQuestionnaire] = useState(false)
+    useEffect(() => {
+        apiWithAuth(getQuestionnairesApi, study_id, dispatch)
+            .then((r) => setHasExternalQuestionnaire((r.body || []).some((q) => q.system && q.system !== "native")))
+            .catch(() => setHasExternalQuestionnaire(false))
+    }, [study_id, props.step, dispatch])
 
     const getClassName = (step) => {
         let className = 'sidebar-item'
@@ -84,9 +93,11 @@ export default function SidebarLayout(props){
                             <Nav.Item>
                                 { getLink("Procedure", CreationSteps.Procedure, CreationOrder[1], CreationOrder[2]) }
                             </Nav.Item>
-                            <Nav.Item>
-                                { getLink("Integrations", CreationSteps.Integrations, CreationOrder[2], CreationOrder[3]) }
-                            </Nav.Item>
+                            {hasExternalQuestionnaire && (
+                                <Nav.Item>
+                                    { getLink("Integrations", CreationSteps.Integrations, CreationOrder[2], CreationOrder[3]) }
+                                </Nav.Item>
+                            )}
                             <Nav.Item>
                                 { getLink("Check", CreationSteps.Check, CreationOrder[3], CreationOrder[4]) }
                             </Nav.Item>
