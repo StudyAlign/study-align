@@ -6,4 +6,6 @@ set -e
 
 echo "prestart: initializing database ..."
 python initialize.py
+echo "prestart: applying migrations ..."
+python run_migrations.py
 echo "prestart: done."
