@@ -340,7 +340,7 @@ async def procedure_check_surveyresult(participant: schema.populated.Participant
 async def navigate_procedure(request: Request, participant: str, db: Session = Depends(get_db)):
     participant = methods.read_by(db, model.Participant, "token", participant)
     if_exists(participant, "Participant")
-    sse = navigator_sse(request, navigator, participant.id)
+    sse = navigator_sse(request, navigator, participant.id, participant.current_procedure_step)
     state = schema.procedure_navigator.ProcedureNavigatorStateEnum.in_progress
     navigator.subscribe(participant_id=participant.id,
                         procedure_step_id=participant.current_procedure_step,

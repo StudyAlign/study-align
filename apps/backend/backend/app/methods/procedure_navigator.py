@@ -32,7 +32,8 @@ class ProcedureNavigator(object):
         return {participant_id: ProcedureNavigatorConnection(procedure_step_id=procedure_step_id, state=state)}
 
 
-async def navigator_sse(request: Request, procedure_navigator: ProcedureNavigator, participant_id: int):
+async def navigator_sse(request: Request, procedure_navigator: ProcedureNavigator, participant_id: int,
+                        procedure_step_id: int):
     delay = 2
     retry_timeout = 2000
     previous_navigator_state = None
@@ -44,7 +45,15 @@ async def navigator_sse(request: Request, procedure_navigator: ProcedureNavigato
         # Unsubscribe participant if disconnected
         if await request.is_disconnected():
             print("DISCONNECTED FROM NAVIGATOR")
-            procedure_navigator.unsubscribe(participant_id)
+            # Only clean up if the pool still holds THIS loop's step. When the
+            # participant moves to a subsequent navigator step (e.g. two
+            # conditions in a row), the client closes this connection and opens a
+            # new one that re-subscribes for the next step. This loop notices the
+            # disconnect a beat later, so unsubscribing unconditionally would
+            # delete the newer subscription and strand the next step.
+            connection = procedure_navigator.get_connection(participant_id)
+            if connection is None or connection.procedure_step_id == procedure_step_id:
+                procedure_navigator.unsubscribe(participant_id)
             break
 
         # Send unsubscribed message
