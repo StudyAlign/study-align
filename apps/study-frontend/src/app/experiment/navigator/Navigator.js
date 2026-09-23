@@ -56,8 +56,6 @@ export default function Navigator(props) {
     const isLastStep = currentProcedureStep && currentProcedureStep.is_last_step;
     const isSecondLastStep =  currentProcedureStep && currentProcedureStep.is_second_last_step;
 
-    let sse;
-
     const config = currentProcedureStep && currentProcedureStep.config;
     const hideNavigator = config && config.hideNavigator;
 
@@ -146,48 +144,63 @@ export default function Navigator(props) {
     }, [visible]);
 
     useEffect(() => {
-        if (navigatorStatus) {
-            sse = getNavigatorApi();
-
-            sse.addEventListener("participant_subscribed", (e) => {
-                console.log("participant_subscribed")
-                console.log(e.data);
-            })
-
-            sse.addEventListener("participant_unsubscribed", (e) => {
-                console.log("participant_unsubscribed")
-                console.log(e.data);
-            })
-
-            sse.addEventListener("state_change", (e) => {
-                const message = JSON.parse(e.data);
-                if (message.state === DONE) {
-                    //sse = null;
-                    //dispatch(navigatorSlice.actions.closeNavigator());
-                    setIsDisabled(false);
-                    //dispatch(navigatorSlice.actions.setNavigatorStatus(false));
-                    //setBackendConnection("");
-                    if (hideNavigator) {
-                        console.log("Show navigator")
-                        setIsVisible(true);
-                    }
-                }
-
-                if (message.state === IN_PROGRESS) {
-                    setIsDisabled(true);
-                }
-
-            })
-
-            sse.onopen = function() {
-                setBackendConnection(CONN_BACKEND)
-            };
-
-            sse.onerror = function() {
-                navigatorReconnect()
-                setBackendConnection(RECONN_AFTER_ERR)
-            };
+        if (!navigatorStatus) {
+            return;
         }
+
+        const source = getNavigatorApi();
+        if (!source) {
+            return;
+        }
+
+        const onSubscribed = (e) => {
+            console.log("participant_subscribed")
+            console.log(e.data);
+        };
+
+        const onUnsubscribed = (e) => {
+            console.log("participant_unsubscribed")
+            console.log(e.data);
+        };
+
+        const onStateChange = (e) => {
+            const message = JSON.parse(e.data);
+            if (message.state === DONE) {
+                setIsDisabled(false);
+                if (hideNavigator) {
+                    console.log("Show navigator")
+                    setIsVisible(true);
+                }
+            }
+
+            if (message.state === IN_PROGRESS) {
+                setIsDisabled(true);
+            }
+        };
+
+        source.addEventListener("participant_subscribed", onSubscribed);
+        source.addEventListener("participant_unsubscribed", onUnsubscribed);
+        source.addEventListener("state_change", onStateChange);
+
+        source.onopen = function() {
+            setBackendConnection(CONN_BACKEND)
+        };
+
+        source.onerror = function() {
+            navigatorReconnect()
+            setBackendConnection(RECONN_AFTER_ERR)
+        };
+
+        // Detach and close when the connection is torn down (status change or
+        // unmount), so listeners and the EventSource don't leak across steps.
+        return () => {
+            source.removeEventListener("participant_subscribed", onSubscribed);
+            source.removeEventListener("participant_unsubscribed", onUnsubscribed);
+            source.removeEventListener("state_change", onStateChange);
+            source.onopen = null;
+            source.onerror = null;
+            source.close();
+        };
     }, [navigatorStatus])
 
     const navigatorStart = async () => {
@@ -212,7 +225,6 @@ export default function Navigator(props) {
             setIsDisabled(true);
 
             if (navigatorStatus) {
-                sse = null;
                 dispatch(navigatorSlice.actions.closeNavigator());
                 dispatch(navigatorSlice.actions.setNavigatorStatus(false));
                 setBackendConnection("");
