@@ -9,10 +9,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/StudyAlign/StudyAlign-library.git"
+    "url": "git+https://github.com/StudyAlign/study-align.git",
+    "directory": "libs/study-align-lib"
   },
-  "homepage": "https://github.com/StudyAlign/StudyAlign-library#readme",
-  "bugs": "https://github.com/StudyAlign/StudyAlign-library/issues",
+  "homepage": "https://github.com/StudyAlign/study-align/tree/main/libs/study-align-lib#readme",
+  "bugs": "https://github.com/StudyAlign/study-align/issues",
   "dependencies": {
     "uuid": "^9.0.1"
   },

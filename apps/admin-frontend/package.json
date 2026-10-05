@@ -2,6 +2,7 @@
   "name": "study-align-admin-frontend",
   "version": "0.1.0",
   "private": true,
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "study-align-lib": "^1.0.0",
     "@reduxjs/toolkit": "^2.5.0",

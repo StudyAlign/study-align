@@ -75,6 +75,23 @@ git submodule update --init docs/app-examples
 - History for every component predates this monorepo. Use
   `git log --follow <path>` to trace a file across the consolidation.
 
+## License
+
+StudyAlign is released under multiple licenses, by component (see
+[`LICENSE`](LICENSE) for the authoritative statement and each directory's own
+`LICENSE` file for the full text):
+
+| Component | License |
+|-----------|---------|
+| `libs/study-align-lib` (client library) | MIT |
+| `apps/backend` | AGPL-3.0-only |
+| `apps/admin-frontend` | AGPL-3.0-only |
+| `apps/study-frontend` | AGPL-3.0-only |
+
+The platform as a whole (including top-level tooling, deployment config, and
+docs) is **AGPL-3.0-only**; the client library is carved out as **MIT** so it
+can be embedded freely in instrumented products and prototypes.
+
 ## History
 
 This repo was assembled from, and supersedes, these now-archived repositories:

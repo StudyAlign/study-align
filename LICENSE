@@ -1,0 +1,39 @@
+StudyAlign — Licensing
+======================
+
+StudyAlign is a monorepo whose components are released under different
+licenses. The license that applies to a file is the license of the component
+directory that contains it. Each component also ships the full text of its
+license in a LICENSE file inside its own directory.
+
+Copyright (c) 2021-2026 Florian Lehmann
+
+Per-directory split
+-------------------
+
+  libs/study-align-lib     MIT License
+                           -> libs/study-align-lib/LICENSE
+
+  apps/backend             GNU Affero General Public License v3.0 (AGPL-3.0-only)
+                           -> apps/backend/LICENSE
+
+  apps/admin-frontend      GNU Affero General Public License v3.0 (AGPL-3.0-only)
+                           -> apps/admin-frontend/LICENSE
+
+  apps/study-frontend      GNU Affero General Public License v3.0 (AGPL-3.0-only)
+                           -> apps/study-frontend/LICENSE
+
+Default for everything else
+---------------------------
+
+The StudyAlign platform as a whole is licensed under the GNU Affero General
+Public License, version 3.0 (AGPL-3.0-only). Everything in this repository that
+is not inside one of the component directories listed above — top-level tooling,
+deployment configuration, and documentation — is therefore covered by the
+AGPL-3.0-only, with the single exception of `libs/study-align-lib`, which is the
+client library and is released under the permissive MIT License so it can be
+embedded freely in instrumented products and prototypes.
+
+The full text of the GNU Affero General Public License v3.0 is in each AGPL
+component's LICENSE file and at https://www.gnu.org/licenses/agpl-3.0.txt .
+The MIT License text is in libs/study-align-lib/LICENSE .
