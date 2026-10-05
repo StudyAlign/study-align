@@ -29,22 +29,3 @@ backend.studyalign.com {
 
     reverse_proxy study_align_backend:80
 }
-
-# LimeSurvey (surveys). The study frontend embeds surveys in an <iframe>, so the
-# default X-Frame-Options: SAMEORIGIN LimeSurvey sends would blank them out.
-# Strip it at the edge and allow framing only from the study/admin apps via CSP.
-surveys.studyalign.com {
-    encode zstd gzip
-
-    # Survey uploads (files participants attach, imported .lss surveys).
-    request_body {
-        max_size 30MB
-    }
-
-    header {
-        -X-Frame-Options
-        Content-Security-Policy "frame-ancestors 'self' https://studies.studyalign.com https://app.studyalign.com"
-    }
-
-    reverse_proxy study_align_limesurvey:80
-}

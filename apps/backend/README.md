@@ -45,18 +45,19 @@ The port 5433 gets mapped to port 5432 in the database container.
 
 ## Run application
 
-You can run the StudyAlign backend but also LimeSurvey with the next steps. If you don't intent to use 
-LimeSurvey, you can skip steps 2 and 3
+> This backend-only guide is legacy (pre-monorepo). For the full dev stack use
+> the root `docker-compose.yml` and the top-level `README.md`.
+>
+> Surveys are external: a study points at your own LimeSurvey/Qualtrics
+> (configured per study in the admin app); the platform hosts no survey tool.
 
 1. Create a docker network by making the shell script create-network.sh executable `sudo chmod +x create-network.sh` and 
    running it `./create-network.sh`.
 2. Start nginx: Open a new shell window, change the directory to `loadbalancer`, execute: `docker-compose up`
-3. Start LimeSurvey: Edit credentials in `limesurvey/docker-compose.yml`. Open a new shell window, change the directory to `limesurvey`, execute: `docker-compose up`
-4. Start StudyAlign: Open a new shell window, execute `docker-compose up` from the project's root folder
+3. Start StudyAlign: Open a new shell window, execute `docker-compose up` from the project's root folder
    1. On production, run: `docker-compose -f docker-compose.prod.yml up`
    2. On dev, run: `docker-compose -f docker-compose.dev.yml up`
 
-Access limesurvey locally through `http://localhost:8082`.
 Access the StudyAlign backend locally through `http://localhost:8080`
 
 
@@ -90,14 +91,12 @@ This is executing all migrations up to the latest.
 ## Architecture Overview
 We run all containers on one host.
 
-The services `limesurvey` and `studyalign-backend` will be attached to the `studyalign-network`. As well, will be 
+The `studyalign-backend` service is attached to the `studyalign-network`, as is
 the nginx service `studyalign-nginx`. The nginx serves as a reverse proxy to balance network requests.
 
 By executing `docker network inspect studyalign-network` from the shell you can see the details about the 
 `studyalign-network`. The `studyalign-network` is accessible from outside, e.g. via port 443 (SSL). Whereas we isolate 
-LimeSurvey's mariadb and StudyAlign's postgres and make it only available within a container.
-
-The LimeSurvey instance, and the StudyAlign instance run in separate containers. 
+StudyAlign's postgres and make it only available within a container.
 
 ## Predictions with models hosted on another VM aka. study-align-prediction
 

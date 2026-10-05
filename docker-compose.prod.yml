@@ -12,6 +12,9 @@
 #      app.studyalign.com      -> study_align_admin_frontend
 #      studies.studyalign.com  -> study_align_study_frontend
 #      backend.studyalign.com  -> study_align_backend
+#
+#  Studies integrate an EXTERNAL survey tool (LimeSurvey/Qualtrics) configured
+#  per study in the admin app; the platform does not host a survey instance.
 # ─────────────────────────────────────────────────────────────────────────
 
 name: studyalign
@@ -20,14 +23,6 @@ networks:
   default:            # private: backend <-> database
   web:
     external: true    # Caddy's shared network (docker network create web)
-
-volumes:
-  # LimeSurvey stores use named volumes (not ./data bind mounts): the upload dir
-  # must carry the image's theme/plugin skeleton and be owned by the in-container
-  # web user (www-data, uid 33) — a bare bind mount gets neither. Back these up
-  # with `docker run --rm -v <vol>:/v busybox tar` (see DEPLOYMENT.md).
-  limesurvey-mysql:
-  limesurvey-upload:
 
 services:
   database:
@@ -96,55 +91,3 @@ services:
       timeout: 5s
       retries: 6
     networks: [web]
-
-  # ── LimeSurvey (surveys.studyalign.com via Caddy) ─────────────────────────
-  #  Apache image (self-contained web server) + dedicated MariaDB. The DB stays
-  #  on the private "default" network; only LimeSurvey joins "web" for Caddy.
-  limesurvey-mysql:
-    image: mariadb:10.11
-    restart: unless-stopped
-    environment:
-      MARIADB_ROOT_PASSWORD: ${LIMESURVEY_DB_ROOT_PW}
-      MARIADB_DATABASE: limesurvey
-      MARIADB_USER: ${LIMESURVEY_DB_USER}
-      MARIADB_PASSWORD: ${LIMESURVEY_DB_PASSWORD}
-    volumes:
-      - limesurvey-mysql:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    networks: [default]
-
-  study_align_limesurvey:
-    # 7.0.15-260910 ships a broken survey editor (its /editor/index.html
-    # references build assets that aren't in the image -> 404s). 7.0.13 is the
-    # latest tag with a self-consistent editor build. Re-check newer tags later.
-    image: martialblog/limesurvey:7.0.13-260903-apache
-    restart: unless-stopped
-    environment:
-      DB_TYPE: mysql
-      DB_HOST: limesurvey-mysql
-      DB_PORT: 3306
-      DB_NAME: limesurvey
-      DB_USERNAME: ${LIMESURVEY_DB_USER}
-      DB_PASSWORD: ${LIMESURVEY_DB_PASSWORD}
-      ADMIN_USER: ${LIMESURVEY_ADMIN_USER}
-      ADMIN_PASSWORD: ${LIMESURVEY_ADMIN_PASSWORD}
-      ADMIN_NAME: ${LIMESURVEY_ADMIN_NAME:-Lime Administrator}
-      ADMIN_EMAIL: ${LIMESURVEY_ADMIN_EMAIL}
-      LISTEN_PORT: 80                       # match the stack; Caddy proxies to :80
-      PUBLIC_URL: ${LIMESURVEY_PUBLIC_URL:-https://surveys.studyalign.com}
-    volumes:
-      - limesurvey-upload:/var/www/html/upload
-    healthcheck:
-      # PHP is always present; curl/wget are not guaranteed in the image.
-      test: ["CMD", "php", "-r", "exit(@fsockopen('127.0.0.1',80)?0:1);"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-    depends_on:
-      limesurvey-mysql:
-        condition: service_healthy
-    networks: [default, web]   # web: reached by Caddy as http://study_align_limesurvey

@@ -27,7 +27,6 @@ study-align/
 | admin-frontend | React 19, Redux Toolkit, react-router 6, Bootstrap 5 | 3000 |
 | study-frontend | React 19, Redux Toolkit, react-router 6, Bootstrap 5 | 3366 |
 | study-align-lib | TypeScript, webpack | n/a |
-| LimeSurvey (optional) | third-party, MariaDB | 8082 |
 
 ## Quick start
 
@@ -37,9 +36,6 @@ docker compose up            # database + backend + both frontends
 
 # initialise the database (first run only)
 docker compose exec study_align_backend python /app/init_db.py
-
-# optional: bring up LimeSurvey too
-docker compose --profile limesurvey up
 ```
 
 - Backend API and docs: http://localhost:8000/docs
@@ -47,9 +43,17 @@ docker compose --profile limesurvey up
 - Study frontend: http://localhost:3366
 
 The compose services are named `study_align_backend`,
-`study_align_admin_frontend`, `study_align_study_frontend`, and, under the
-`limesurvey` profile, `study_align_limesurvey`. In production
-(`docker-compose.prod.yml`) LimeSurvey runs by default, without the profile.
+`study_align_admin_frontend`, and `study_align_study_frontend`.
+
+## Surveys / questionnaires
+
+Studies can embed questionnaires from an **external** survey tool (LimeSurvey or
+Qualtrics). StudyAlign does not bundle or host a survey instance: you point a
+study at your own LimeSurvey/Qualtrics by entering its survey URL and API
+credentials per study in the admin app. See
+[`docs/examples/README.md`](docs/examples/README.md) for ready-to-import
+LimeSurvey `.lss` examples, and [`docs/native-questionnaires.md`](docs/native-questionnaires.md)
+for StudyAlign's built-in (native) questionnaires.
 
 ## Example prototypes (submodule)
 
