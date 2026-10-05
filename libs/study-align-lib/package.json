@@ -1,6 +1,6 @@
 {
   "name": "study-align-lib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Library to use the study-align API comfortably.",
   "main": "dist/study-align-lib-bundle.js",
   "types": "dist/study-align-lib.d.ts",
