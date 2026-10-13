@@ -29,18 +29,51 @@
 	border-radius: 4px;
 }
 
-/* Give the Quill editors a comfortable initial writing area (study
-   description/consent and procedure HTML elements). */
+/* Give the Quill editors a comfortable initial writing area and a readable
+   line-height (study description/consent and procedure HTML elements). This
+   scope also covers the read-only preview, which shares .html-editor. */
 .html-editor .ql-editor {
 	min-height: 220px;
+	line-height: 1.6;
 }
 
-/* Quill zeroes paragraph margins by default; add spacing after each paragraph
-   so the content is easier to read while editing. */
-.html-editor .ql-editor p {
-	margin-bottom: 0.75em;
+/* Quill zeroes most block margins by default, so headings sit flush against the
+   following list/paragraph and the content reads as a dense wall. Give every
+   block some space beneath it, and push headings away from the block above so a
+   heading reads as the start of its section rather than crammed onto what
+   follows it. */
+.html-editor .ql-editor p,
+.html-editor .ql-editor ul,
+.html-editor .ql-editor ol,
+.html-editor .ql-editor blockquote,
+.html-editor .ql-editor pre {
+	margin-bottom: 0.9em;
 }
-.html-editor .ql-editor p:last-child {
+
+.html-editor .ql-editor h1,
+.html-editor .ql-editor h2,
+.html-editor .ql-editor h3,
+.html-editor .ql-editor h4,
+.html-editor .ql-editor h5,
+.html-editor .ql-editor h6 {
+	margin-top: 1.4em;
+	margin-bottom: 0.5em;
+	line-height: 1.3;
+}
+
+/* A little breathing room between list items without doubling the block gap. */
+.html-editor .ql-editor li {
+	margin-bottom: 0.25em;
+}
+.html-editor .ql-editor li:last-child {
+	margin-bottom: 0;
+}
+
+/* No stray gap above the first block or below the last one. */
+.html-editor .ql-editor > :first-child {
+	margin-top: 0;
+}
+.html-editor .ql-editor > :last-child {
 	margin-bottom: 0;
 }
 
