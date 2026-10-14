@@ -9,18 +9,23 @@ Create a `.env` file in the root (app) folder. Then edit the following key-value
 the paste them into the previously created env file.
 
 ```
-SECRET_KEY = "4307fff64d15d8366384e22cb48f8d4f6fc3bd74c89eb19a1c93bdfc5f94434d"
+# Generate fresh secrets — never reuse these placeholders:  openssl rand -hex 32
+SECRET_KEY = "<openssl rand -hex 32>"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120
-API_ADMIN_KEY = "73d088b3ce965980dcb1ccf3b5b63b54cafb93232ab0889151c52207fe5a104b"
-INITIAL_ADMIN_PW = "AlignStudiesPassword"
-INITIAL_ADMIN_EMAIL = "norply@studyalign.com"
+API_ADMIN_KEY = "<openssl rand -hex 32>"
+INITIAL_ADMIN_PW = "<strong-password>"
+INITIAL_ADMIN_EMAIL = "you@example.com"
 
-CORS_ORIGINS = "http://localhost:*, http://localhost, http://localhost:8080, http://localhost:63343, http://localhost:3333, http://localhost:3000, http://localhost:3366"
+CORS_ORIGINS = "http://localhost:3000, http://localhost:3366"
 ```
 
-These key-value pairs are mainly used for authentication (issuing and validating of JWT tokens). In a production 
+These key-value pairs are mainly used for authentication (issuing and validating of JWT tokens). In a production
 environment they would be replaced accordingly. Configuration of env variables might differ between hosting services.
+
+> **Never commit real secrets.** Generate `SECRET_KEY` and `API_ADMIN_KEY` with
+> `openssl rand -hex 32`; `.env` is gitignored. The monorepo root `.env.example`
+> is the authoritative, documented template.
 
 ## Database
 Create a `database.env` file in the database directory and paste the content from below. 
@@ -82,8 +87,8 @@ This is executing all migrations up to the latest.
 
 ```
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNTc3NjVmNy0yYTIxLTRkMzMtYTNmMC1hYmNkZjdkZmM0MTIiLCJleHAiOjE1OTY3MjQzMzB9.tQ6clupKwY5YfmD7p7xQBWjx22O0dNAF5q6iCnVWZos",
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNTc3NjVmNy0yYTIxLTRkMzMtYTNmMC1hYmNkZjdkZmM0MTIiLCJyZWZyZXNoIjp0cnVlLCJleHAiOjkxMDE2MjQwMTZ9.wPaN3NMUU2n4ST3tjpuz0ZfPALK3dO3TZ6wzW9zPY7g",
+  "access_token": "<JWT access token>",
+  "refresh_token": "<JWT refresh token>",
   "token_type": "bearer"
 }
 ```

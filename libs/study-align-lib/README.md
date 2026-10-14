@@ -1,6 +1,6 @@
 # study-align-lib
 
-Client library for talking to the [StudyAlign](https://github.com/StudyAlign/StudyAlign-library)
+Client library for talking to the [StudyAlign](https://github.com/StudyAlign/study-align)
 API comfortably. It wraps the REST endpoints and the interaction-logging used by
 the StudyAlign admin and study frontends.
 

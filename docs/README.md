@@ -5,15 +5,22 @@
 StudyAlign is an open-source software system for setting up online user studies to evaluate web prototypes, such as interactive prototypes with AI features. It simplifies implementing experiment procedures, integration of questionnaires, and data logging. It has a focus on studies in the field of Human-Computer Interaction and human-AI interaction studies
 since these studies have been prototyped with web technologies lately.
 
-- Key Features
-- Typical Study Designs
-- Screenshots
-- Software Parts
-- Setting up the System
-- Preparing and Creating a Study
-- Philosophy
+**Contents**
 
-StudyAlign streamlines HCI online studies and has enabled several studies; see "Studies Enabled by StudyAlign".
+- [Key Features](#key-features)
+- [Typical Study Designs](#typical-study-designs)
+- [Frontends](#frontends)
+- [Software Parts](#software-parts)
+- [Setting up the System](#setting-up-the-system)
+- [Preparing and Creating a Study](#preparing-and-creating-a-study)
+- [Study Examples for Import](#study-examples-for-import)
+- [Philosophy](#philosophy)
+- [Studies Enabled by StudyAlign](#studies-enabled-by-studyalign)
+
+> Looking to install and run it? Start with the [root README](../README.md) for
+> the quick start and [DEPLOYMENT.md](../DEPLOYMENT.md) for production.
+
+StudyAlign streamlines HCI online studies and has enabled several studies; see [Studies Enabled by StudyAlign](#studies-enabled-by-studyalign).
 
 You can find detailed information about the system in our paper `StudyAlign: A Software System for Conducting Web-Based
 User Studies with Functional Interactive Prototypes` arXiv: https://arxiv.org/abs/2505.13046 ACM DL (coming soon): https://doi.org/10.1145/3733053

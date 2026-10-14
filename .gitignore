@@ -45,8 +45,9 @@ data/
 CLAUDE.md
 CLAUDE.local.md
 .claude/
+
+# ── Maintainer-only notes (kept out of the public repo) ───────────────────
 PUBLISHING.md
-DEPLOYMENT.md
 
 # ── Editors / OS ──────────────────────────────────────────────────────────
 .idea/

@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use StudyAlign in your research, please cite the paper below."
+title: StudyAlign
+abstract: >-
+  StudyAlign is an open-source software system for setting up web-based user
+  studies to evaluate functional interactive prototypes, including prototypes
+  with AI features. It supports experiment procedures, counterbalancing,
+  external questionnaire integration, participant flow, and interaction logging,
+  with a focus on Human-Computer Interaction and human-AI interaction research.
+type: software
+repository-code: "https://github.com/StudyAlign/study-align"
+url: "https://github.com/StudyAlign/study-align"
+license: AGPL-3.0-only
+authors:
+  - family-names: Lehmann
+    given-names: Florian
+  - family-names: Buschek
+    given-names: Daniel
+preferred-citation:
+  type: article
+  title: "StudyAlign: A Software System for Conducting Web-Based User Studies with Functional Interactive Prototypes"
+  authors:
+    - family-names: Lehmann
+      given-names: Florian
+    - family-names: Buschek
+      given-names: Daniel
+  year: 2025
+  month: 6
+  journal: "Proceedings of the ACM on Human-Computer Interaction"
+  volume: 9
+  issue: 4
+  doi: "10.1145/3733053"
+  url: "https://dl.acm.org/doi/10.1145/3733053"
+  publisher:
+    name: "Association for Computing Machinery"
+  notes: "Article no. EICS007, 26 pages. Preprint: arXiv:2505.13046 (https://arxiv.org/abs/2505.13046)"
