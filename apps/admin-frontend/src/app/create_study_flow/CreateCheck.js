@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import { Container, Row, Col, Card, Button, Accordion } from "react-bootstrap";
 import { ArrowDown } from "react-bootstrap-icons";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { getTexts, selectTexts } from "../../redux/reducers/textSlice";
 import { getConditions, selectConditions } from "../../redux/reducers/conditionSlice";
@@ -26,7 +26,7 @@ import Topbar from "../../components/Topbar";
 import LoadingScreen from "../../components/LoadingScreen";
 import { reformatDate } from "../../components/CommonFunctions";
 import ShowProcedure from "./ShowProcedure";
-import StudyCreationLayout, { CreationSteps, StudyStatus } from "./navigation_logic/StudyCreationLayout";
+import StudyCreationLayout, { CreationSteps, StudyStatus, isStudyOver } from "./navigation_logic/StudyCreationLayout";
 import { STATES } from "../study_overview/StudyOverviewLayout";
 
 
@@ -44,7 +44,9 @@ export default function CreateCheck(props) {
     const procedureConfig = useSelector(selectStudyProcedure)
     const procedureConfigOverview = useSelector(selectStudyProcedureOverview)
 
-    const [disabled] = useState(status === StudyStatus.Active ? true : false)
+    // Lock a launched (Active) study only while it is still live; an over study
+    // can be edited again.
+    const disabled = status === StudyStatus.Active && !isStudyOver(study)
 
     useEffect(  () => {
         dispatch(getStudy(study_id))

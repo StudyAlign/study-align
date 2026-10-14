@@ -159,7 +159,9 @@ export default function StudyOverviewLayout() {
         }))
         await dispatch(getStudySetupInfo(study_id))
         // choose edit path
-        if(editState === editEnum.Running) {
+        if(editState === editEnum.Running || editState === editEnum.Closed) {
+            // Running studies and studies that are over/closed both edit through
+            // the /edit flow (over studies are unlocked there for editing again).
             navigate("/edit/" + study_id + "/information")
         } else if (editState === editEnum.NotOpen) {
             navigate("/create/" + study_id + "/information")
@@ -338,11 +340,11 @@ export default function StudyOverviewLayout() {
                     <Row className="mb-3">
                         <Col>
                             <div className="study-toolbar d-flex flex-wrap gap-2 align-items-center">
-                                {editState !== editEnum.Closed && (
-                                    <Button variant="primary" onClick={handleEdit}>
-                                        <PencilSquare /> Edit
-                                    </Button>
-                                )}
+                                {/* Over/closed studies are editable again, so the
+                                    Edit button is always available. */}
+                                <Button variant="primary" onClick={handleEdit}>
+                                    <PencilSquare /> Edit
+                                </Button>
                                 <Button variant="outline-secondary" onClick={handleDuplicate}>Duplicate</Button>
                                 <Button variant="outline-secondary" onClick={() => setShowModal(modalStates.EXPORT)}>Export</Button>
                                 {getStateButton()}

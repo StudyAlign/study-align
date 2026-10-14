@@ -26,7 +26,7 @@ import {
 } from "../../redux/reducers/studySlice";
 import { createBlock, deleteBlock } from "../../redux/reducers/blockSlice";
 
-import StudyCreationLayout, { CreationSteps, StudyStatus } from "./navigation_logic/StudyCreationLayout";
+import StudyCreationLayout, { CreationSteps, StudyStatus, isStudyOver } from "./navigation_logic/StudyCreationLayout";
 import ProcedureAlert from "./ProcedureAlert";
 import ProcedureObject, { ProcedureTypes } from "./ProcedureObject";
 
@@ -142,8 +142,7 @@ export default function CreateProcedure(props) {
     } = useContext(CreateProcedureContext)
 
     // States
-    const [disabled] = useState(status === StudyStatus.Active ? true : false)
-    const [procedureObjectMapState, setProcedureObjectMapState] = useState(createInitialProcedureMap) // nested state  
+    const [procedureObjectMapState, setProcedureObjectMapState] = useState(createInitialProcedureMap) // nested state
     const [selectedAccordionKey, setSelectedAccordionKey] = useState(null) // Collapse Reference State
     const [isSetupDone, setIsSetupDone] = useState(false) // Setup State
     const [isDispatched, setIsDispatched] = useState(false) // Dispatch State
@@ -176,9 +175,17 @@ export default function CreateProcedure(props) {
     const procedureConfigOverview = useSelector(selectStudyProcedureOverview)
     const studySetupInfo = useSelector(selectStudySetupInfo)
 
+    // Lock a launched (Active) study's procedure only while it is still live;
+    // once the study is over it can be edited again. Falls back to locked until
+    // the setup info (with the end date) has loaded.
+    const disabled = status === StudyStatus.Active && !isStudyOver(studySetupInfo)
+
     useEffect(() => {
         Promise.all([
             dispatch(getProcedureConfig(study_id)),
+            // load fresh setup info so `disabled` can tell whether this study is
+            // over (and therefore editable) rather than relying on stale state.
+            dispatch(getStudySetupInfo(study_id)),
         ]).then(() => {
             resetQuestionnaireUpdateList()
             setIsDispatched(true)

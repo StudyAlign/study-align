@@ -472,7 +472,10 @@ const ProcedureObject = forwardRef((props, ref) => {
 
     const dispatch = useDispatch()
 
-    const [disabled] = useState(props.disabled)
+    // Read straight from the prop so the lock reacts when the parent recomputes
+    // it (e.g. once the study's setup info loads and an over study unlocks),
+    // rather than freezing the value captured at mount.
+    const disabled = props.disabled
     const [content, setContent] = useState(props.content)
     const [backendId, setBackendId] = useState(props.backendId) // BackendId of ProcedureObject
     const [stepId, setStepId] = useState(props.stepId) // StepId of ProcedureObject

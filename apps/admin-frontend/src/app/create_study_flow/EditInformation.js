@@ -16,7 +16,7 @@ import HtmlEditor from "./procedure_editors/HtmlEditor";
 import { getGroupsApi } from "../../api/studyAlignApi";
 
 import LoadingScreen from "../../components/LoadingScreen";
-import StudyCreationLayout, { CreationSteps, StudyStatus } from "./navigation_logic/StudyCreationLayout";
+import StudyCreationLayout, { CreationSteps, StudyStatus, isStudyOver } from "./navigation_logic/StudyCreationLayout";
 
 export default function EditInformation(props) {
 
@@ -26,7 +26,6 @@ export default function EditInformation(props) {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const [disabled] = useState(status === StudyStatus.Active ? true : false)
     const [title, setTitle] = useState('')
     const [startDate, setStartDate] = useState('')
     const [endDate, setEndDate] = useState('')
@@ -75,6 +74,10 @@ export default function EditInformation(props) {
     if (study == null || studySetupInfo == null) {
         return <LoadingScreen />
     }
+
+    // Lock a launched (Active) study only while it is still live; once it is over
+    // it can be edited again (the start/end dates and participant count fields).
+    const disabled = status === StudyStatus.Active && !isStudyOver(study)
 
     const handleTitle = (event) => {
         setTitle(event.target.value)

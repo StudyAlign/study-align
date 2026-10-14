@@ -7,6 +7,14 @@ export const StudyStatus = {
     Active: 1,
 }
 
+// A study is "over" once its end date has passed (date-only comparison, matching
+// the study overview). The edit screens lock an Active study only while it is
+// still live; once it is over there is nothing running to protect, so editing is
+// unlocked again. Accepts any object carrying an `endDate` (study or setup info).
+export const isStudyOver = (study) =>
+    !!study && !!study.endDate &&
+    new Date(study.endDate.split("T")[0]) < new Date()
+
 export const CreationOrder = [
     "study",
     "information",
